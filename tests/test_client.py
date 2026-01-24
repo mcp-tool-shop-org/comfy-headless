@@ -111,7 +111,7 @@ class TestSessionManagement:
 class TestConnectionMethods:
     """Test connection methods with mocking."""
 
-    @patch("comfy_headless.client.ComfyClient._get")
+    @patch("comfy_headless.client.requests.get")
     def test_is_online_true(self, mock_get):
         """Test is_online returns True when server responds."""
         from comfy_headless.client import ComfyClient
@@ -124,7 +124,7 @@ class TestConnectionMethods:
         assert client.is_online() is True
         mock_get.assert_called_once()
 
-    @patch("comfy_headless.client.ComfyClient._get")
+    @patch("comfy_headless.client.requests.get")
     def test_is_online_false_on_error(self, mock_get):
         """Test is_online returns False on error."""
         from comfy_headless.client import ComfyClient
@@ -134,7 +134,7 @@ class TestConnectionMethods:
         client = ComfyClient()
         assert client.is_online() is False
 
-    @patch("comfy_headless.client.ComfyClient._get")
+    @patch("comfy_headless.client.requests.get")
     def test_is_online_false_on_bad_status(self, mock_get):
         """Test is_online returns False on non-200 status."""
         from comfy_headless.client import ComfyClient

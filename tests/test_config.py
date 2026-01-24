@@ -21,7 +21,7 @@ class TestSettings:
         from comfy_headless.config import Settings
 
         settings = Settings()
-        assert settings.version == "2.5.0"
+        assert settings.version == "2.5.1"
 
     def test_to_dict(self):
         """Test settings serialization."""

@@ -35,11 +35,8 @@ jobs:
           ruff check .
           ruff format --check .
 
-      # NOTE: Tests are skipped until package structure is fixed
-      # The source files need to be moved to a comfy_headless/ directory
-      # See: https://github.com/mcp-tool-shop/comfy-headless/issues/10
-      # - name: Run tests
-      #   run: pytest tests/ -v --cov=. --cov-report=xml --cov-report=term-missing
+      - name: Run tests
+        run: pytest tests/ -v --cov=comfy_headless --cov-report=xml --cov-report=term-missing
 
   lint:
     runs-on: ubuntu-latest
