@@ -1,0 +1,131 @@
+# Comfy Headless
+
+> Production-ready headless client for ComfyUI with AI-powered prompt intelligence
+
+## Overview
+
+Comfy Headless provides a Python API and Gradio UI for ComfyUI without the complexity. Features include AI-powered prompt enhancement via Ollama, video generation with 11 preset models, real-time WebSocket progress, and modular architecture with optional dependencies.
+
+## Quick Start
+
+```bash
+pip install comfy-headless[standard]  # Recommended: AI + WebSocket
+
+# Or minimal install
+pip install comfy-headless
+```
+
+```python
+from comfy_headless import ComfyClient
+
+client = ComfyClient("http://localhost:8188")
+result = client.generate(
+    prompt="cyberpunk cityscape at sunset",
+    workflow="txt2img"
+)
+print(result.images)  # List of generated image paths
+```
+
+## Installation Options
+
+| Extra | Includes |
+|-------|----------|
+| `[ai]` | Ollama prompt enhancement |
+| `[websocket]` | Real-time progress updates |
+| `[health]` | System health monitoring |
+| `[ui]` | Gradio web interface |
+| `[validation]` | Pydantic config validation |
+| `[observability]` | OpenTelemetry tracing |
+| `[standard]` | ai + websocket (recommended) |
+| `[full]` | All features |
+
+## Core API
+
+### ComfyClient(url, timeout=300)
+Main client for ComfyUI interaction.
+
+```python
+client = ComfyClient("http://localhost:8188")
+```
+
+### client.generate(prompt, workflow, **kwargs)
+Generate images or video.
+- `prompt`: Text description
+- `workflow`: Workflow name or path
+- `negative_prompt`: What to avoid
+- `width`, `height`: Dimensions
+- `steps`: Sampling steps
+- `cfg_scale`: Guidance strength
+- Returns: GenerationResult with images/video paths
+
+### client.enhance_prompt(prompt)
+AI-powered prompt enhancement via Ollama.
+- Returns: Enhanced prompt string
+
+### client.list_workflows()
+List available workflow presets.
+
+### client.get_history(prompt_id)
+Get generation history and status.
+
+## Video Generation
+
+11 preset video models:
+- Wan 2.1 (14B, 1.3B)
+- Hunyuan Video
+- LTX Video
+- Mochi
+- CogVideoX (5B, 2B)
+- AnimateDiff
+- Stable Video Diffusion
+- Custom workflows
+
+```python
+result = client.generate_video(
+    prompt="ocean waves crashing",
+    model="wan21_14b",
+    frames=48,
+    fps=24
+)
+```
+
+## Gradio UI
+
+```bash
+# Launch web interface
+comfy-headless --ui
+
+# Or programmatically
+from comfy_headless.ui import launch_ui
+launch_ui(share=False, port=7860)
+```
+
+7 tabs: Generate, Video, Workflows, History, Settings, Health, Help
+
+## Configuration
+
+Environment variables:
+- `COMFY_URL`: ComfyUI server URL (default: http://localhost:8188)
+- `OLLAMA_URL`: Ollama server URL for AI features
+- `COMFY_TIMEOUT`: Request timeout in seconds
+
+## Key Features
+
+- Connection pooling with retry logic
+- Circuit breaker for resilience
+- WebSocket real-time progress
+- Structured logging with OpenTelemetry
+- Input validation and sanitization
+- Secrets management utilities
+- Temporary file cleanup
+
+## Links
+
+- Repository: https://github.com/mcp-tool-shop/comfy-headless
+- PyPI: https://pypi.org/project/comfy-headless/
+- Documentation: https://github.com/mcp-tool-shop/comfy-headless#readme
+- Issues: https://github.com/mcp-tool-shop/comfy-headless/issues
+
+## License
+
+MIT License
