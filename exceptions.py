@@ -768,7 +768,7 @@ class CircuitOpenError(ResilienceError):
 
 if EXCEPTION_GROUPS_AVAILABLE:
 
-    class ComfyHeadlessExceptionGroup(ExceptionGroup):
+    class ComfyHeadlessExceptionGroup(ExceptionGroup):  # noqa: F821
         """
         Group of related exceptions (e.g., multiple validation errors).
 

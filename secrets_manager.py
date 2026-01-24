@@ -71,7 +71,7 @@ __all__ = [
 
 # Try to import optional dependencies
 try:
-    from dotenv import dotenv_values, load_dotenv
+    from dotenv import load_dotenv
 
     DOTENV_AVAILABLE = True
 except ImportError:

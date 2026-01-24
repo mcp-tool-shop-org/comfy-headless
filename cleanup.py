@@ -330,7 +330,7 @@ def register_shutdown_handlers():
     if _shutdown_registered:
         return
 
-    def shutdown_handler(signum=None, frame=None):
+    def shutdown_handler(_signum=None, _frame=None):
         logger.info("Shutdown signal received, cleaning up...")
         cleanup_all()
 

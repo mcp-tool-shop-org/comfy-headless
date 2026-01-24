@@ -58,10 +58,6 @@ __all__ = [
     "validated_dimensions",
     # Pydantic models (if available)
     "GenerationRequest",
-    "ImageGenerationRequest",
-    "VideoGenerationRequest",
-    # Security patterns
-    "PROMPT_INJECTION_PATTERNS",
     # Constants
     "PYDANTIC_AVAILABLE",
 ]
@@ -72,7 +68,6 @@ try:
         BaseModel,
         ConfigDict,
         Field,
-        SecretStr,
         field_validator,
         model_validator,
     )
@@ -248,11 +243,12 @@ def validate_dimensions(
         raise DimensionError(width, height, f"Maximum size is {max_size}x{max_size}")
 
     # Divisibility
-    if must_be_divisible_by > 0:
-        if width % must_be_divisible_by != 0 or height % must_be_divisible_by != 0:
-            raise DimensionError(
-                width, height, f"Dimensions must be divisible by {must_be_divisible_by}"
-            )
+    if must_be_divisible_by > 0 and (
+        width % must_be_divisible_by != 0 or height % must_be_divisible_by != 0
+    ):
+        raise DimensionError(
+            width, height, f"Dimensions must be divisible by {must_be_divisible_by}"
+        )
 
     return (width, height)
 
@@ -324,7 +320,7 @@ def validate_path(
     try:
         filepath = Path(path).resolve()
     except Exception as e:
-        raise ValidationError(f"Invalid path: {e}")
+        raise ValidationError(f"Invalid path: {e}") from e
 
     # Check extension
     if allowed_extensions:
@@ -340,11 +336,11 @@ def validate_path(
         base = Path(base_directory).resolve()
         try:
             filepath.relative_to(base)
-        except ValueError:
+        except ValueError as e:
             raise SecurityError(
                 "Path is outside allowed directory",
                 suggestions=["Use paths within the allowed directory only"],
-            )
+            ) from e
 
     # Check existence
     if must_exist and not filepath.exists():

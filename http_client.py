@@ -138,9 +138,7 @@ class HttpClient:
                 raise ImportError("Neither httpx nor requests is installed")
         return self._client
 
-    def _request(
-        self, method: str, endpoint: str, timeout: float | None = None, **kwargs
-    ) -> Any:
+    def _request(self, method: str, endpoint: str, timeout: float | None = None, **kwargs) -> Any:
         """
         Make an HTTP request with circuit breaker protection.
 
@@ -170,11 +168,16 @@ class HttpClient:
                 return make_request()
 
         except Exception as e:
-            if HTTPX_AVAILABLE and isinstance(e, httpx.ConnectError) or REQUESTS_AVAILABLE and isinstance(e, requests.exceptions.ConnectionError):
+            if (
+                HTTPX_AVAILABLE
+                and isinstance(e, httpx.ConnectError)
+                or REQUESTS_AVAILABLE
+                and isinstance(e, requests.exceptions.ConnectionError)
+            ):
                 raise ComfyUIConnectionError(
                     f"Failed to connect to {self.base_url}: {e}",
                     url=self.base_url,
-                )
+                ) from e
             raise
 
     def get(self, endpoint: str, **kwargs) -> Any:
@@ -302,7 +305,7 @@ class AsyncHttpClient:
             raise ComfyUIConnectionError(
                 f"Failed to connect to {self.base_url}: {e}",
                 url=self.base_url,
-            )
+            ) from e
 
     async def get(self, endpoint: str, **kwargs) -> httpx.Response:
         """Make a GET request."""

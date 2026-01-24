@@ -505,7 +505,7 @@ class SnapshotManager:
     def rollback(
         self,
         snapshot_id: str,
-        compiler: Optional["WorkflowCompiler"] = None,
+        _compiler: Optional["WorkflowCompiler"] = None,
     ) -> CompiledWorkflow | None:
         """
         Rollback to a previous snapshot.
@@ -796,9 +796,12 @@ class DAGValidator:
         import time
 
         # Check cache
-        if not force and self._dynamic_node_cache is not None:
-            if time.time() - self._cache_timestamp < self._cache_ttl:
-                return self._dynamic_node_cache
+        if (
+            not force
+            and self._dynamic_node_cache is not None
+            and time.time() - self._cache_timestamp < self._cache_ttl
+        ):
+            return self._dynamic_node_cache
 
         if not self.comfyui_url:
             return self.NODE_OUTPUTS.copy()
@@ -954,13 +957,12 @@ class DAGValidator:
                         if source_node:
                             source_type = source_node.get("class_type")
                             source_outputs = self.get_node_outputs(source_type)
-                            if source_outputs is not None:
-                                if output_idx >= len(source_outputs):
-                                    errors.append(
-                                        f"Node '{node_id}' references invalid output "
-                                        f"index {output_idx} from '{source_id}' "
-                                        f"(has {len(source_outputs)} outputs)"
-                                    )
+                            if source_outputs is not None and output_idx >= len(source_outputs):
+                                errors.append(
+                                    f"Node '{node_id}' references invalid output "
+                                    f"index {output_idx} from '{source_id}' "
+                                    f"(has {len(source_outputs)} outputs)"
+                                )
 
         return errors
 
@@ -1235,10 +1237,13 @@ class WorkflowCompiler:
         elif param_def.type == ParameterType.BOOL:
             value = bool(value)
 
-        elif param_def.type == ParameterType.CHOICE:
-            if param_def.choices and value not in param_def.choices:
-                warning = f"'{name}' value '{value}' invalid, using default"
-                value = param_def.default or param_def.choices[0]
+        elif (
+            param_def.type == ParameterType.CHOICE
+            and param_def.choices
+            and value not in param_def.choices
+        ):
+            warning = f"'{name}' value '{value}' invalid, using default"
+            value = param_def.default or param_def.choices[0]
 
         # Range validation
         if param_def.min is not None and value < param_def.min:

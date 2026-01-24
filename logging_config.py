@@ -48,7 +48,6 @@ __all__ = [
     "LogContext",
     # Timing utilities
     "log_timing",
-    "timed_operation",
     # Tracing
     "traced_operation",
     "get_tracer",

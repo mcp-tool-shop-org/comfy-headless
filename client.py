@@ -61,7 +61,7 @@ def _safe_json_parse(response: "requests.Response", context: str = "") -> dict:
             message=f"Invalid JSON response from ComfyUI{f' while {context}' if context else ''}",
             url=response.url,
             cause=e,
-        )
+        ) from e
 
 
 def _safe_get_nested(data: Any, *keys: str, default: Any = None) -> Any:
@@ -217,12 +217,13 @@ class ComfyClient:
         timeout = timeout or settings.comfyui.timeout_read
 
         # Apply rate limiting if configured
-        if self._rate_limiter is not None:
-            if not self._rate_limiter.acquire(blocking=True, timeout=30.0):
-                logger.warning(f"Rate limit timeout for {endpoint}")
-                raise ComfyUIConnectionError(
-                    message="Rate limit timeout - too many requests", url=self.base_url
-                )
+        if self._rate_limiter is not None and not self._rate_limiter.acquire(
+            blocking=True, timeout=30.0
+        ):
+            logger.warning(f"Rate limit timeout for {endpoint}")
+            raise ComfyUIConnectionError(
+                message="Rate limit timeout - too many requests", url=self.base_url
+            )
 
         try:
             with self._circuit:
@@ -235,15 +236,15 @@ class ComfyClient:
                 message=f"Failed to connect to ComfyUI at {self.base_url}",
                 url=self.base_url,
                 cause=e,
-            )
+            ) from e
         except requests.exceptions.Timeout as e:
             logger.warning(f"Request timeout: {endpoint}", extra={"timeout": timeout})
             raise ComfyUIConnectionError(
                 message=f"Request timed out after {timeout}s", url=url, cause=e
-            )
+            ) from e
         except Exception as e:
             logger.error(f"Request failed: {endpoint}", extra={"error": str(e)})
-            raise ComfyUIConnectionError(message=f"Request failed: {e}", url=url, cause=e)
+            raise ComfyUIConnectionError(message=f"Request failed: {e}", url=url, cause=e) from e
 
     def _get(self, endpoint: str, **kwargs) -> requests.Response:
         """Make a GET request."""
@@ -859,10 +860,9 @@ class ComfyClient:
                         # Find position in queue
                         queue_pos = None
                         for i, item in enumerate(pending):
-                            if isinstance(item, list) and len(item) > 1:
-                                if item[1] == prompt_id:
-                                    queue_pos = i + 1
-                                    break
+                            if isinstance(item, list) and len(item) > 1 and item[1] == prompt_id:
+                                queue_pos = i + 1
+                                break
 
                         is_running = any(
                             isinstance(item, list) and len(item) > 1 and item[1] == prompt_id
@@ -1326,8 +1326,8 @@ class ComfyClient:
                 if on_progress:
                     on_progress(idx, total, 0.0, f"Starting {idx + 1}/{total}")
 
-                # Wrap individual progress
-                def item_progress(prog: float, status: str):
+                # Wrap individual progress - bind loop vars as defaults (B023)
+                def item_progress(prog: float, status: str, idx: int = idx, total: int = total):
                     if on_progress:
                         overall = (idx + prog) / total
                         on_progress(idx, total, overall, f"[{idx + 1}/{total}] {status}")

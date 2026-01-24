@@ -32,7 +32,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import TypeVar, Union
+from typing import TypeVar
 
 from .config import settings
 from .exceptions import CircuitOpenError, RetryExhaustedError
@@ -65,7 +65,6 @@ __all__ = [
 try:
     import tenacity
     from tenacity import (
-        after_log,
         before_sleep_log,
         retry,
         retry_if_exception_type,
@@ -85,7 +84,7 @@ except ImportError:
 # =============================================================================
 
 T = TypeVar("T")
-ExceptionTypes = Union[type[Exception], tuple[type[Exception], ...]]
+ExceptionTypes = type[Exception] | tuple[type[Exception], ...]
 
 
 # =============================================================================
@@ -167,7 +166,7 @@ def retry_with_backoff(
                         message=f"All {_max_attempts} retry attempts exhausted for {func.__name__}",
                         attempts=_max_attempts,
                         last_error=e.last_attempt.exception() if e.last_attempt else None,
-                    )
+                    ) from e
 
             return wrapper
 
@@ -195,7 +194,7 @@ def retry_with_backoff(
                                 message=f"All {_max_attempts} retry attempts exhausted for {func.__name__}",
                                 attempts=_max_attempts,
                                 last_error=last_exception,
-                            )
+                            ) from last_exception
 
                         # Calculate backoff with optional jitter
                         backoff = min(_backoff_base**attempt, _backoff_max)
@@ -444,13 +443,8 @@ class CircuitBreaker:
         with self._lock:
             self._maybe_transition_to_half_open()
 
-            if self._state == CircuitState.CLOSED:
-                return True
-            elif self._state == CircuitState.HALF_OPEN:
-                # Allow limited requests in half-open state
-                return True
-            else:  # OPEN
-                return False
+            # OPEN state returns False, CLOSED and HALF_OPEN return True
+            return self._state != CircuitState.OPEN
 
     def record_success(self):
         """Record a successful request."""
@@ -697,10 +691,10 @@ def with_timeout(timeout: float):
                 future = executor.submit(func, *args, **kwargs)
                 try:
                     return future.result(timeout=timeout)
-                except concurrent.futures.TimeoutError:
+                except concurrent.futures.TimeoutError as e:
                     raise OperationTimeoutError(
                         f"Operation {func.__name__} timed out after {timeout}s"
-                    )
+                    ) from e
 
         return wrapper
 
@@ -722,8 +716,10 @@ def async_timeout(timeout: float):
         async def wrapper(*args, **kwargs):
             try:
                 return await asyncio.wait_for(func(*args, **kwargs), timeout=timeout)
-            except asyncio.TimeoutError:
-                raise OperationTimeoutError(f"Operation {func.__name__} timed out after {timeout}s")
+            except asyncio.TimeoutError as e:
+                raise OperationTimeoutError(
+                    f"Operation {func.__name__} timed out after {timeout}s"
+                ) from e
 
         return wrapper
 
