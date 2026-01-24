@@ -1,7 +1,6 @@
 """Tests for config module."""
 
 
-
 class TestSettings:
     """Test Settings configuration."""
 

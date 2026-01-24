@@ -1,7 +1,6 @@
 """Tests for __main__.py CLI entry point."""
 
 
-
 class TestMainArgParsing:
     """Test argument parsing."""
 

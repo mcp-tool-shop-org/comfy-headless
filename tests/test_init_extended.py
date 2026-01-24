@@ -8,7 +8,6 @@ Covers:
 - __all__ exports completeness
 """
 
-
 import pytest
 
 

@@ -64,9 +64,7 @@ class TestVideoPresets:
         """Test quick preset exists."""
         from comfy_headless.video import VIDEO_PRESETS
 
-        quick_presets = [
-            k for k in VIDEO_PRESETS if "quick" in k.lower() or "fast" in k.lower()
-        ]
+        quick_presets = [k for k in VIDEO_PRESETS if "quick" in k.lower() or "fast" in k.lower()]
         assert len(quick_presets) > 0
 
     def test_quality_preset_exists(self):

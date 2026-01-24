@@ -742,9 +742,7 @@ def create_ui():
 
     with gr.Blocks(title=f"Comfy Headless v{_ui_version}") as app:
         # Prompt Studio Sidebar
-        with gr.Sidebar(
-            position="right", open=False, elem_id="prompt-studio-sidebar"
-        ):
+        with gr.Sidebar(position="right", open=False, elem_id="prompt-studio-sidebar"):
             gr.Markdown("## Prompt Studio")
             gr.Markdown("Enhance your prompts with AI assistance.")
 
@@ -1337,9 +1335,7 @@ def create_ui():
                             refresh_workflows_btn = gr.Button("🔄 Refresh", scale=1)
 
                         # Workflow details panel
-                        with gr.Accordion(
-                            "Workflow Details", open=False
-                        ):
+                        with gr.Accordion("Workflow Details", open=False):
                             workflow_details = gr.Markdown("*Select a workflow to view details*")
 
                             workflow_params_table = gr.Dataframe(
@@ -1682,20 +1678,17 @@ def create_ui():
                                     inputs = node.get("inputs", {})
 
                                     # Auto-detect prompt inputs
-                                    if "CLIPTextEncode" in class_type:
-                                        if "text" in inputs:
-                                            param_name = (
-                                                "prompt"
-                                                if "positive" not in parameters
-                                                else "negative"
-                                            )
-                                            parameters[param_name] = ParameterDef(
-                                                type=ParameterType.STRING,
-                                                node_id=node_id,
-                                                input_name="text",
-                                                label=param_name.title(),
-                                                description=f"Text input for {class_type}",
-                                            )
+                                    if "CLIPTextEncode" in class_type and "text" in inputs:
+                                        param_name = (
+                                            "prompt" if "positive" not in parameters else "negative"
+                                        )
+                                        parameters[param_name] = ParameterDef(
+                                            type=ParameterType.STRING,
+                                            node_id=node_id,
+                                            input_name="text",
+                                            label=param_name.title(),
+                                            description=f"Text input for {class_type}",
+                                        )
 
                                     # Auto-detect seed
                                     if "KSampler" in class_type:
@@ -2003,7 +1996,7 @@ def create_ui():
                         loras = client.get_loras() or []
                         if not loras:
                             return [["(No LoRAs found)", "—"]]
-                        return [[l, _detect_lora_type(l)] for l in loras]
+                        return [[lora, _detect_lora_type(lora)] for lora in loras]
 
                     def _detect_lora_type(lora_name: str) -> str:
                         """Detect LoRA type from filename."""
@@ -2069,9 +2062,7 @@ def create_ui():
                         wrap=True,
                     )
 
-                    gr.Markdown(
-                        "*Motion models control animation style in video generation.*"
-                    )
+                    gr.Markdown("*Motion models control animation style in video generation.*")
 
                 # -------------------------------------------------------------
                 # Samplers & Schedulers Section
@@ -2128,7 +2119,7 @@ def create_ui():
                 # Event Handlers
                 # -------------------------------------------------------------
 
-                def filter_models(search_text: str, type_filter: str):
+                def filter_models(search_text: str, _type_filter: str):
                     """Filter models based on search and type."""
                     checkpoints = get_checkpoints_data()
                     loras = get_loras_data()
@@ -2137,7 +2128,7 @@ def create_ui():
                     if search_text:
                         search_lower = search_text.lower()
                         checkpoints = [c for c in checkpoints if search_lower in c[0].lower()]
-                        loras = [l for l in loras if search_lower in l[0].lower()]
+                        loras = [lora for lora in loras if search_lower in lora[0].lower()]
                         motion = [m for m in motion if search_lower in m[0].lower()]
 
                     return checkpoints, loras, motion
@@ -2285,7 +2276,7 @@ def create_ui():
                             diagnostics.append(
                                 f"✅ **Queue:** {running} running, {pending} pending"
                             )
-                    except:
+                    except Exception:
                         diagnostics.append("⚠️ **Queue:** Could not fetch")
 
                     # Test 3: Models endpoint
@@ -2304,7 +2295,7 @@ def create_ui():
                             diagnostics.append(
                                 f"✅ **Models:** {len(checkpoints)} checkpoints available"
                             )
-                    except:
+                    except Exception:
                         diagnostics.append("⚠️ **Models:** Could not fetch")
 
                     return status, gr.update(value="\n".join(diagnostics), visible=True)

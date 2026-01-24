@@ -9,7 +9,6 @@ Covers:
 - Feature listing functions
 """
 
-
 import pytest
 
 

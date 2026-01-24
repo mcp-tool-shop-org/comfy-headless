@@ -1,7 +1,6 @@
 """Tests for help_system module."""
 
 
-
 class TestHelpLevel:
     """Test HelpLevel enum."""
 

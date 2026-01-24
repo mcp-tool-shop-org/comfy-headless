@@ -4,7 +4,6 @@ Error path and failure mode tests.
 Tests that error conditions are handled gracefully without crashes.
 """
 
-
 import pytest
 
 # =============================================================================

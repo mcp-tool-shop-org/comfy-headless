@@ -1,7 +1,6 @@
 """Tests for intelligence module."""
 
 
-
 class TestPromptCache:
     """Test PromptCache LRU implementation."""
 

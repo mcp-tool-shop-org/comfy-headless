@@ -1,7 +1,6 @@
 """Tests for health module."""
 
 
-
 class TestHealthStatus:
     """Test HealthStatus enum."""
 

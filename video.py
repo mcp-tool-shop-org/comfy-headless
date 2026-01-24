@@ -663,7 +663,7 @@ class VideoWorkflowBuilder:
         negative: str,
         settings: VideoSettings,
         seed: int,
-        init_image: str | None = None,
+        _init_image: str | None = None,
     ) -> dict[str, Any]:
         """Build AnimateDiff v2/v3 workflow."""
         motion_scale = self._get_motion_scale(settings)
@@ -746,7 +746,7 @@ class VideoWorkflowBuilder:
         negative: str,
         settings: VideoSettings,
         seed: int,
-        init_image: str | None = None,
+        _init_image: str | None = None,
     ) -> dict[str, Any]:
         """Build AnimateDiff Lightning (4-step fast) workflow."""
         return {
@@ -806,8 +806,8 @@ class VideoWorkflowBuilder:
 
     def _build_svd(
         self,
-        prompt: str,
-        negative: str,
+        _prompt: str,
+        _negative: str,
         settings: VideoSettings,
         seed: int,
         init_image: str | None = None,
@@ -870,10 +870,10 @@ class VideoWorkflowBuilder:
     def _build_cogvideo(
         self,
         prompt: str,
-        negative: str,
+        _negative: str,
         settings: VideoSettings,
         seed: int,
-        init_image: str | None = None,
+        _init_image: str | None = None,
     ) -> dict[str, Any]:
         """Build CogVideoX workflow."""
         return {
@@ -924,7 +924,7 @@ class VideoWorkflowBuilder:
         negative: str,
         settings: VideoSettings,
         seed: int,
-        init_image: str | None = None,
+        _init_image: str | None = None,
     ) -> dict[str, Any]:
         """Build Hunyuan Video workflow."""
         workflow = {
@@ -1001,7 +1001,7 @@ class VideoWorkflowBuilder:
         negative: str,
         settings: VideoSettings,
         seed: int,
-        init_image: str | None = None,
+        _init_image: str | None = None,
     ) -> dict[str, Any]:
         """
         Build Hunyuan Video 1.5 workflow.
@@ -1377,7 +1377,7 @@ class VideoWorkflowBuilder:
         negative: str,
         settings: VideoSettings,
         seed: int,
-        init_image: str | None = None,
+        _init_image: str | None = None,
     ) -> dict[str, Any]:
         """
         Build Wan 2.2 4-step fast workflow.
@@ -1510,10 +1510,10 @@ class VideoWorkflowBuilder:
     def _build_mochi(
         self,
         prompt: str,
-        negative: str,
+        _negative: str,
         settings: VideoSettings,
         seed: int,
-        init_image: str | None = None,
+        _init_image: str | None = None,
     ) -> dict[str, Any]:
         """
         Build Mochi 1 workflow (EXPERIMENTAL).

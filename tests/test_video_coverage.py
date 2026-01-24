@@ -11,7 +11,6 @@ Targets the specialized video model builder methods:
 - Convenience functions (lines 1760-1789)
 """
 
-
 import pytest
 
 # ============================================================================

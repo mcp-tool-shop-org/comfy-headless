@@ -1679,7 +1679,7 @@ class PromptIntelligence:
 
         return enhanced
 
-    def _generate_negative(self, prompt: str, analysis: PromptAnalysis) -> str:
+    def _generate_negative(self, _prompt: str, analysis: PromptAnalysis) -> str:
         """Generate an appropriate negative prompt."""
         negatives = list(NEGATIVE_DEFAULTS)
 
@@ -1822,10 +1822,7 @@ Output ONLY the enhanced prompt, nothing else. Keep under 300 total characters."
                 # Truncate at last comma before limit to keep clean formatting
                 truncated = enhanced[:300]
                 last_comma = truncated.rfind(",")
-                if last_comma > len(prompt):  # Keep at least original
-                    enhanced = truncated[:last_comma]
-                else:
-                    enhanced = truncated
+                enhanced = truncated[:last_comma] if last_comma > len(prompt) else truncated
                 logger.debug(f"Truncated enhanced prompt to {len(enhanced)} chars")
 
             # Generate smart negative

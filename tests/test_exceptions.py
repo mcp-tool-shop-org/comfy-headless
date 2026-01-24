@@ -1,7 +1,6 @@
 """Tests for exceptions module."""
 
 
-
 class TestComfyHeadlessError:
     """Test base exception class."""
 

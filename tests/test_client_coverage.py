@@ -840,9 +840,7 @@ class TestBatchGenerationExtended:
                 "prompt_id": "abc",
             }
 
-            client.generate_batch(
-                prompts=["p1", "p2"], check_vram=False, on_progress=on_progress
-            )
+            client.generate_batch(prompts=["p1", "p2"], check_vram=False, on_progress=on_progress)
 
             assert len(progress_calls) > 0
             # Should have calls for each prompt

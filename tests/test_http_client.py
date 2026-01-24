@@ -1,7 +1,6 @@
 """Tests for http_client module."""
 
 
-
 class TestHttpClientInitialization:
     """Test HTTP client initialization."""
 

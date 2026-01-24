@@ -1,7 +1,6 @@
 """Tests for workflows module."""
 
 
-
 class TestGenerationPresets:
     """Test generation presets."""
 
