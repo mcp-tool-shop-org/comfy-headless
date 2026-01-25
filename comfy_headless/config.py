@@ -128,9 +128,11 @@ if PYDANTIC_SETTINGS_AVAILABLE:
         """
         Gradio UI configuration.
 
-        Security Note:
-            Default host is 127.0.0.1 (localhost only) for security.
-            Set COMFY_HEADLESS_UI__HOST=0.0.0.0 to expose on network.
+        Security Notes:
+            - Default host is 127.0.0.1 (localhost only) for security.
+            - Set COMFY_HEADLESS_UI__HOST=0.0.0.0 to expose on network.
+            - When exposing on network, ALWAYS set username/password for auth.
+            - Never expose without authentication in production.
         """
 
         model_config = SettingsConfigDict(
@@ -144,6 +146,9 @@ if PYDANTIC_SETTINGS_AVAILABLE:
         share: bool = False
         auto_open: bool = True
         temp_cleanup_interval: int = 3600
+        # Authentication (recommended when host != 127.0.0.1)
+        username: str | None = None
+        password: SecretStr | None = None
 
     class GenerationConfig(BaseSettings):
         """Default generation settings."""
@@ -359,13 +364,15 @@ else:
 
     @dataclass
     class UIConfig:
-        """Security: Default to localhost-only."""
+        """Security: Default to localhost-only. Set auth when exposing on network."""
 
         port: int = field(default_factory=lambda: _get_env_int("UI__PORT", 7861))
         host: str = field(default_factory=lambda: _get_env("UI__HOST", "127.0.0.1"))
         share: bool = False
         auto_open: bool = True
         temp_cleanup_interval: int = 3600
+        username: str | None = field(default_factory=lambda: _get_env("UI__USERNAME", None))
+        password: str | None = field(default_factory=lambda: _get_env("UI__PASSWORD", None))
 
     @dataclass
     class GenerationConfig:

@@ -138,13 +138,35 @@ class ComfyWSClient:
         reconnect_delay: float = 1.0,
         *,
         max_message_size: int | None = None,
+        allow_insecure: bool | None = None,
     ):
+        """
+        Initialize WebSocket client.
+
+        Args:
+            base_url: ComfyUI server URL (ws:// or http://)
+            client_id: Unique client identifier
+            reconnect_attempts: Max reconnection attempts
+            reconnect_delay: Base delay between reconnects
+            max_message_size: Maximum WebSocket message size (security limit)
+            allow_insecure: Allow unencrypted ws:// for non-localhost.
+                If None (default), reads COMFY_HEADLESS_WEBSOCKET__ALLOW_INSECURE env var.
+                Set to True explicitly to allow, False to require wss:// for remote hosts.
+
+        Security Notes:
+            - Use wss:// (HTTPS) in production to encrypt WebSocket traffic
+            - max_message_size prevents DoS via large messages
+            - Non-localhost connections will warn without encryption
+        """
+        import os
+
         if not WEBSOCKETS_AVAILABLE:
             raise ImportError("websockets package required. Install with: pip install websockets")
 
         # Convert HTTP URL to WebSocket URL
         http_url = (base_url or settings.comfyui.url).rstrip("/")
         uses_encryption = False
+        is_localhost = False
 
         if http_url.startswith("http://"):
             self.ws_url = http_url.replace("http://", "ws://") + "/ws"
@@ -154,14 +176,35 @@ class ComfyWSClient:
         else:
             self.ws_url = f"ws://{http_url}/ws"
 
-        # Security: Warn about unencrypted connections
+        # Check if localhost
+        host_part = http_url.replace("http://", "").replace("https://", "").split(":")[0].split("/")[0]
+        is_localhost = host_part in ("localhost", "127.0.0.1", "::1")
+
+        # Resolve allow_insecure setting
+        if allow_insecure is None:
+            env_val = os.environ.get("COMFY_HEADLESS_WEBSOCKET__ALLOW_INSECURE", "").lower()
+            allow_insecure = env_val in ("true", "1", "yes")
+
+        # Security: Handle unencrypted connections
         if not uses_encryption:
-            logger.warning(
-                "WebSocket using unencrypted ws:// protocol. "
-                "Consider using wss:// (HTTPS) for production environments "
-                "to prevent man-in-the-middle attacks.",
-                extra={"ws_url": self.ws_url},
-            )
+            if is_localhost:
+                # Localhost is OK without encryption
+                logger.debug(
+                    "WebSocket using ws:// for localhost (acceptable for development)",
+                    extra={"ws_url": self.ws_url},
+                )
+            elif allow_insecure:
+                logger.warning(
+                    "WebSocket using unencrypted ws:// for remote host. "
+                    "This is insecure. Consider using wss:// (HTTPS) in production.",
+                    extra={"ws_url": self.ws_url, "allow_insecure": True},
+                )
+            else:
+                raise ValueError(
+                    f"Refusing unencrypted WebSocket connection to non-localhost host. "
+                    f"Use https:// or set COMFY_HEADLESS_WEBSOCKET__ALLOW_INSECURE=true "
+                    f"to override. URL: {http_url}"
+                )
 
         self.client_id = client_id or str(uuid.uuid4())
         self.reconnect_attempts = reconnect_attempts

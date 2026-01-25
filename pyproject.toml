@@ -104,6 +104,8 @@ comfy-headless = "comfy_headless.__main__:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["comfy_headless"]
+# Include py.typed marker for PEP 561 typing support
+artifacts = ["comfy_headless/py.typed"]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -111,6 +113,7 @@ include = [
     "/tests",
     "/README.md",
     "/LICENSE",
+    "/comfy_headless/py.typed",
 ]
 
 [tool.ruff]

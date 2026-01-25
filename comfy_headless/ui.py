@@ -2495,15 +2495,42 @@ def create_ui():
 
 if __name__ == "__main__":
     import os
+    import warnings
 
-    port = int(os.environ.get("GRADIO_SERVER_PORT", 7870))
+    from .config import get_settings
+
+    cfg = get_settings().ui
+
+    # Allow env override for port (backwards compatibility)
+    port = int(os.environ.get("GRADIO_SERVER_PORT", cfg.port))
+    host = cfg.host
+    share = cfg.share
+    auto_open = cfg.auto_open
+
+    # Build auth tuple if credentials are configured
+    auth = None
+    if cfg.username and cfg.password:
+        pwd = cfg.password.get_secret_value() if hasattr(cfg.password, 'get_secret_value') else cfg.password
+        auth = (cfg.username, pwd)
+
+    # Security warning if exposing without auth
+    if host != "127.0.0.1" and auth is None:
+        warnings.warn(
+            "UI is exposed on network without authentication. "
+            "Set COMFY_HEADLESS_UI__USERNAME and COMFY_HEADLESS_UI__PASSWORD "
+            "for secure access.",
+            UserWarning,
+            stacklevel=2,
+        )
+
     app = create_ui()
     # Gradio 6.0: pass theme/css to launch()
     app.launch(
-        server_name="0.0.0.0",
+        server_name=host,
         server_port=port,
-        share=False,
-        inbrowser=True,
+        share=share,
+        inbrowser=auto_open,
+        auth=auth,
         theme=_theme,
         css=_custom_css,
     )

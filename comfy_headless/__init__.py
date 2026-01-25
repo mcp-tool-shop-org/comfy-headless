@@ -354,15 +354,63 @@ def __getattr__(name: str):
         # Special handling for launch
         if name == "launch":
 
-            def _launch(port: int = 7861, share: bool = False):
+            def _launch(
+                port: int | None = None,
+                host: str | None = None,
+                share: bool | None = None,
+                auto_open: bool | None = None,
+            ):
+                """
+                Launch the Comfy Headless UI.
+
+                Security Note:
+                    Default host is 127.0.0.1 (localhost only).
+                    Set COMFY_HEADLESS_UI__HOST=0.0.0.0 to expose on network.
+                    When exposing on network, set COMFY_HEADLESS_UI__USERNAME and
+                    COMFY_HEADLESS_UI__PASSWORD for authentication.
+
+                Args:
+                    port: Server port (default from config: 7861)
+                    host: Server host (default from config: 127.0.0.1)
+                    share: Create public Gradio link (default from config: False)
+                    auto_open: Open browser automatically (default from config: True)
+                """
+                from .config import get_settings
                 from .ui import create_ui
+
+                cfg = get_settings().ui
+
+                # Use config defaults, allow overrides
+                _port = port if port is not None else cfg.port
+                _host = host if host is not None else cfg.host
+                _share = share if share is not None else cfg.share
+                _auto_open = auto_open if auto_open is not None else cfg.auto_open
+
+                # Build auth tuple if credentials are configured
+                auth = None
+                if cfg.username and cfg.password:
+                    # Handle SecretStr if present
+                    pwd = cfg.password.get_secret_value() if hasattr(cfg.password, 'get_secret_value') else cfg.password
+                    auth = (cfg.username, pwd)
+
+                # Security warning if exposing without auth
+                if _host != "127.0.0.1" and auth is None:
+                    import warnings
+                    warnings.warn(
+                        "UI is exposed on network without authentication. "
+                        "Set COMFY_HEADLESS_UI__USERNAME and COMFY_HEADLESS_UI__PASSWORD "
+                        "for secure access.",
+                        UserWarning,
+                        stacklevel=2,
+                    )
 
                 app = create_ui()
                 app.launch(
-                    server_name="0.0.0.0",
-                    server_port=port,
-                    share=share,
-                    inbrowser=True,
+                    server_name=_host,
+                    server_port=_port,
+                    share=_share,
+                    inbrowser=_auto_open,
+                    auth=auth,
                 )
 
             return _launch

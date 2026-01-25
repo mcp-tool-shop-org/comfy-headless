@@ -6,12 +6,12 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/comfy-headless?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/comfy-headless/)
 [![Downloads](https://img.shields.io/pypi/dm/comfy-headless?color=green&logo=pypi&logoColor=white)](https://pypi.org/project/comfy-headless/)
-[![Tests](https://github.com/mikeyfrilot/comfy-headless/actions/workflows/test.yml/badge.svg)](https://github.com/mikeyfrilot/comfy-headless/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/mikeyfrilot/comfy-headless/graph/badge.svg)](https://codecov.io/gh/mikeyfrilot/comfy-headless)
+[![Tests](https://github.com/mcp-tool-shop/comfy-headless/actions/workflows/test.yml/badge.svg)](https://github.com/mcp-tool-shop/comfy-headless/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/mcp-tool-shop/comfy-headless/graph/badge.svg)](https://codecov.io/gh/mcp-tool-shop/comfy-headless)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.5.1-green.svg)](https://github.com/mikeyfrilot/comfy-headless/releases)
-[![GitHub stars](https://img.shields.io/github/stars/mikeyfrilot/comfy-headless?style=social)](https://github.com/mikeyfrilot/comfy-headless)
+[![Version](https://img.shields.io/badge/version-2.5.1-green.svg)](https://github.com/mcp-tool-shop/comfy-headless/releases)
+[![GitHub stars](https://img.shields.io/github/stars/mcp-tool-shop/comfy-headless?style=social)](https://github.com/mcp-tool-shop/comfy-headless)
 
 *AI image & video generation in 3 lines of code*
 
@@ -318,14 +318,100 @@ Install these custom nodes:
 - Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
 - AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
 
+## Security
+
+See [SECURITY.md](SECURITY.md) for full security documentation.
+
+**Key defaults (v2.5.1+):**
+- UI binds to `127.0.0.1` (localhost only) by default
+- WebSocket requires `wss://` for non-localhost connections
+- UI authentication support via environment variables
+
+```bash
+# To expose UI on network with auth:
+export COMFY_HEADLESS_UI__HOST=0.0.0.0
+export COMFY_HEADLESS_UI__USERNAME=admin
+export COMFY_HEADLESS_UI__PASSWORD=your-password
+```
+
+## Troubleshooting
+
+### Connection Refused / ComfyUI Offline
+
+```python
+ComfyUIOfflineError: Cannot connect to ComfyUI at http://localhost:8188
+```
+
+**Solutions:**
+1. Start ComfyUI: `cd /path/to/ComfyUI && python main.py`
+2. Check the port: `curl http://localhost:8188/system_stats`
+3. If using custom port: `export COMFY_HEADLESS_COMFYUI__URL=http://localhost:YOUR_PORT`
+
+### Generation Timeout
+
+```python
+GenerationTimeoutError: Generation timed out after 300s
+```
+
+**Solutions:**
+1. Increase timeout: `export COMFY_HEADLESS_GENERATION__GENERATION_TIMEOUT=600`
+2. For video: `export COMFY_HEADLESS_GENERATION__VIDEO_TIMEOUT=900`
+3. Check VRAM - reduce resolution or use smaller model
+
+### Missing Nodes / Workflow Error
+
+```python
+ValidationError: Node 'KSampler' not found
+```
+
+**Solutions:**
+1. Install missing custom nodes via ComfyUI Manager
+2. Check node name spelling in workflow JSON
+3. Update ComfyUI to latest version
+
+### WebSocket Connection Failed
+
+```python
+ValueError: Refusing unencrypted WebSocket connection to non-localhost host
+```
+
+**Solutions:**
+1. Use HTTPS URL: `export COMFY_HEADLESS_COMFYUI__URL=https://your-host:8188`
+2. Or allow insecure (not recommended): `export COMFY_HEADLESS_WEBSOCKET__ALLOW_INSECURE=true`
+
+### Out of VRAM
+
+**Solutions:**
+1. Use smaller preset: `client.generate_video(prompt, preset="ltx_quick")`
+2. Reduce resolution: `width=512, height=512`
+3. Use VRAM-appropriate model: `get_recommended_preset(vram_gb=8)`
+
+### Import Errors
+
+```python
+ImportError: 'analyze_prompt' requires the [ai] feature
+```
+
+**Solutions:**
+```bash
+# Install specific feature
+pip install comfy-headless[ai]
+
+# Or install standard bundle
+pip install comfy-headless[standard]
+
+# Or install everything
+pip install comfy-headless[full]
+```
+
 ## Related Projects
 
 Part of the **Compass Suite** for AI-powered development:
 
-- [Tool Compass](https://github.com/mikeyfrilot/tool-compass) - Semantic MCP tool discovery
-- [File Compass](https://github.com/mikeyfrilot/file-compass) - Semantic file search
-- [Integradio](https://github.com/mikeyfrilot/integradio) - Vector-embedded Gradio components
-- [Backpropagate](https://github.com/mikeyfrilot/backpropagate) - Headless LLM fine-tuning
+- [Tool Compass](https://github.com/mcp-tool-shop/tool-compass) - Semantic MCP tool discovery
+- [File Compass](https://github.com/mcp-tool-shop/file-compass) - Semantic file search
+- [Integradio](https://github.com/mcp-tool-shop/integradio) - Vector-embedded Gradio components
+- [Backpropagate](https://github.com/mcp-tool-shop/backpropagate) - Headless LLM fine-tuning
 
 ## License
 
@@ -345,6 +431,6 @@ Areas of interest:
 
 <div align="center">
 
-**[Documentation](https://github.com/mikeyfrilot/comfy-headless#readme)** • **[Issues](https://github.com/mikeyfrilot/comfy-headless/issues)** • **[Discussions](https://github.com/mikeyfrilot/comfy-headless/discussions)**
+**[Documentation](https://github.com/mcp-tool-shop/comfy-headless#readme)** • **[Issues](https://github.com/mcp-tool-shop/comfy-headless/issues)** • **[Discussions](https://github.com/mcp-tool-shop/comfy-headless/discussions)**
 
 </div>
