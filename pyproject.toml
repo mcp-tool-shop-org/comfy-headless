@@ -191,3 +191,6 @@ exclude_lines = [
     "if __name__ == .__main__.:",
 ]
 
+[tool.bandit]
+exclude_dirs = ["tests", "docs"]
+skips = ["B101"]  # assert_used - OK in tests
