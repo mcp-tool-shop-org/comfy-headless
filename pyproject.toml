@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "comfy-headless"
-version = "2.5.1"
+version = "2.5.2"
 description = "Production-ready headless client for ComfyUI with AI-powered prompt intelligence, video generation, and modular architecture"
 readme = "README.md"
 license = "MIT"
@@ -96,10 +96,10 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mcp-tool-shop/comfy-headless"
-Documentation = "https://github.com/mcp-tool-shop/comfy-headless#readme"
-Repository = "https://github.com/mcp-tool-shop/comfy-headless"
-Issues = "https://github.com/mcp-tool-shop/comfy-headless/issues"
+Homepage = "https://github.com/mcp-tool-shop-org/comfy-headless"
+Documentation = "https://github.com/mcp-tool-shop-org/comfy-headless#readme"
+Repository = "https://github.com/mcp-tool-shop-org/comfy-headless"
+Issues = "https://github.com/mcp-tool-shop-org/comfy-headless/issues"
 
 [project.scripts]
 comfy-headless = "comfy_headless.__main__:main"
