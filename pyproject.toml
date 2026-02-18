@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "comfy-headless"
-version = "2.5.2"
+version = "2.5.3"
 description = "Production-ready headless client for ComfyUI with AI-powered prompt intelligence, video generation, and modular architecture"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
-    { name = "Mikey Frilot" }
+    { name = "mcp-tool-shop", email = "64996768+mcp-tool-shop@users.noreply.github.com" }
 ]
 keywords = [
     "comfyui",
