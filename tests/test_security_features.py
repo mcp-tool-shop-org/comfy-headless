@@ -27,6 +27,7 @@ class TestFeatureFlagsSecurity:
         with patch.dict(sys.modules, {"httpx": None}):
             # Reimport to trigger detection
             import importlib
+
             from comfy_headless import feature_flags
 
             importlib.reload(feature_flags)
@@ -38,6 +39,7 @@ class TestFeatureFlagsSecurity:
         """WebSocket feature flag should be False when websockets not available."""
         with patch.dict(sys.modules, {"websockets": None}):
             import importlib
+
             from comfy_headless import feature_flags
 
             importlib.reload(feature_flags)
@@ -133,9 +135,7 @@ class TestSecureDefaults:
                 value = getattr(config, attr, None)
                 # Should be None, empty, or require environment variable
                 if value is not None and isinstance(value, str):
-                    assert len(value) == 0 or value.startswith(
-                        "$"
-                    )  # Env var placeholder
+                    assert len(value) == 0 or value.startswith("$")  # Env var placeholder
 
     def test_secure_connection_defaults(self):
         """Verify secure connection settings by default."""

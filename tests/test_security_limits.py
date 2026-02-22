@@ -28,26 +28,26 @@ class TestWebSocketMessageSizeLimits:
     async def test_reject_oversized_message(self):
         """Message exceeding max size should be rejected or truncated."""
         try:
-            from comfy_headless.websocket_client import ComfyWSClient, MAX_MESSAGE_SIZE
+            from comfy_headless.websocket_client import MAX_MESSAGE_SIZE, ComfyWSClient
         except ImportError:
             pytest.skip("WebSocket dependencies not available")
 
         # Create a mock WebSocket connection
         mock_ws = AsyncMock()
-        
+
         # Create oversized message (1 byte over limit)
         oversized_data = "x" * (MAX_MESSAGE_SIZE + 1)
-        oversized_message = json.dumps({"type": "test", "data": oversized_data})
+        _oversized_message = json.dumps({"type": "test", "data": oversized_data})
 
         with patch("websockets.connect", return_value=mock_ws):
-            client = ComfyWSClient("ws://localhost:8188")
-            
+            _client = ComfyWSClient("ws://localhost:8188")
+
             # Attempt to send oversized message - should be rejected or truncated
             # Implementation should either:
             # 1. Raise an exception
             # 2. Truncate the message
             # 3. Return an error status
-            
+
             # Test depends on actual implementation
             # This test documents expected behavior
 
@@ -55,19 +55,19 @@ class TestWebSocketMessageSizeLimits:
     async def test_receive_oversized_message_handling(self):
         """Receiving oversized message should be handled gracefully."""
         try:
-            from comfy_headless.websocket_client import ComfyWSClient, MAX_MESSAGE_SIZE
+            from comfy_headless.websocket_client import MAX_MESSAGE_SIZE, ComfyWSClient
         except ImportError:
             pytest.skip("WebSocket dependencies not available")
 
         mock_ws = AsyncMock()
         oversized_msg = "x" * (MAX_MESSAGE_SIZE + 1)
-        
+
         # Mock receiving an oversized message
         mock_ws.recv = AsyncMock(return_value=oversized_msg)
 
         with patch("websockets.connect", return_value=mock_ws):
-            client = ComfyWSClient("ws://localhost:8188")
-            
+            _client = ComfyWSClient("ws://localhost:8188")
+
             # Should handle oversized message without crashing
             # Implementation should either disconnect or log warning
             # This test verifies no unhandled exception occurs
@@ -76,16 +76,16 @@ class TestWebSocketMessageSizeLimits:
     async def test_message_within_limit_accepted(self):
         """Message within size limit should be processed normally."""
         try:
-            from comfy_headless.websocket_client import ComfyWSClient, MAX_MESSAGE_SIZE
+            from comfy_headless.websocket_client import MAX_MESSAGE_SIZE, ComfyWSClient
         except ImportError:
             pytest.skip("WebSocket dependencies not available")
 
         # Create a message well within the limit
         safe_data = {"type": "progress", "data": {"value": 50, "max": 100}}
         safe_message = json.dumps(safe_data)
-        
+
         assert len(safe_message) < MAX_MESSAGE_SIZE
-        
+
         # This message should be accepted and processed normally
         # Implementation test would verify successful processing
 
@@ -98,6 +98,7 @@ class TestWebSocketConnectionLimits:
         """Verify MAX_CONNECTIONS or similar limit is defined."""
         try:
             from comfy_headless.websocket_client import MAX_CONNECTIONS
+
             assert isinstance(MAX_CONNECTIONS, int)
             assert MAX_CONNECTIONS > 0
         except ImportError:
@@ -131,21 +132,21 @@ class TestListenerLimits:
         """Adding listeners beyond limit should be rejected."""
         try:
             from comfy_headless.websocket_client import (
-                ComfyWSClient,
                 MAX_LISTENERS_PER_PROMPT,
+                ComfyWSClient,
             )
         except ImportError:
             pytest.skip("WebSocket dependencies not available")
 
         mock_ws = AsyncMock()
-        
+
         with patch("websockets.connect", return_value=mock_ws):
             client = ComfyWSClient("ws://localhost:8188")
             prompt_id = "test_prompt_123"
 
             # Add listeners up to the limit
             listeners = []
-            for i in range(MAX_LISTENERS_PER_PROMPT):
+            for _i in range(MAX_LISTENERS_PER_PROMPT):
                 listener = AsyncMock()
                 # Assuming add_listener method exists
                 try:
@@ -156,7 +157,7 @@ class TestListenerLimits:
 
             # Attempting to add one more should fail
             excess_listener = AsyncMock()
-            
+
             # Should raise an exception or return error status
             with pytest.raises((ValueError, RuntimeError)):
                 client.add_listener(prompt_id, excess_listener)
@@ -180,7 +181,7 @@ class TestOriginValidation:
 
         # Valid localhost origin
         valid_url = "ws://localhost:8188"
-        
+
         # Should not raise exception
         client = ComfyWSClient(valid_url)
         assert client.url == valid_url
@@ -201,7 +202,7 @@ class TestOriginValidation:
             "file:///etc/passwd",  # File access attempt
         ]
 
-        for bad_url in malicious_urls:
+        for _bad_url in malicious_urls:
             # Implementation should validate and reject
             # Test depends on whether origin validation is implemented
             pass
@@ -215,16 +216,16 @@ class TestSecurityRegression:
         """Verify Gradio version meets security requirement."""
         # SECURITY_AUDIT.md specifies Gradio >= 5.6.0 for CVE-2025-23042
         import sys
-        
+
         if "gradio" not in sys.modules:
             pytest.skip("Gradio not installed")
-        
+
         import gradio
-        
+
         # Check version string
         version = gradio.__version__
         major, minor, *_ = version.split(".")
-        
+
         assert int(major) >= 5
         if int(major) == 5:
             assert int(minor) >= 6
