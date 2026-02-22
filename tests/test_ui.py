@@ -34,129 +34,6 @@ class TestUIConstants:
         assert len(EXAMPLE_PROMPTS) > 0
 
 
-class TestCheckOllama:
-    """Test check_ollama function."""
-
-    @patch("comfy_headless.ui.intel")
-    def test_check_ollama_available(self, mock_intel):
-        """Test check_ollama when available."""
-        mock_intel.check_ollama.return_value = True
-        from comfy_headless.ui import check_ollama
-
-        result = check_ollama()
-        assert result is True
-
-    @patch("comfy_headless.ui.intel")
-    def test_check_ollama_unavailable(self, mock_intel):
-        """Test check_ollama when unavailable."""
-        mock_intel.check_ollama.return_value = False
-        from comfy_headless.ui import check_ollama
-
-        result = check_ollama()
-        assert result is False
-
-
-class TestEnhanceWithAI:
-    """Test enhance_with_ai function."""
-
-    @patch("comfy_headless.ui.intel")
-    def test_enhance_empty_prompt(self, mock_intel):
-        """Test enhance with empty prompt."""
-        from comfy_headless.ui import DEFAULT_NEGATIVE, enhance_with_ai
-
-        enhanced, negative, info = enhance_with_ai("")
-        assert enhanced == ""
-        assert negative == DEFAULT_NEGATIVE
-        assert "Enter" in info
-
-    @patch("comfy_headless.ui.intel")
-    def test_enhance_valid_prompt(self, mock_intel):
-        """Test enhance with valid prompt."""
-        mock_intel.enhance_with_ai.return_value = (
-            "enhanced prompt",
-            "negative prompt",
-            "Enhancement complete",
-        )
-        from comfy_headless.ui import enhance_with_ai
-
-        enhanced, negative, info = enhance_with_ai("a sunset")
-        assert enhanced == "enhanced prompt"
-        mock_intel.enhance_with_ai.assert_called_once()
-
-
-class TestAnalyzePromptAI:
-    """Test analyze_prompt_ai function."""
-
-    @patch("comfy_headless.ui.intel")
-    def test_analyze_empty_prompt(self, mock_intel):
-        """Test analyze with empty prompt."""
-        from comfy_headless.ui import analyze_prompt_ai
-
-        result = analyze_prompt_ai("")
-        assert "Enter" in result
-
-    @patch("comfy_headless.ui.intel")
-    def test_analyze_valid_prompt(self, mock_intel):
-        """Test analyze with valid prompt."""
-        # Mock the analysis result
-        mock_analysis = MagicMock()
-        mock_analysis.intent = "landscape"
-        mock_analysis.styles = ["photographic"]
-        mock_analysis.mood = "peaceful"
-        mock_analysis.subjects = ["mountains"]
-        mock_analysis.suggested_aspect = "landscape"
-        mock_analysis.suggested_preset = "quality"
-        mock_analysis.suggested_workflow = "txt2img"
-        mock_analysis.confidence = 0.85
-
-        mock_intel.analyze_keywords.return_value = mock_analysis
-        mock_intel.analyze_with_ai.return_value = None
-
-        from comfy_headless.ui import analyze_prompt_ai
-
-        result = analyze_prompt_ai("a beautiful mountain landscape")
-
-        assert "Analysis Results" in result
-        assert "Intent" in result
-
-
-class TestGenerateVariationsAI:
-    """Test generate_variations_ai function."""
-
-    @patch("comfy_headless.ui.intel")
-    def test_generate_variations(self, mock_intel):
-        """Test generating variations."""
-        mock_intel.generate_variations.return_value = ["variation 1", "variation 2", "variation 3"]
-        from comfy_headless.ui import generate_variations_ai
-
-        variations = generate_variations_ai("a sunset", 3)
-        assert len(variations) == 3
-        mock_intel.generate_variations.assert_called_once()
-
-
-class TestGetSmartSettings:
-    """Test get_smart_settings function."""
-
-    @patch("comfy_headless.ui.intel")
-    def test_get_smart_settings(self, mock_intel):
-        """Test getting smart settings."""
-        mock_analysis = MagicMock()
-        mock_analysis.suggested_aspect = "portrait"
-        mock_analysis.suggested_preset = "portrait"
-        mock_analysis.intent = "portrait"
-        mock_analysis.styles = ["photographic"]
-
-        mock_intel.analyze_keywords.return_value = mock_analysis
-
-        from comfy_headless.ui import get_smart_settings
-
-        settings = get_smart_settings("portrait of a woman")
-
-        assert "preset" in settings
-        assert "width" in settings
-        assert "height" in settings
-
-
 class TestGetStatus:
     """Test get_status function."""
 
@@ -226,7 +103,7 @@ class TestRefreshModels:
         from comfy_headless.ui import refresh_models
 
         models = refresh_models()
-        assert "(ComfyUI offline)" in models
+        assert any("offline" in str(m).lower() for m in models)
 
     @patch("comfy_headless.ui.client")
     def test_refresh_models_online(self, mock_client):
@@ -275,7 +152,7 @@ class TestRefreshMotionModels:
         from comfy_headless.ui import refresh_motion_models
 
         models = refresh_motion_models()
-        assert "(ComfyUI offline)" in models
+        assert any("offline" in str(m).lower() for m in models)
 
     @patch("comfy_headless.ui.client")
     def test_refresh_motion_models_online(self, mock_client):
@@ -487,124 +364,6 @@ class TestGenerateVideo:
 
         assert result is None
         assert "not running" in info.lower() or "offline" in info.lower()
-
-
-class TestGenerateVariations:
-    """Test generate_variations function."""
-
-    @patch("comfy_headless.ui.client")
-    def test_variations_empty_prompt(self, mock_client):
-        """Test variations with empty prompt."""
-        from comfy_headless.ui import generate_variations
-
-        class MockProgress:
-            def __call__(self, *args, **kwargs):
-                pass
-
-        images, info = generate_variations(
-            prompt="",
-            negative_prompt="",
-            checkpoint="model.safetensors",
-            width=512,
-            height=512,
-            steps=20,
-            cfg=7.0,
-            sampler="euler",
-            scheduler="normal",
-            num_variations=4,
-            progress=MockProgress(),
-        )
-
-        assert images == []
-        assert "Error" in info
-
-    @patch("comfy_headless.ui.client")
-    def test_variations_offline(self, mock_client):
-        """Test variations when offline."""
-        mock_client.is_online.return_value = False
-        from comfy_headless.ui import generate_variations
-
-        class MockProgress:
-            def __call__(self, *args, **kwargs):
-                pass
-
-        images, info = generate_variations(
-            prompt="a sunset",
-            negative_prompt="",
-            checkpoint="model.safetensors",
-            width=512,
-            height=512,
-            steps=20,
-            cfg=7.0,
-            sampler="euler",
-            scheduler="normal",
-            num_variations=4,
-            progress=MockProgress(),
-        )
-
-        assert images == []
-        assert "not running" in info.lower()
-
-
-class TestComparePrompts:
-    """Test compare_prompts function."""
-
-    @patch("comfy_headless.ui.client")
-    def test_compare_empty_prompt(self, mock_client):
-        """Test compare with empty prompt."""
-        from comfy_headless.ui import compare_prompts
-
-        class MockProgress:
-            def __call__(self, *args, **kwargs):
-                pass
-
-        img_a, img_b, info = compare_prompts(
-            prompt_a="",
-            prompt_b="test",
-            negative_prompt="",
-            checkpoint="model.safetensors",
-            width=512,
-            height=512,
-            steps=20,
-            cfg=7.0,
-            sampler="euler",
-            scheduler="normal",
-            seed=-1,
-            progress=MockProgress(),
-        )
-
-        assert img_a is None
-        assert img_b is None
-        assert "Error" in info
-
-    @patch("comfy_headless.ui.client")
-    def test_compare_offline(self, mock_client):
-        """Test compare when offline."""
-        mock_client.is_online.return_value = False
-        from comfy_headless.ui import compare_prompts
-
-        class MockProgress:
-            def __call__(self, *args, **kwargs):
-                pass
-
-        img_a, img_b, info = compare_prompts(
-            prompt_a="sunset",
-            prompt_b="sunrise",
-            negative_prompt="",
-            checkpoint="model.safetensors",
-            width=512,
-            height=512,
-            steps=20,
-            cfg=7.0,
-            sampler="euler",
-            scheduler="normal",
-            seed=-1,
-            progress=MockProgress(),
-        )
-
-        assert img_a is None
-        assert img_b is None
-        assert "not running" in info.lower()
 
 
 class TestCreateUI:

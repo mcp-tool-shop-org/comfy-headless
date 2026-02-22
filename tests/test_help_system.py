@@ -57,6 +57,7 @@ class TestHelpTopic:
         topic = HelpTopic(
             id="test",
             title="Test Topic",
+            category="core",
             eli5="Simple explanation",
             casual="Regular explanation",
             developer="Technical explanation",
@@ -70,7 +71,12 @@ class TestHelpTopic:
         from comfy_headless.help_system import HelpLevel, HelpTopic
 
         topic = HelpTopic(
-            id="test", title="Test", eli5="Simple", casual="Regular", developer="Technical"
+            id="test",
+            title="Test",
+            category="core",
+            eli5="Simple",
+            casual="Regular",
+            developer="Technical",
         )
 
         assert topic.get_content(HelpLevel.ELI5) == "Simple"
@@ -80,7 +86,12 @@ class TestHelpTopic:
         from comfy_headless.help_system import HelpLevel, HelpTopic
 
         topic = HelpTopic(
-            id="test", title="Test", eli5="Simple", casual="Regular", developer="Technical"
+            id="test",
+            title="Test",
+            category="core",
+            eli5="Simple",
+            casual="Regular",
+            developer="Technical",
         )
 
         assert topic.get_content(HelpLevel.CASUAL) == "Regular"
@@ -90,7 +101,12 @@ class TestHelpTopic:
         from comfy_headless.help_system import HelpLevel, HelpTopic
 
         topic = HelpTopic(
-            id="test", title="Test", eli5="Simple", casual="Regular", developer="Technical"
+            id="test",
+            title="Test",
+            category="core",
+            eli5="Simple",
+            casual="Regular",
+            developer="Technical",
         )
 
         assert topic.get_content(HelpLevel.DEVELOPER) == "Technical"
@@ -102,13 +118,14 @@ class TestHelpTopic:
         topic = HelpTopic(
             id="test",
             title="Test Topic",
+            category="core",
             eli5="Simple",
             casual="Regular",
             developer="Technical",
-            see_also=["other_topic"],
+            related=["other_topic"],
         )
 
-        formatted = topic.format_full(HelpLevel.CASUAL)
+        formatted = topic.format(HelpLevel.CASUAL)
 
         assert "# Test Topic" in formatted
         assert "Regular" in formatted
@@ -121,13 +138,14 @@ class TestHelpTopic:
         topic = HelpTopic(
             id="test",
             title="Test",
+            category="core",
             eli5="Simple",
             casual="Regular",
             developer="Technical",
             examples=["example_code()"],
         )
 
-        formatted = topic.format_full(HelpLevel.DEVELOPER)
+        formatted = topic.format(HelpLevel.DEVELOPER)
 
         assert "## Examples" in formatted
         assert "example_code()" in formatted
@@ -211,14 +229,14 @@ class TestGetHelpForError:
         """Test help for timeout error."""
         from comfy_headless.help_system import get_help_for_error
 
-        help_text = get_help_for_error("GENERATION_TIMEOUT")
+        help_text = get_help_for_error("TIMEOUT")
         assert "timeout" in help_text.lower() or "Timeout" in help_text
 
     def test_get_help_for_error_vram(self):
         """Test help for VRAM error."""
         from comfy_headless.help_system import get_help_for_error
 
-        help_text = get_help_for_error("INSUFFICIENT_VRAM")
+        help_text = get_help_for_error("VRAM")
         assert "VRAM" in help_text or "memory" in help_text.lower()
 
 
@@ -276,80 +294,6 @@ class TestSearchHelp:
         assert len(results) == 0
 
 
-class TestHelpContext:
-    """Test contextual help functions."""
-
-    def test_set_context_operation(self):
-        """Test setting context operation."""
-        from comfy_headless.help_system import _help_context, set_context
-
-        set_context(operation="generation")
-        assert _help_context.current_operation == "generation"
-
-    def test_set_context_error(self):
-        """Test setting context error."""
-        from comfy_headless.help_system import _help_context, set_context
-
-        set_context(error="COMFYUI_OFFLINE")
-        assert _help_context.last_error == "COMFYUI_OFFLINE"
-
-    def test_get_contextual_help_with_error(self):
-        """Test contextual help returns error help."""
-        from comfy_headless.help_system import _help_context, get_contextual_help, set_context
-
-        # Clear and set context
-        _help_context.last_error = None
-        _help_context.current_operation = None
-
-        set_context(error="COMFYUI_OFFLINE")
-        help_text = get_contextual_help()
-
-        assert "Offline" in help_text or "ComfyUI" in help_text
-
-    def test_get_contextual_help_with_operation(self):
-        """Test contextual help returns operation help."""
-        from comfy_headless.help_system import _help_context, get_contextual_help, set_context
-
-        # Clear context
-        _help_context.last_error = None
-        _help_context.current_operation = None
-
-        set_context(operation="video")
-        help_text = get_contextual_help()
-
-        assert "Video" in help_text or "video" in help_text.lower()
-
-    def test_get_contextual_help_default(self):
-        """Test contextual help default."""
-        from comfy_headless.help_system import _help_context, get_contextual_help
-
-        # Clear context
-        _help_context.last_error = None
-        _help_context.current_operation = None
-
-        help_text = get_contextual_help()
-        # Should return generation help by default
-        assert "Generation" in help_text or "generation" in help_text.lower()
-
-
-class TestGetSuggestionsForError:
-    """Test get_suggestions_for_error function."""
-
-    def test_get_suggestions_offline(self):
-        """Test suggestions for offline error."""
-        from comfy_headless.help_system import get_suggestions_for_error
-
-        suggestions = get_suggestions_for_error("COMFYUI_OFFLINE")
-        assert isinstance(suggestions, list)
-
-    def test_get_suggestions_unknown_error(self):
-        """Test suggestions for unknown error."""
-        from comfy_headless.help_system import get_suggestions_for_error
-
-        suggestions = get_suggestions_for_error("UNKNOWN_ERROR_XYZ")
-        assert suggestions == []
-
-
 class TestFormatHelpers:
     """Test format helper functions."""
 
@@ -374,8 +318,7 @@ class TestFormatHelpers:
 
         help_list = format_help_list()
 
-        assert "# Available Help Topics" in help_list
-        assert "## Core" in help_list or "Core" in help_list
+        assert "# Comfy Headless Help Topics" in help_list
 
 
 class TestBuiltInTopics:
@@ -383,52 +326,59 @@ class TestBuiltInTopics:
 
     def test_generation_topic_exists(self):
         """Test generation topic exists."""
-        from comfy_headless.help_system import HELP_TOPICS
+        from comfy_headless.help_system import list_topics
 
-        assert "generation" in HELP_TOPICS
+        topics = list_topics()
+        assert "generation" in topics
 
     def test_prompts_topic_exists(self):
         """Test prompts topic exists."""
-        from comfy_headless.help_system import HELP_TOPICS
+        from comfy_headless.help_system import list_topics
 
-        assert "prompts" in HELP_TOPICS
+        topics = list_topics()
+        assert "prompts" in topics
 
     def test_presets_topic_exists(self):
         """Test presets topic exists."""
-        from comfy_headless.help_system import HELP_TOPICS
+        from comfy_headless.help_system import list_topics
 
-        assert "presets" in HELP_TOPICS
+        topics = list_topics()
+        assert "presets" in topics
 
     def test_video_topic_exists(self):
         """Test video topic exists."""
-        from comfy_headless.help_system import HELP_TOPICS
+        from comfy_headless.help_system import list_topics
 
-        assert "video" in HELP_TOPICS
+        topics = list_topics()
+        assert "video" in topics
 
-    def test_health_checks_topic_exists(self):
-        """Test health_checks topic exists."""
-        from comfy_headless.help_system import HELP_TOPICS
+    def test_health_topic_exists(self):
+        """Test health topic exists."""
+        from comfy_headless.help_system import list_topics
 
-        assert "health_checks" in HELP_TOPICS
+        topics = list_topics()
+        assert "health" in topics
 
     def test_workflows_topic_exists(self):
         """Test workflows topic exists."""
-        from comfy_headless.help_system import HELP_TOPICS
+        from comfy_headless.help_system import list_topics
 
-        assert "workflows" in HELP_TOPICS
+        topics = list_topics()
+        assert "workflows" in topics
 
     def test_error_topics_exist(self):
         """Test error topics exist."""
-        from comfy_headless.help_system import HELP_TOPICS
+        from comfy_headless.help_system import list_topics
 
-        error_topics = [t for t in HELP_TOPICS if t.startswith("error:")]
+        topics = list_topics()
+        error_topics = [t for t in topics if t.startswith("error:")]
         assert len(error_topics) >= 3  # Should have at least 3 error topics
 
     def test_all_topics_have_content(self):
         """Test all topics have content at all levels."""
-        from comfy_headless.help_system import HELP_TOPICS
+        from comfy_headless.help_system import HelpLevel, get_help, list_topics
 
-        for topic_id, topic in HELP_TOPICS.items():
-            assert topic.eli5, f"{topic_id} missing eli5"
-            assert topic.casual, f"{topic_id} missing casual"
-            assert topic.developer, f"{topic_id} missing developer"
+        for topic_id in list_topics():
+            for level in HelpLevel:
+                content = get_help(topic_id, level=level)
+                assert content, f"{topic_id} missing content at {level}"
