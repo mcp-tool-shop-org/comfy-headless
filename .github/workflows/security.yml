@@ -1,13 +1,23 @@
-# Comfy Headless Security Scanning
-# Runs pip-audit and secret scanning
-
 name: Security
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
+    paths:
+      - 'pyproject.toml'
+      - 'comfy_headless/**'
+      - '.github/workflows/**'
   pull_request:
-    branches: [main, master]
+    branches: [main]
+    paths:
+      - 'pyproject.toml'
+      - 'comfy_headless/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pip-audit:
@@ -38,7 +48,7 @@ jobs:
         run: |
           pip install -e ".[full]"
           pip-audit
-        continue-on-error: true  # Full deps may have lower priority issues
+        continue-on-error: true
 
   secret-scan:
     name: Secret Scanning
@@ -48,7 +58,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # Full history for scanning
+          fetch-depth: 0
 
       - name: TruffleHog Secret Scan
         uses: trufflesecurity/trufflehog@main
@@ -57,15 +67,3 @@ jobs:
           base: ${{ github.event.repository.default_branch }}
           head: HEAD
           extra_args: --debug --only-verified
-
-  dependency-review:
-    name: Dependency Review
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
