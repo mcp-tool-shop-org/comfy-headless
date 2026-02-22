@@ -154,7 +154,7 @@ def retry_with_backoff(
                 wait=wait_strategy,
                 retry=retry_if_exception_type(exceptions),
                 before_sleep=before_sleep_log(logger, log_level=20),  # INFO
-                reraise=True,
+                reraise=False,
             )
 
             @functools.wraps(func)

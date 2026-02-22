@@ -310,9 +310,9 @@ class TestOllamaConfig:
 
         config = OllamaConfig()
         assert config.url == "http://localhost:11434"
-        assert config.model == "qwen2.5:7b"
-        assert config.timeout_analysis == 15.0
-        assert config.timeout_enhancement == 30.0
+        assert config.model == "qwen2.5:1.5b"
+        assert config.timeout_analysis == 10.0
+        assert config.timeout_enhancement == 20.0
         assert config.timeout_connect == 2.0
 
     def test_ollama_config_few_shot_path(self):
@@ -363,7 +363,7 @@ class TestUIConfig:
 
         config = UIConfig()
         assert config.port == 7861
-        assert config.host == "0.0.0.0"
+        assert config.host == "127.0.0.1"
         assert config.share is False
         assert config.auto_open is True
 

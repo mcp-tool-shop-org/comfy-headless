@@ -38,10 +38,10 @@ class TestColorDefinitions:
         """Test ACCENT colors constant is properly defined."""
         from comfy_headless.theme import ACCENT
 
-        assert "primary" in ACCENT
-        assert "primary_hover" in ACCENT
-        assert "emerald" in ACCENT
-        assert "emerald_dark" in ACCENT
+        assert "blue" in ACCENT
+        assert "blue_light" in ACCENT
+        assert "green" in ACCENT
+        assert "teal" in ACCENT
 
     def test_semantic_colors_defined(self):
         """Test SEMANTIC colors constant is properly defined."""
@@ -226,7 +226,7 @@ class TestGetThemeInfo:
 
         info = get_theme_info()
         assert "light_mode" in info
-        assert "Warm Neutral" in info["light_mode"]
+        assert "Ocean Mist" in info["light_mode"]
 
     def test_get_theme_info_has_dark_mode_info(self):
         """Test theme info describes dark mode."""
@@ -234,7 +234,7 @@ class TestGetThemeInfo:
 
         info = get_theme_info()
         assert "dark_mode" in info
-        assert "Emerald" in info["dark_mode"]
+        assert "Ocean Mist" in info["dark_mode"]
 
     def test_get_theme_info_has_primary_colors(self):
         """Test theme info contains primary colors."""
@@ -397,15 +397,13 @@ class TestThemeIntegration:
     """Integration tests for theme with UI module."""
 
     @patch("comfy_headless.ui.client")
-    @patch("comfy_headless.ui.intel")
-    def test_ui_uses_custom_theme(self, mock_intel, mock_client):
+    def test_ui_uses_custom_theme(self, mock_client):
         """Test UI module imports and uses custom theme."""
         mock_client.is_online.return_value = False
         mock_client.get_samplers.return_value = ["euler"]
         mock_client.get_schedulers.return_value = ["normal"]
         mock_client.get_checkpoints.return_value = []
         mock_client.get_motion_models.return_value = []
-        mock_intel.check_ollama.return_value = False
 
         # Import should work without error
         from comfy_headless.ui import create_ui
