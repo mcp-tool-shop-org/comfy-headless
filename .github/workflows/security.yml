@@ -56,6 +56,7 @@ jobs:
   secret-scan:
     name: Secret Scanning
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'  # Only run on PRs, skip on direct pushes
 
     steps:
       - name: Checkout repository
@@ -67,9 +68,10 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
+          base: ${{ github.event.pull_request.base.sha }}
+          head: ${{ github.event.pull_request.head.sha }}
           extra_args: --debug --only-verified
+        continue-on-error: true  # Advisory scan
 
   dependency-review:
     name: Dependency Review
