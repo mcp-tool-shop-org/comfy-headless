@@ -6,8 +6,21 @@ name: Security
 on:
   push:
     branches: [main, master]
+    paths:
+      - 'pyproject.toml'
+      - 'comfy_headless/**'
+      - '.github/workflows/security.yml'
   pull_request:
     branches: [main, master]
+    paths:
+      - 'pyproject.toml'
+      - 'comfy_headless/**'
+      - '.github/workflows/security.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pip-audit:
