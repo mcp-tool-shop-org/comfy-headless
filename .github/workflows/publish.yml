@@ -68,6 +68,7 @@ jobs:
           path: dist/
 
       - name: Install from wheel
+        shell: bash
         run: pip install dist/*.whl
 
       - name: Test import
