@@ -8,11 +8,11 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/comfy-headless?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/comfy-headless/)
 [![Downloads](https://img.shields.io/pypi/dm/comfy-headless?color=green&logo=pypi&logoColor=white)](https://pypi.org/project/comfy-headless/)
-[![Tests](https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/test.yml/badge.svg)](https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/test.yml)
+[![CI](https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg)](https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/mcp-tool-shop-org/comfy-headless/graph/badge.svg)](https://codecov.io/gh/mcp-tool-shop-org/comfy-headless)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.5.3-green.svg)](https://github.com/mcp-tool-shop-org/comfy-headless/releases)
+[![Version](https://img.shields.io/badge/version-2.5.4-green.svg)](https://github.com/mcp-tool-shop-org/comfy-headless/releases)
 [![GitHub stars](https://img.shields.io/github/stars/mcp-tool-shop-org/comfy-headless?style=social)](https://github.com/mcp-tool-shop-org/comfy-headless)
 
 *AI image & video generation in 3 lines of code*
