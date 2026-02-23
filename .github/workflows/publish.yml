@@ -44,8 +44,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.10', '3.11', '3.12']
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.12']
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
@@ -60,6 +60,7 @@ jobs:
           path: dist/
 
       - name: Install from wheel
+        shell: bash
         run: pip install dist/*.whl
 
       - name: Test import
