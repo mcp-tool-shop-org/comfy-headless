@@ -3,12 +3,12 @@
 </p>
 
 <p align="center">
-  <img src="assets/logo.png" alt="comfy-headless" width="400">
+  <img src="logo.png" alt="comfy-headless" width="400">
 </p>
 
 # Comfy Headless
 
-**Making ComfyUI's power accessible without the complexity**
+**ComfyUIの強力な機能を、複雑さを感じさせずに利用可能に**
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml"><img src="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -20,16 +20,16 @@
 
 ---
 
-## Why Comfy Headless?
+## Comfy Headlessの利点
 
-| Problem | Solution |
-|---------|----------|
-| ComfyUI's node interface is overwhelming | Simple presets and clean Python API |
-| Prompt engineering is hard | AI-powered prompt enhancement |
-| Video generation is complex | One-line video with model presets |
-| No idea what settings to use | Best settings for your intent, automatically |
+| 問題点 | 解決策 |
+| --------- | ---------- |
+| ComfyUIのノードインターフェースが複雑 | シンプルなプリセットと、使いやすいPython API |
+| プロンプトの作成が難しい | AIを活用したプロンプトの改善 |
+| 動画生成が複雑 | 数行のコードでモデルプリセットを利用した動画生成 |
+| どの設定を使えば良いかわからない | 意図に最適な設定を自動的に適用 |
 
-## Quick Start
+## クイックスタート
 
 ```bash
 pip install comfy-headless[standard]
@@ -43,17 +43,17 @@ result = client.generate_image("a beautiful sunset over mountains")
 print(f"Generated: {result['images']}")
 ```
 
-## Philosophy
+## 哲学
 
-- **For Users**: Simple presets and AI-powered prompt enhancement
-- **For Developers**: Clean API with template-based workflow compilation
-- **For Everyone**: Best settings for your intent, automatically
+- **ユーザー向け**: シンプルなプリセットと、AIを活用したプロンプトの改善
+- **開発者向け**: テンプレートベースのワークフローコンパイルに対応した、シンプルなAPI
+- **すべての人向け**: 意図に最適な設定を自動的に適用
 
-## Installation
+## インストール
 
-### Modular Installation (v2.5.0+)
+### モジュール式インストール (v2.5.0以降)
 
-Install only what you need:
+必要なものだけをインストール:
 
 ```bash
 # Core only (minimal - ~2MB)
@@ -72,28 +72,28 @@ pip install comfy-headless[standard]
 pip install comfy-headless[full]
 ```
 
-### Available Extras
+### 利用可能な追加機能
 
-| Extra | Dependencies | Features |
-|-------|--------------|----------|
-| `ai` | httpx | Ollama prompt intelligence |
-| `websocket` | websockets | Real-time progress updates |
-| `health` | psutil | System health monitoring |
-| `ui` | gradio | Web interface |
-| `validation` | pydantic | Config validation |
-| `observability` | opentelemetry | Distributed tracing |
-| `standard` | ai + websocket | Recommended bundle |
-| `full` | All of the above | Everything |
+| Extra | 依存関係 | 機能 |
+| ------- | -------------- | ---------- |
+| `ai` | httpx | Ollamaによるプロンプトのインテリジェンス |
+| `websocket` | WebSockets | リアルタイムの進捗状況の表示 |
+| `health` | psutil | システムの状態監視 |
+| `ui` | Gradio | Webインターフェース |
+| `validation` | pydantic | 設定の検証 |
+| `observability` | opentelemetry | 分散トレーシング |
+| `standard` | AI + WebSocket | 推奨されるバンドル |
+| `full` | 上記すべて | すべて |
 
-### Requirements
+### 要件
 
-- Python 3.10+
-- ComfyUI running locally (default: `http://localhost:8188`)
-- Optional: Ollama for AI prompt enhancement
+- Python 3.10以上
+- ローカルで動作しているComfyUI (デフォルト: `http://localhost:8188`)
+- オプション: AIプロンプトの改善のためのOllama
 
-## Usage
+## 使い方
 
-### Use as a Library
+### ライブラリとして使用
 
 ```python
 from comfy_headless import ComfyClient
@@ -104,7 +104,7 @@ result = client.generate_image("a beautiful sunset over mountains")
 print(f"Generated: {result['images']}")
 ```
 
-### With AI Enhancement
+### AIによる改善機能付き
 
 ```python
 from comfy_headless import analyze_prompt, enhance_prompt
@@ -121,7 +121,7 @@ print(enhanced.enhanced)   # "a cat, masterpiece, best quality, highly detailed.
 print(enhanced.negative)   # Style-aware negative prompt
 ```
 
-### Video Generation
+### 動画生成
 
 ```python
 from comfy_headless import ComfyClient, list_video_presets
@@ -137,43 +137,43 @@ result = client.generate_video(
 )
 ```
 
-### Launch the Web UI
+### Web UIの起動
 
 ```python
 from comfy_headless import launch
 launch()  # Opens http://localhost:7870
 ```
 
-Or via command line:
+または、コマンドラインから:
 ```bash
 python -m comfy_headless.ui
 ```
 
-**UI Features (v2.5.1):**
-- **Image Generation** - txt2img with presets, AI prompt enhancement
-- **Video Generation** - AnimateDiff, LTX, Hunyuan, Wan support
-- **Queue & History** - Real-time queue management, job history
-- **Workflows** - Browse, import, and create workflow templates
-- **Models Browser** - View checkpoints, LoRAs, motion models
-- **Settings** - Connection management, timeouts, system info
+**UIの機能 (v2.5.1):**
+- **画像生成**: プリセット付きのtxt2img、AIによるプロンプトの改善
+- **動画生成**: AnimateDiff、LTX、Hunyuan、Wanのサポート
+- **キューと履歴**: リアルタイムのキュー管理、ジョブ履歴
+- **ワークフロー**: ワークフローテンプレートの閲覧、インポート、作成
+- **モデルブラウザ**: チェックポイント、LoRA、モーションモデルの表示
+- **設定**: 接続管理、タイムアウト、システム情報
 
-**Theme:** Ocean Mist - soft teal accents on warm neutral backgrounds
+**テーマ**: Ocean Mist - 暖かみのある背景に、ソフトなティール色のアクセント
 
-## Video Models (v2.5.0)
+## 動画モデル (v2.5.0)
 
-### Supported Models
+### サポートされているモデル
 
-| Model | VRAM | Quality | Speed | Best For |
-|-------|------|---------|-------|----------|
-| **LTX-Video 2** | 12GB+ | Excellent | Fast | General use, RTX 3080+ |
-| **Hunyuan 1.5** | 14GB+ | Best | Slow | High quality, RTX 4080+ |
-| **Wan 2.1/2.2** | 6-16GB | Great | Medium | Budget GPUs, efficiency |
-| **Mochi** | 12GB+ | Excellent | Slow | Text adherence |
-| AnimateDiff | 6GB+ | Good | Fast | Quick previews |
-| SVD | 8GB+ | Good | Medium | Image-to-video |
-| CogVideoX | 10GB+ | Good | Slow | Legacy support |
+| Model | VRAM | 品質 | Speed | 最適な用途 |
+| ------- | ------ | --------- | ------- | ---------- |
+| **LTX-Video 2** | 12GB+ | 優れている | Fast | 一般的な用途、RTX 3080以上 |
+| **Hunyuan 1.5** | 14GB+ | Best | Slow | 高品質、RTX 4080以上 |
+| **Wan 2.1/2.2** | 6-16GB | Great | 普通 | エントリーレベルのGPU、効率重視 |
+| **Mochi** | 12GB+ | 優れている | Slow | テキストへの忠実性 |
+| AnimateDiff | 6GB+ | Good | Fast | プレビューの高速化 |
+| SVD | 8GB+ | Good | 普通 | 画像から動画への変換 |
+| CogVideoX | 10GB+ | Good | Slow | レガシーサポート |
 
-### Video Presets
+### 動画プリセット
 
 ```python
 from comfy_headless import VIDEO_PRESETS, get_recommended_preset
@@ -195,9 +195,9 @@ preset = get_recommended_preset(vram_gb=16)  # Returns "hunyuan15_720p"
 # "wan_14b": 1280x720, 81 frames (12GB VRAM)
 ```
 
-## Feature Flags
+## 機能フラグ
 
-Check what features are available:
+利用可能な機能を確認:
 
 ```python
 from comfy_headless import FEATURES, list_missing_features
@@ -209,7 +209,7 @@ print(list_missing_features())
 # {'health': 'pip install comfy-headless[health]', ...}
 ```
 
-## WebSocket Progress
+## WebSocketによる進捗状況
 
 ```python
 import asyncio
@@ -227,9 +227,9 @@ async def generate_with_progress():
 asyncio.run(generate_with_progress())
 ```
 
-## API Reference
+## APIリファレンス
 
-### Core Classes
+### 主要なクラス
 
 ```python
 from comfy_headless import (
@@ -254,7 +254,7 @@ from comfy_headless import (
 )
 ```
 
-### Error Handling
+### エラー処理
 
 ```python
 from comfy_headless import (
@@ -274,7 +274,7 @@ except GenerationTimeoutError:
     print("Generation timed out")
 ```
 
-## Architecture
+## アーキテクチャ
 
 ```
 comfy_headless/
@@ -294,41 +294,41 @@ comfy_headless/
 └── tests/               # Test suite
 ```
 
-## ComfyUI Node Requirements
+## ComfyUIノードの要件
 
-### For Video Generation
+### 動画生成に必要なもの
 
-Install these custom nodes:
+以下のカスタムノードをインストールしてください:
 
-**Core:**
-- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - Video encoding
+**主要機能:**
+- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - ビデオエンコード
 
-**Model-Specific:**
-- LTX-Video 2: Built-in ComfyUI support (recent versions)
+**モデル固有:**
+- LTX-Video 2: ComfyUIへの組み込みサポート (最新バージョン)
 - Hunyuan 1.5: [ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
 - Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
 - AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
 
-## Related Projects
+## 関連プロジェクト
 
-Part of [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — open-source ML tooling for local hardware.
+[**MCP Tool Shop**](https://mcp-tool-shop.github.io/) の一部 — ローカル環境のハードウェアで使用できるオープンソースの機械学習ツール。
 
-- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - ML development toolkit
-- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Browse all tools
+- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - 機械学習開発ツールキット
+- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - すべてのツールを閲覧
 
-## License
+## ライセンス
 
-MIT License - see [LICENSE](LICENSE)
+MITライセンス - [LICENSE](LICENSE) を参照
 
-## Contributing
+## 貢献
 
-Contributions welcome! Please open an issue or pull request.
+貢献を歓迎します！ 問題やプルリクエストを送信してください。
 
-Areas of interest:
-- Additional video model support
-- Workflow templates
-- Documentation
-- Bug fixes
+関心のある分野:
+- 追加のビデオモデルサポート
+- ワークフローテンプレート
+- ドキュメント
+- バグ修正
 
 ---
 
