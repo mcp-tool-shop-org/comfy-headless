@@ -8,7 +8,7 @@
 
 # Comfy Headless
 
-**Making ComfyUI's power accessible without the complexity**
+**让 ComfyUI 的强大功能触手可及，同时避免其复杂性**
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml"><img src="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -20,16 +20,16 @@
 
 ---
 
-## Why Comfy Headless?
+## 为什么选择 Comfy Headless？
 
-| Problem | Solution |
-|---------|----------|
-| ComfyUI's node interface is overwhelming | Simple presets and clean Python API |
-| Prompt engineering is hard | AI-powered prompt enhancement |
-| Video generation is complex | One-line video with model presets |
-| No idea what settings to use | Best settings for your intent, automatically |
+| 问题 | 解决方案 |
+| --------- | ---------- |
+| ComfyUI 的节点界面过于复杂 | 简单的预设和简洁的 Python API |
+| 提示词工程很困难 | 基于 AI 的提示词增强 |
+| 视频生成很复杂 | 一键视频生成，带模型预设 |
+| 不知道该使用哪些设置 | 自动为您选择最佳设置，以满足您的需求 |
 
-## Quick Start
+## 快速开始
 
 ```bash
 pip install comfy-headless[standard]
@@ -43,17 +43,17 @@ result = client.generate_image("a beautiful sunset over mountains")
 print(f"Generated: {result['images']}")
 ```
 
-## Philosophy
+## 设计理念
 
-- **For Users**: Simple presets and AI-powered prompt enhancement
-- **For Developers**: Clean API with template-based workflow compilation
-- **For Everyone**: Best settings for your intent, automatically
+- **面向用户：** 简单的预设和基于 AI 的提示词增强
+- **面向开发者：** 干净的 API，基于模板的工作流程编译
+- **面向所有人：** 自动为您选择最佳设置，以满足您的需求
 
-## Installation
+## 安装
 
-### Modular Installation (v2.5.0+)
+### 模块化安装 (v2.5.0+)
 
-Install only what you need:
+仅安装您需要的组件：
 
 ```bash
 # Core only (minimal - ~2MB)
@@ -72,28 +72,28 @@ pip install comfy-headless[standard]
 pip install comfy-headless[full]
 ```
 
-### Available Extras
+### 可选组件
 
-| Extra | Dependencies | Features |
-|-------|--------------|----------|
-| `ai` | httpx | Ollama prompt intelligence |
-| `websocket` | websockets | Real-time progress updates |
-| `health` | psutil | System health monitoring |
-| `ui` | gradio | Web interface |
-| `validation` | pydantic | Config validation |
-| `observability` | opentelemetry | Distributed tracing |
-| `standard` | ai + websocket | Recommended bundle |
-| `full` | All of the above | Everything |
+| Extra | 依赖项 | 特性 |
+| ------- | -------------- | ---------- |
+| `ai` | httpx | Ollama 提示词智能 |
+| `websocket` | WebSocket | 实时进度更新 |
+| `health` | psutil | 系统健康状况监控 |
+| `ui` | gradio | Web 界面 |
+| `validation` | pydantic | 配置验证 |
+| `observability` | opentelemetry | 分布式追踪 |
+| `standard` | AI + WebSocket | 推荐套餐 |
+| `full` | 以上所有组件 | 全部 |
 
-### Requirements
+### 系统要求
 
 - Python 3.10+
-- ComfyUI running locally (default: `http://localhost:8188`)
-- Optional: Ollama for AI prompt enhancement
+- 必须在本地运行 ComfyUI (默认：`http://localhost:8188`)
+- 可选：Ollama 用于 AI 提示词增强
 
-## Usage
+## 使用方法
 
-### Use as a Library
+### 作为库使用
 
 ```python
 from comfy_headless import ComfyClient
@@ -104,7 +104,7 @@ result = client.generate_image("a beautiful sunset over mountains")
 print(f"Generated: {result['images']}")
 ```
 
-### With AI Enhancement
+### 带 AI 增强
 
 ```python
 from comfy_headless import analyze_prompt, enhance_prompt
@@ -121,7 +121,7 @@ print(enhanced.enhanced)   # "a cat, masterpiece, best quality, highly detailed.
 print(enhanced.negative)   # Style-aware negative prompt
 ```
 
-### Video Generation
+### 视频生成
 
 ```python
 from comfy_headless import ComfyClient, list_video_presets
@@ -137,43 +137,43 @@ result = client.generate_video(
 )
 ```
 
-### Launch the Web UI
+### 启动 Web 界面
 
 ```python
 from comfy_headless import launch
 launch()  # Opens http://localhost:7870
 ```
 
-Or via command line:
+或通过命令行：
 ```bash
 python -m comfy_headless.ui
 ```
 
-**UI Features (v2.5.1):**
-- **Image Generation** - txt2img with presets, AI prompt enhancement
-- **Video Generation** - AnimateDiff, LTX, Hunyuan, Wan support
-- **Queue & History** - Real-time queue management, job history
-- **Workflows** - Browse, import, and create workflow templates
-- **Models Browser** - View checkpoints, LoRAs, motion models
-- **Settings** - Connection management, timeouts, system info
+**UI 特性 (v2.5.1):**
+- **图像生成** - txt2img，带预设和 AI 提示词增强
+- **视频生成** - 支持 AnimateDiff、LTX、Hunyuan、Wan
+- **队列和历史记录** - 实时队列管理，任务历史记录
+- **工作流程** - 浏览、导入和创建工作流程模板
+- **模型浏览器** - 查看检查点、LoRA、运动模型
+- **设置** - 连接管理、超时设置、系统信息
 
-**Theme:** Ocean Mist - soft teal accents on warm neutral backgrounds
+**主题：** 海洋薄雾 - 柔和的薄荷绿点缀在温暖的中性背景上
 
-## Video Models (v2.5.0)
+## 视频模型 (v2.5.0)
 
-### Supported Models
+### 支持的模型
 
-| Model | VRAM | Quality | Speed | Best For |
-|-------|------|---------|-------|----------|
-| **LTX-Video 2** | 12GB+ | Excellent | Fast | General use, RTX 3080+ |
-| **Hunyuan 1.5** | 14GB+ | Best | Slow | High quality, RTX 4080+ |
-| **Wan 2.1/2.2** | 6-16GB | Great | Medium | Budget GPUs, efficiency |
-| **Mochi** | 12GB+ | Excellent | Slow | Text adherence |
-| AnimateDiff | 6GB+ | Good | Fast | Quick previews |
-| SVD | 8GB+ | Good | Medium | Image-to-video |
-| CogVideoX | 10GB+ | Good | Slow | Legacy support |
+| Model | VRAM | 质量 | Speed | 最适合 |
+| ------- | ------ | --------- | ------- | ---------- |
+| **LTX-Video 2** | 12GB+ | 优秀 | Fast | 通用用途，RTX 3080+ |
+| **Hunyuan 1.5** | 14GB+ | Best | Slow | 高质量，RTX 4080+ |
+| **Wan 2.1/2.2** | 6-16GB | Great | 中等 | 入门级显卡，效率 |
+| **Mochi** | 12GB+ | 优秀 | Slow | 文本一致性 |
+| AnimateDiff | 6GB+ | Good | Fast | 快速预览 |
+| SVD | 8GB+ | Good | 中等 | 图像转视频 |
+| CogVideoX | 10GB+ | Good | Slow | 旧版本支持 |
 
-### Video Presets
+### 视频预设
 
 ```python
 from comfy_headless import VIDEO_PRESETS, get_recommended_preset
@@ -195,9 +195,9 @@ preset = get_recommended_preset(vram_gb=16)  # Returns "hunyuan15_720p"
 # "wan_14b": 1280x720, 81 frames (12GB VRAM)
 ```
 
-## Feature Flags
+## 特性标志
 
-Check what features are available:
+检查哪些特性可用：
 
 ```python
 from comfy_headless import FEATURES, list_missing_features
@@ -209,7 +209,7 @@ print(list_missing_features())
 # {'health': 'pip install comfy-headless[health]', ...}
 ```
 
-## WebSocket Progress
+## WebSocket 进度
 
 ```python
 import asyncio
@@ -227,9 +227,9 @@ async def generate_with_progress():
 asyncio.run(generate_with_progress())
 ```
 
-## API Reference
+## API 参考
 
-### Core Classes
+### 核心类
 
 ```python
 from comfy_headless import (
@@ -254,7 +254,7 @@ from comfy_headless import (
 )
 ```
 
-### Error Handling
+### 错误处理
 
 ```python
 from comfy_headless import (
@@ -274,7 +274,7 @@ except GenerationTimeoutError:
     print("Generation timed out")
 ```
 
-## Architecture
+## 架构
 
 ```
 comfy_headless/
@@ -294,41 +294,41 @@ comfy_headless/
 └── tests/               # Test suite
 ```
 
-## ComfyUI Node Requirements
+## ComfyUI 节点要求
 
-### For Video Generation
+### 用于视频生成
 
-Install these custom nodes:
+安装以下自定义节点：
 
-**Core:**
-- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - Video encoding
+**核心功能：**
+- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - 视频编码
 
-**Model-Specific:**
-- LTX-Video 2: Built-in ComfyUI support (recent versions)
-- Hunyuan 1.5: [ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
-- Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
-- AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
+**特定模型支持：**
+- LTX-Video 2：内置 ComfyUI 支持（最新版本）
+- Hunyuan 1.5：[ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
+- Wan：[ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
+- AnimateDiff：[ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
 
-## Related Projects
+## 相关项目
 
-Part of [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — open-source ML tooling for local hardware.
+该项目是 [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) 的一部分，该项目提供用于本地硬件的开源机器学习工具。
 
-- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - ML development toolkit
-- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Browse all tools
+- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - 机器学习开发工具包
+- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - 浏览所有工具
 
-## License
+## 许可证
 
-MIT License - see [LICENSE](LICENSE)
+MIT 许可证 - 参见 [LICENSE](LICENSE)
 
-## Contributing
+## 贡献
 
-Contributions welcome! Please open an issue or pull request.
+欢迎贡献！请提交问题或拉取请求。
 
-Areas of interest:
-- Additional video model support
-- Workflow templates
-- Documentation
-- Bug fixes
+感兴趣的领域：
+- 更多视频模型支持
+- 工作流程模板
+- 文档
+- 错误修复
 
 ---
 

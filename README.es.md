@@ -8,7 +8,7 @@
 
 # Comfy Headless
 
-**Making ComfyUI's power accessible without the complexity**
+**Haciendo que el poder de ComfyUI sea accesible sin la complejidad.**
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml"><img src="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -20,16 +20,16 @@
 
 ---
 
-## Why Comfy Headless?
+## ¿Por qué Comfy Headless?
 
-| Problem | Solution |
-|---------|----------|
-| ComfyUI's node interface is overwhelming | Simple presets and clean Python API |
-| Prompt engineering is hard | AI-powered prompt enhancement |
-| Video generation is complex | One-line video with model presets |
-| No idea what settings to use | Best settings for your intent, automatically |
+| Problema | Solución |
+| --------- | ---------- |
+| La interfaz de nodos de ComfyUI es abrumadora. | Preajustes sencillos y una API de Python limpia. |
+| La ingeniería de prompts es difícil. | Mejora de prompts impulsada por IA. |
+| La generación de video es compleja. | Generación de video en una sola línea con preajustes de modelos. |
+| No se sabe qué configuraciones usar. | Las mejores configuraciones para su intención, automáticamente. |
 
-## Quick Start
+## Comienzo rápido
 
 ```bash
 pip install comfy-headless[standard]
@@ -43,17 +43,17 @@ result = client.generate_image("a beautiful sunset over mountains")
 print(f"Generated: {result['images']}")
 ```
 
-## Philosophy
+## Filosofía
 
-- **For Users**: Simple presets and AI-powered prompt enhancement
-- **For Developers**: Clean API with template-based workflow compilation
-- **For Everyone**: Best settings for your intent, automatically
+- **Para usuarios:** Preajustes sencillos y mejora de prompts impulsada por IA.
+- **Para desarrolladores:** API limpia con compilación de flujo de trabajo basada en plantillas.
+- **Para todos:** Las mejores configuraciones para su intención, automáticamente.
 
-## Installation
+## Instalación
 
-### Modular Installation (v2.5.0+)
+### Instalación modular (v2.5.0+)
 
-Install only what you need:
+Instale solo lo que necesita:
 
 ```bash
 # Core only (minimal - ~2MB)
@@ -72,28 +72,28 @@ pip install comfy-headless[standard]
 pip install comfy-headless[full]
 ```
 
-### Available Extras
+### Complementos disponibles
 
-| Extra | Dependencies | Features |
-|-------|--------------|----------|
-| `ai` | httpx | Ollama prompt intelligence |
-| `websocket` | websockets | Real-time progress updates |
-| `health` | psutil | System health monitoring |
-| `ui` | gradio | Web interface |
-| `validation` | pydantic | Config validation |
-| `observability` | opentelemetry | Distributed tracing |
-| `standard` | ai + websocket | Recommended bundle |
-| `full` | All of the above | Everything |
+| Extra | Dependencias | Características |
+| ------- | -------------- | ---------- |
+| `ai` | httpx | Inteligencia de prompts de Ollama. |
+| `websocket` | Websockets. | Actualizaciones de progreso en tiempo real. |
+| `health` | psutil. | Monitoreo de la salud del sistema. |
+| `ui` | gradio. | Interfaz web. |
+| `validation` | pydantic. | Validación de configuración. |
+| `observability` | opentelemetry. | Trazabilidad distribuida. |
+| `standard` | IA + websocket. | Paquete recomendado. |
+| `full` | Todo lo anterior. | Todo. |
 
-### Requirements
+### Requisitos
 
-- Python 3.10+
-- ComfyUI running locally (default: `http://localhost:8188`)
-- Optional: Ollama for AI prompt enhancement
+- Python 3.10+.
+- ComfyUI ejecutándose localmente (por defecto: `http://localhost:8188`).
+- Opcional: Ollama para la mejora de prompts de IA.
 
-## Usage
+## Uso
 
-### Use as a Library
+### Usar como una biblioteca
 
 ```python
 from comfy_headless import ComfyClient
@@ -104,7 +104,7 @@ result = client.generate_image("a beautiful sunset over mountains")
 print(f"Generated: {result['images']}")
 ```
 
-### With AI Enhancement
+### Con mejora de IA
 
 ```python
 from comfy_headless import analyze_prompt, enhance_prompt
@@ -121,7 +121,7 @@ print(enhanced.enhanced)   # "a cat, masterpiece, best quality, highly detailed.
 print(enhanced.negative)   # Style-aware negative prompt
 ```
 
-### Video Generation
+### Generación de video
 
 ```python
 from comfy_headless import ComfyClient, list_video_presets
@@ -137,43 +137,43 @@ result = client.generate_video(
 )
 ```
 
-### Launch the Web UI
+### Iniciar la interfaz web
 
 ```python
 from comfy_headless import launch
 launch()  # Opens http://localhost:7870
 ```
 
-Or via command line:
+O a través de la línea de comandos:
 ```bash
 python -m comfy_headless.ui
 ```
 
-**UI Features (v2.5.1):**
-- **Image Generation** - txt2img with presets, AI prompt enhancement
-- **Video Generation** - AnimateDiff, LTX, Hunyuan, Wan support
-- **Queue & History** - Real-time queue management, job history
-- **Workflows** - Browse, import, and create workflow templates
-- **Models Browser** - View checkpoints, LoRAs, motion models
-- **Settings** - Connection management, timeouts, system info
+**Características de la interfaz (v2.5.1):**
+- **Generación de imágenes:** txt2img con preajustes, mejora de prompts de IA.
+- **Generación de video:** Soporte para AnimateDiff, LTX, Hunyuan, Wan.
+- **Cola y historial:** Gestión de cola en tiempo real, historial de trabajos.
+- **Flujos de trabajo:** Explorar, importar y crear plantillas de flujo de trabajo.
+- **Explorador de modelos:** Ver puntos de control, LoRAs, modelos de movimiento.
+- **Configuración:** Gestión de conexiones, tiempos de espera, información del sistema.
 
-**Theme:** Ocean Mist - soft teal accents on warm neutral backgrounds
+**Tema:** Ocean Mist: detalles suaves en tonos turquesa sobre fondos neutros cálidos.
 
-## Video Models (v2.5.0)
+## Modelos de video (v2.5.0)
 
-### Supported Models
+### Modelos soportados
 
-| Model | VRAM | Quality | Speed | Best For |
-|-------|------|---------|-------|----------|
-| **LTX-Video 2** | 12GB+ | Excellent | Fast | General use, RTX 3080+ |
-| **Hunyuan 1.5** | 14GB+ | Best | Slow | High quality, RTX 4080+ |
-| **Wan 2.1/2.2** | 6-16GB | Great | Medium | Budget GPUs, efficiency |
-| **Mochi** | 12GB+ | Excellent | Slow | Text adherence |
-| AnimateDiff | 6GB+ | Good | Fast | Quick previews |
-| SVD | 8GB+ | Good | Medium | Image-to-video |
-| CogVideoX | 10GB+ | Good | Slow | Legacy support |
+| Model | VRAM | Calidad | Speed | Ideal para |
+| ------- | ------ | --------- | ------- | ---------- |
+| **LTX-Video 2** | 12GB+ | Excelente | Fast | Uso general, RTX 3080+. |
+| **Hunyuan 1.5** | 14GB+ | Best | Slow | Alta calidad, RTX 4080+. |
+| **Wan 2.1/2.2** | 6-16 GB. | Great | Medio | GPUs de bajo presupuesto, eficiencia. |
+| **Mochi** | 12GB+ | Excelente | Slow | Adherencia al texto. |
+| AnimateDiff. | 6GB+ | Good | Fast | Previsualizaciones rápidas. |
+| SVD | 8GB+ | Good | Medio | Imagen a video. |
+| CogVideoX. | 10GB+ | Good | Slow | Soporte heredado. |
 
-### Video Presets
+### Preajustes de video
 
 ```python
 from comfy_headless import VIDEO_PRESETS, get_recommended_preset
@@ -195,9 +195,9 @@ preset = get_recommended_preset(vram_gb=16)  # Returns "hunyuan15_720p"
 # "wan_14b": 1280x720, 81 frames (12GB VRAM)
 ```
 
-## Feature Flags
+## Marcadores de características
 
-Check what features are available:
+Verifique qué características están disponibles:
 
 ```python
 from comfy_headless import FEATURES, list_missing_features
@@ -209,7 +209,7 @@ print(list_missing_features())
 # {'health': 'pip install comfy-headless[health]', ...}
 ```
 
-## WebSocket Progress
+## Progreso de WebSocket
 
 ```python
 import asyncio
@@ -227,9 +227,9 @@ async def generate_with_progress():
 asyncio.run(generate_with_progress())
 ```
 
-## API Reference
+## Referencia de la API
 
-### Core Classes
+### Clases principales
 
 ```python
 from comfy_headless import (
@@ -254,7 +254,7 @@ from comfy_headless import (
 )
 ```
 
-### Error Handling
+### Manejo de errores
 
 ```python
 from comfy_headless import (
@@ -274,7 +274,7 @@ except GenerationTimeoutError:
     print("Generation timed out")
 ```
 
-## Architecture
+## Arquitectura
 
 ```
 comfy_headless/
@@ -294,41 +294,41 @@ comfy_headless/
 └── tests/               # Test suite
 ```
 
-## ComfyUI Node Requirements
+## Requisitos de nodos de ComfyUI
 
-### For Video Generation
+### Para la generación de video
 
-Install these custom nodes:
+Instale estos nodos personalizados:
 
-**Core:**
-- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - Video encoding
+**Núcleo:**
+- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - Codificación de video
 
-**Model-Specific:**
-- LTX-Video 2: Built-in ComfyUI support (recent versions)
+**Específico del modelo:**
+- LTX-Video 2: Soporte integrado para ComfyUI (versiones recientes)
 - Hunyuan 1.5: [ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
 - Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
 - AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
 
-## Related Projects
+## Proyectos relacionados
 
-Part of [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — open-source ML tooling for local hardware.
+Parte de [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — herramientas de aprendizaje automático de código abierto para hardware local.
 
-- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - ML development toolkit
-- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Browse all tools
+- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - Kit de herramientas de desarrollo de aprendizaje automático
+- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Explore todas las herramientas
 
-## License
+## Licencia
 
-MIT License - see [LICENSE](LICENSE)
+Licencia MIT - ver [LICENSE](LICENSE)
 
-## Contributing
+## Contribuciones
 
-Contributions welcome! Please open an issue or pull request.
+¡Las contribuciones son bienvenidas! Por favor, abra un problema o una solicitud de extracción.
 
-Areas of interest:
-- Additional video model support
-- Workflow templates
-- Documentation
-- Bug fixes
+Áreas de interés:
+- Soporte adicional para modelos de video
+- Plantillas de flujo de trabajo
+- Documentación
+- Corrección de errores
 
 ---
 

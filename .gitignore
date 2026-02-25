@@ -79,3 +79,6 @@ coverage.xml
 
 # Build artifacts
 *.whl
+site/.astro/
+site/node_modules/
+site/dist/
