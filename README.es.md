@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="logo.png" alt="comfy-headless" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/comfy-headless/readme.png" alt="comfy-headless" width="400">
 </p>
 
 # Comfy Headless
