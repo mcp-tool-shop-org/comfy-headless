@@ -16,7 +16,8 @@ We take security vulnerabilities seriously. If you discover a security issue, pl
 **DO NOT** open a public GitHub issue for security vulnerabilities.
 
 Instead, please report security issues by emailing:
-- **Email**: [Create a private security advisory](https://github.com/mcp-tool-shop/comfy-headless/security/advisories/new) on GitHub
+- **Email**: 64996768+mcp-tool-shop@users.noreply.github.com
+- **GitHub**: [Create a private security advisory](https://github.com/mcp-tool-shop-org/comfy-headless/security/advisories/new)
 
 ### What to Include
 
