@@ -3,31 +3,29 @@
 </p>
 
 <p align="center">
-  <img src="logo.png" alt="comfy-headless" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/comfy-headless/readme.png" alt="comfy-headless" width="400">
 </p>
-
-# Comfy Headless
 
 **ComfyUIの強力な機能を、複雑さを感じさせずに利用可能に**
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml"><img src="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
-  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue?style=flat-square" alt="Landing Page"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless"><img src="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/v/comfy-headless?color=blue&logo=pypi&logoColor=white" alt="PyPI version"></a>
-  <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/dm/comfy-headless?color=green&logo=pypi&logoColor=white" alt="Downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
 </p>
 
 ---
 
-## Comfy Headlessの利点
+## Comfy Headlessとは？
 
 | 問題点 | 解決策 |
-| --------- | ---------- |
-| ComfyUIのノードインターフェースが複雑 | シンプルなプリセットと、使いやすいPython API |
-| プロンプトの作成が難しい | AIを活用したプロンプトの改善 |
-| 動画生成が複雑 | 数行のコードでモデルプリセットを利用した動画生成 |
-| どの設定を使えば良いかわからない | 意図に最適な設定を自動的に適用 |
+|---------|----------|
+| ComfyUIのノードインターフェースは複雑 | シンプルなプリセットと、使いやすいPython API |
+| プロンプトエンジニアリングは難しい | AIを活用したプロンプトの最適化 |
+| 動画生成は複雑 | 数行のコードで動画生成が可能（モデルプリセット利用） |
+| どの設定を使えば良いか分からない | あなたの意図に最適な設定を自動的に適用 |
 
 ## クイックスタート
 
@@ -45,9 +43,9 @@ print(f"Generated: {result['images']}")
 
 ## 哲学
 
-- **ユーザー向け**: シンプルなプリセットと、AIを活用したプロンプトの改善
-- **開発者向け**: テンプレートベースのワークフローコンパイルに対応した、シンプルなAPI
-- **すべての人向け**: 意図に最適な設定を自動的に適用
+- **ユーザー向け**: シンプルなプリセットと、AIを活用したプロンプトの最適化
+- **開発者向け**: テンプレートベースのワークフローコンパイルが可能な、シンプルなAPI
+- **すべての人向け**: あなたの意図に最適な設定を自動的に適用
 
 ## インストール
 
@@ -74,12 +72,12 @@ pip install comfy-headless[full]
 
 ### 利用可能な追加機能
 
-| Extra | 依存関係 | 機能 |
-| ------- | -------------- | ---------- |
-| `ai` | httpx | Ollamaによるプロンプトのインテリジェンス |
-| `websocket` | WebSockets | リアルタイムの進捗状況の表示 |
+| 追加機能 | 依存関係 | 機能 |
+|-------|--------------|----------|
+| `ai` | httpx | Ollamaによるプロンプトインテリジェンス |
+| `websocket` | websockets | リアルタイムの進捗状況表示 |
 | `health` | psutil | システムの状態監視 |
-| `ui` | Gradio | Webインターフェース |
+| `ui` | gradio | Webインターフェース |
 | `validation` | pydantic | 設定の検証 |
 | `observability` | opentelemetry | 分散トレーシング |
 | `standard` | AI + WebSocket | 推奨されるバンドル |
@@ -89,11 +87,11 @@ pip install comfy-headless[full]
 
 - Python 3.10以上
 - ローカルで動作しているComfyUI (デフォルト: `http://localhost:8188`)
-- オプション: AIプロンプトの改善のためのOllama
+- オプション: AIプロンプトの最適化にはOllama
 
 ## 使い方
 
-### ライブラリとして使用
+### ライブラリとして利用
 
 ```python
 from comfy_headless import ComfyClient
@@ -104,7 +102,7 @@ result = client.generate_image("a beautiful sunset over mountains")
 print(f"Generated: {result['images']}")
 ```
 
-### AIによる改善機能付き
+### AIによる最適化機能付きで利用
 
 ```python
 from comfy_headless import analyze_prompt, enhance_prompt
@@ -137,7 +135,7 @@ result = client.generate_video(
 )
 ```
 
-### Web UIの起動
+### Web UIを起動
 
 ```python
 from comfy_headless import launch
@@ -150,9 +148,9 @@ python -m comfy_headless.ui
 ```
 
 **UIの機能 (v2.5.1):**
-- **画像生成**: プリセット付きのtxt2img、AIによるプロンプトの改善
+- **画像生成**: プリセット付きのtxt2img、AIによるプロンプトの最適化
 - **動画生成**: AnimateDiff、LTX、Hunyuan、Wanのサポート
-- **キューと履歴**: リアルタイムのキュー管理、ジョブ履歴
+- **キュー＆履歴**: リアルタイムのキュー管理、ジョブ履歴
 - **ワークフロー**: ワークフローテンプレートの閲覧、インポート、作成
 - **モデルブラウザ**: チェックポイント、LoRA、モーションモデルの表示
 - **設定**: 接続管理、タイムアウト、システム情報
@@ -163,15 +161,15 @@ python -m comfy_headless.ui
 
 ### サポートされているモデル
 
-| Model | VRAM | 品質 | Speed | 最適な用途 |
-| ------- | ------ | --------- | ------- | ---------- |
-| **LTX-Video 2** | 12GB+ | 優れている | Fast | 一般的な用途、RTX 3080以上 |
-| **Hunyuan 1.5** | 14GB+ | Best | Slow | 高品質、RTX 4080以上 |
-| **Wan 2.1/2.2** | 6-16GB | Great | 普通 | エントリーレベルのGPU、効率重視 |
-| **Mochi** | 12GB+ | 優れている | Slow | テキストへの忠実性 |
-| AnimateDiff | 6GB+ | Good | Fast | プレビューの高速化 |
-| SVD | 8GB+ | Good | 普通 | 画像から動画への変換 |
-| CogVideoX | 10GB+ | Good | Slow | レガシーサポート |
+| モデル | VRAM | 画質 | 速度 | 推奨用途 |
+|-------|------|---------|-------|----------|
+| **LTX-Video 2** | 12GB以上 | 優れている | 速い | 一般的な用途、RTX 3080以上 |
+| **Hunyuan 1.5** | 14GB以上 | 最高 | 遅い | 高画質、RTX 4080以上 |
+| **Wan 2.1/2.2** | 6-16GB | 良い | 普通 | エントリーモデル、効率重視 |
+| **Mochi** | 12GB以上 | 優れている | 遅い | テキストへの適合性 |
+| AnimateDiff | 6GB以上 | 良い | 速い | プレビュー用 |
+| SVD | 8GB以上 | 良い | 普通 | 画像から動画 |
+| CogVideoX | 10GB以上 | 良い | 遅い | レガシーサポート |
 
 ### 動画プリセット
 
@@ -209,7 +207,7 @@ print(list_missing_features())
 # {'health': 'pip install comfy-headless[health]', ...}
 ```
 
-## WebSocketによる進捗状況
+## WebSocketによる進捗状況表示
 
 ```python
 import asyncio
@@ -229,7 +227,7 @@ asyncio.run(generate_with_progress())
 
 ## APIリファレンス
 
-### 主要なクラス
+### 主要クラス
 
 ```python
 from comfy_headless import (
@@ -311,10 +309,31 @@ comfy_headless/
 
 ## 関連プロジェクト
 
-[**MCP Tool Shop**](https://mcp-tool-shop.github.io/) の一部 — ローカル環境のハードウェアで使用できるオープンソースの機械学習ツール。
+[**MCP Tool Shop**](https://mcp-tool-shop.github.io/) の一部 - ローカル環境のハードウェアで使用できるオープンソースの機械学習ツール。
 
 - [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - 機械学習開発ツールキット
 - [MCP Tool Shop](https://mcp-tool-shop.github.io/) - すべてのツールを閲覧
+
+## セキュリティとデータ範囲
+
+- **アクセスするデータ:** HTTP/WebSocketを介して、ローカルまたはリモートのComfyUIインスタンスに接続します。ワークフローのJSONデータを送信し、生成された画像をデータとして受信します。オプションで、AIプロンプトのインテリジェンスのために、ローカルのOllamaに接続できます。生成された画像を一時ディレクトリに保存し、自動的にクリーンアップします。
+- **アクセスしないデータ:** テレメトリー、分析、ユーザーが設定したComfyUIおよびオプションのOllama以外の外部APIはありません。すべてのログ出力において、機密情報は`SecretValue`によってマスクされます。
+- **必要な権限:** ComfyUIサーバーへのネットワークアクセス、オプションでOllamaサーバーへのアクセス。画像出力と一時ディレクトリへのファイル書き込み権限。
+
+脆弱性報告とセキュリティに関するベストプラクティスについては、[SECURITY.md](SECURITY.md) を参照してください。
+
+## 評価項目
+
+| カテゴリ | 評価 |
+|----------|-------|
+| A. セキュリティ | 10/10 |
+| B. エラー処理 | 10/10 |
+| C. ユーザーマニュアル | 10/10 |
+| D. ソフトウェアの品質 | 10/10 |
+| E. 識別情報 (ソフト) | 10/10 |
+| **Overall** | **50/50** |
+
+> [`@mcptoolshop/shipcheck`](https://github.com/mcp-tool-shop-org/shipcheck) を使用して評価
 
 ## ライセンス
 
@@ -322,7 +341,7 @@ MITライセンス - [LICENSE](LICENSE) を参照
 
 ## 貢献
 
-貢献を歓迎します！ 問題やプルリクエストを送信してください。
+貢献を歓迎します！問題やプルリクエストを送信してください。
 
 関心のある分野:
 - 追加のビデオモデルサポート
@@ -332,6 +351,4 @@ MITライセンス - [LICENSE](LICENSE) を参照
 
 ---
 
-<p align="center">
-  <a href="https://github.com/mcp-tool-shop-org/comfy-headless/issues">Issues</a> • <a href="https://github.com/mcp-tool-shop-org/comfy-headless/discussions">Discussions</a>
-</p>
+[MCP Tool Shop](https://mcp-tool-shop.github.io/) が作成

@@ -3,19 +3,17 @@
 </p>
 
 <p align="center">
-  <img src="logo.png" alt="comfy-headless" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/comfy-headless/readme.png" alt="comfy-headless" width="400">
 </p>
 
-# Comfy Headless
-
-**Haciendo que el poder de ComfyUI sea accesible sin la complejidad.**
+**Haciendo que el poder de ComfyUI sea accesible sin la complejidad**
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml"><img src="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
-  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue?style=flat-square" alt="Landing Page"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless"><img src="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/v/comfy-headless?color=blue&logo=pypi&logoColor=white" alt="PyPI version"></a>
-  <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/dm/comfy-headless?color=green&logo=pypi&logoColor=white" alt="Downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
 </p>
 
 ---
@@ -23,13 +21,13 @@
 ## ¿Por qué Comfy Headless?
 
 | Problema | Solución |
-| --------- | ---------- |
+|---------|----------|
 | La interfaz de nodos de ComfyUI es abrumadora. | Preajustes sencillos y una API de Python limpia. |
 | La ingeniería de prompts es difícil. | Mejora de prompts impulsada por IA. |
 | La generación de video es compleja. | Generación de video en una sola línea con preajustes de modelos. |
-| No se sabe qué configuraciones usar. | Las mejores configuraciones para su intención, automáticamente. |
+| No se sabe qué configuraciones usar. | Las mejores configuraciones para su objetivo, automáticamente. |
 
-## Comienzo rápido
+## Guía de inicio rápido
 
 ```bash
 pip install comfy-headless[standard]
@@ -47,7 +45,7 @@ print(f"Generated: {result['images']}")
 
 - **Para usuarios:** Preajustes sencillos y mejora de prompts impulsada por IA.
 - **Para desarrolladores:** API limpia con compilación de flujo de trabajo basada en plantillas.
-- **Para todos:** Las mejores configuraciones para su intención, automáticamente.
+- **Para todos:** Las mejores configuraciones para su objetivo, automáticamente.
 
 ## Instalación
 
@@ -74,21 +72,21 @@ pip install comfy-headless[full]
 
 ### Complementos disponibles
 
-| Extra | Dependencias | Características |
-| ------- | -------------- | ---------- |
+| Complemento | Dependencias | Características |
+|-------|--------------|----------|
 | `ai` | httpx | Inteligencia de prompts de Ollama. |
-| `websocket` | Websockets. | Actualizaciones de progreso en tiempo real. |
-| `health` | psutil. | Monitoreo de la salud del sistema. |
-| `ui` | gradio. | Interfaz web. |
-| `validation` | pydantic. | Validación de configuración. |
-| `observability` | opentelemetry. | Trazabilidad distribuida. |
-| `standard` | IA + websocket. | Paquete recomendado. |
-| `full` | Todo lo anterior. | Todo. |
+| `websocket` | websockets | Actualizaciones de progreso en tiempo real. |
+| `health` | psutil | Monitoreo del estado del sistema. |
+| `ui` | gradio | Interfaz web. |
+| `validation` | pydantic | Validación de configuración. |
+| `observability` | opentelemetry | Trazabilidad distribuida. |
+| `standard` | IA + WebSocket | Paquete recomendado |
+| `full` | Todo lo anterior | Todo |
 
 ### Requisitos
 
-- Python 3.10+.
-- ComfyUI ejecutándose localmente (por defecto: `http://localhost:8188`).
+- Python 3.10+
+- ComfyUI ejecutándose localmente (por defecto: `http://localhost:8188`)
 - Opcional: Ollama para la mejora de prompts de IA.
 
 ## Uso
@@ -163,15 +161,15 @@ python -m comfy_headless.ui
 
 ### Modelos soportados
 
-| Model | VRAM | Calidad | Speed | Ideal para |
-| ------- | ------ | --------- | ------- | ---------- |
-| **LTX-Video 2** | 12GB+ | Excelente | Fast | Uso general, RTX 3080+. |
-| **Hunyuan 1.5** | 14GB+ | Best | Slow | Alta calidad, RTX 4080+. |
-| **Wan 2.1/2.2** | 6-16 GB. | Great | Medio | GPUs de bajo presupuesto, eficiencia. |
-| **Mochi** | 12GB+ | Excelente | Slow | Adherencia al texto. |
-| AnimateDiff. | 6GB+ | Good | Fast | Previsualizaciones rápidas. |
-| SVD | 8GB+ | Good | Medio | Imagen a video. |
-| CogVideoX. | 10GB+ | Good | Slow | Soporte heredado. |
+| Modelo | VRAM | Calidad | Velocidad | Ideal para |
+|-------|------|---------|-------|----------|
+| **LTX-Video 2** | 12GB+ | Excelente | Rápido | Uso general, RTX 3080+ |
+| **Hunyuan 1.5** | 14GB+ | Mejor | Lento | Alta calidad, RTX 4080+ |
+| **Wan 2.1/2.2** | 6-16GB | Genial | Medio | GPUs de bajo presupuesto, eficiencia. |
+| **Mochi** | 12GB+ | Excelente | Lento | Adherencia al texto |
+| AnimateDiff | 6GB+ | Bueno | Rápido | Previsualizaciones rápidas |
+| SVD | 8GB+ | Bueno | Medio | Imagen a video |
+| CogVideoX | 10GB+ | Bueno | Lento | Soporte heredado |
 
 ### Preajustes de video
 
@@ -195,9 +193,9 @@ preset = get_recommended_preset(vram_gb=16)  # Returns "hunyuan15_720p"
 # "wan_14b": 1280x720, 81 frames (12GB VRAM)
 ```
 
-## Marcadores de características
+## Marcas de función
 
-Verifique qué características están disponibles:
+Compruebe qué funciones están disponibles:
 
 ```python
 from comfy_headless import FEATURES, list_missing_features
@@ -316,13 +314,34 @@ Parte de [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — herramientas 
 - [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - Kit de herramientas de desarrollo de aprendizaje automático
 - [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Explore todas las herramientas
 
+## Seguridad y alcance de los datos
+
+- **Datos accedidos:** Se conecta a una instancia local/remota de ComfyUI a través de HTTP/WebSocket. Envía flujos de trabajo en formato JSON, recibe imágenes generadas. Opcionalmente, se conecta a Ollama local para inteligencia de prompts de IA. Almacena las imágenes generadas en directorios temporales con limpieza automática.
+- **Datos NO accedidos:** No hay telemetría, ni análisis, ni APIs externas más allá de la configuración de ComfyUI y el Ollama opcional. Los secretos se enmascaran en todos los registros a través de `SecretValue`.
+- **Permisos requeridos:** Acceso a la red al servidor de ComfyUI, servidor Ollama opcional. Permiso de escritura de archivos para la salida de imágenes y directorios temporales.
+
+Consulte [SECURITY.md](SECURITY.md) para informar sobre vulnerabilidades y obtener las mejores prácticas de seguridad.
+
+## Evaluación
+
+| Categoría | Puntuación |
+|----------|-------|
+| A. Seguridad | 10/10 |
+| B. Manejo de errores | 10/10 |
+| C. Documentación para el usuario | 10/10 |
+| D. Higiene en la entrega | 10/10 |
+| E. Identidad (suave) | 10/10 |
+| **Overall** | **50/50** |
+
+> Evaluado con [`@mcptoolshop/shipcheck`](https://github.com/mcp-tool-shop-org/shipcheck)
+
 ## Licencia
 
-Licencia MIT - ver [LICENSE](LICENSE)
+Licencia MIT - consulte [LICENSE](LICENSE)
 
 ## Contribuciones
 
-¡Las contribuciones son bienvenidas! Por favor, abra un problema o una solicitud de extracción.
+¡Las contribuciones son bienvenidas! Abra un problema o una solicitud de extracción.
 
 Áreas de interés:
 - Soporte adicional para modelos de video
@@ -332,6 +351,4 @@ Licencia MIT - ver [LICENSE](LICENSE)
 
 ---
 
-<p align="center">
-  <a href="https://github.com/mcp-tool-shop-org/comfy-headless/issues">Issues</a> • <a href="https://github.com/mcp-tool-shop-org/comfy-headless/discussions">Discussions</a>
-</p>
+Desarrollado por [MCP Tool Shop](https://mcp-tool-shop.github.io/)

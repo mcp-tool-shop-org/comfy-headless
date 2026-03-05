@@ -3,19 +3,17 @@
 </p>
 
 <p align="center">
-  <img src="assets/logo.png" alt="comfy-headless" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/comfy-headless/readme.png" alt="comfy-headless" width="400">
 </p>
-
-# Comfy Headless
 
 **Making ComfyUI's power accessible without the complexity**
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml"><img src="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
-  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue?style=flat-square" alt="Landing Page"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless"><img src="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/v/comfy-headless?color=blue&logo=pypi&logoColor=white" alt="PyPI version"></a>
-  <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/dm/comfy-headless?color=green&logo=pypi&logoColor=white" alt="Downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
 </p>
 
 ---
@@ -316,6 +314,27 @@ Part of [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — open-source ML
 - [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - ML development toolkit
 - [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Browse all tools
 
+## Security & Data Scope
+
+- **Data touched:** connects to a local/remote ComfyUI instance via HTTP/WebSocket. Sends workflow JSON, receives generated images. Optionally connects to local Ollama for AI prompt intelligence. Stores generated images in temp directories with automatic cleanup.
+- **Data NOT touched:** no telemetry, no analytics, no external APIs beyond user-configured ComfyUI and optional Ollama. Secrets are masked in all log output via `SecretValue`.
+- **Permissions required:** network access to ComfyUI server, optional Ollama server. File write for image output and temp directories.
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and security best practices.
+
+## Scorecard
+
+| Category | Score |
+|----------|-------|
+| A. Security | 10/10 |
+| B. Error Handling | 10/10 |
+| C. Operator Docs | 10/10 |
+| D. Shipping Hygiene | 10/10 |
+| E. Identity (soft) | 10/10 |
+| **Overall** | **50/50** |
+
+> Assessed with [`@mcptoolshop/shipcheck`](https://github.com/mcp-tool-shop-org/shipcheck)
+
 ## License
 
 MIT License - see [LICENSE](LICENSE)
@@ -332,6 +351,4 @@ Areas of interest:
 
 ---
 
-<p align="center">
-  <a href="https://github.com/mcp-tool-shop-org/comfy-headless/issues">Issues</a> • <a href="https://github.com/mcp-tool-shop-org/comfy-headless/discussions">Discussions</a>
-</p>
+Built by [MCP Tool Shop](https://mcp-tool-shop.github.io/)

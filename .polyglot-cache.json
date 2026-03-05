@@ -1,0 +1,1340 @@
+{
+  "version": 1,
+  "entries": {
+    "4580147accbb0302": {
+      "translation": "आरामदायक, बिना सिर वाला.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "477ac75c8409838f": {
+      "translation": "\"कोम्फीयूआई की शक्ति को आसान तरीके से उपलब्ध कराना, ताकि इसकी जटिलताओं को कम किया जा सके।\"",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "9b9415275aa07a97": {
+      "translation": "\"कॉम्फी हेडलेस\" क्यों?",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "f1c900f4a4d6cff1": {
+      "translation": "समस्या।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "3eb45db8ea520f0d": {
+      "translation": "समाधान।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "1a20fc4dc8ce3304": {
+      "translation": "ज़रूर, मैं आपकी मदद कर सकता हूँ। कृपया वह अंग्रेजी पाठ प्रदान करें जिसका आप हिंदी में अनुवाद करवाना चाहते हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "3b88b43261c1c270": {
+      "translation": "ज़रूर, मैं आपकी मदद कर सकता हूँ। कृपया वह अंग्रेजी पाठ प्रदान करें जिसका आप हिंदी में अनुवाद करवाना चाहते हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "18ef110c5d562912": {
+      "translation": "कॉम्फीयूआई का नोड इंटरफ़ेस बहुत जटिल है।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "91fd8c013c7155c4": {
+      "translation": "सरल पूर्व-निर्धारित सेटिंग्स और एक स्पष्ट पायथन एपीआई।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "6eb55a5890a443e8": {
+      "translation": "\"प्रॉम्प्ट इंजीनियरिंग एक जटिल काम है।\"",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "1cfc594b7f845411": {
+      "translation": "एआई-आधारित संकेत (प्रॉम्प्ट) को बेहतर बनाने की तकनीक।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "155f73ddfb400a84": {
+      "translation": "वीडियो बनाना एक जटिल प्रक्रिया है।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "a49dcdacf84d1de4": {
+      "translation": "एक पंक्ति वाला वीडियो, जिसमें मॉडल के लिए पहले से निर्धारित सेटिंग्स उपलब्ध हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "543084c19b517b91": {
+      "translation": "मुझे नहीं पता कि कौन से सेटिंग्स (विकल्प) इस्तेमाल करने हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "0418663045e1f946": {
+      "translation": "आपके इरादे के लिए सबसे उपयुक्त सेटिंग्स, स्वचालित रूप से।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "abb619d8b0588257": {
+      "translation": "शुरुआत कैसे करें।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "b1bb69a311945b59": {
+      "translation": "दर्शनशास्त्र।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "c7aa5d548dbe32a1": {
+      "translation": "- **उपयोगकर्ताओं के लिए:** सरल पूर्व-निर्धारित सेटिंग्स और एआई-संचालित संकेत अनुकूलन।\n- **डेवलपर्स के लिए:** स्वच्छ एपीआई (API) और टेम्पलेट-आधारित वर्कफ़्लो संकलन।\n- **सभी के लिए:** आपकी आवश्यकताओं के अनुसार सर्वोत्तम सेटिंग्स, जो स्वचालित रूप से लागू हो जाएंगी।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "ed383afd27175535": {
+      "translation": "स्थापना।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5da8da0e389121b7": {
+      "translation": "मॉड्यूलर इंस्टॉलेशन (संस्करण 2.5.0 और उसके बाद के संस्करणों में)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e20ab67fcd43fdee": {
+      "translation": "केवल वही चीजें स्थापित करें जिनकी आपको आवश्यकता है:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "37e83c513f435c53": {
+      "translation": "उपलब्ध अतिरिक्त सुविधाएँ।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "fbd9c4fbd8ab97fb": {
+      "translation": "निर्भरताएँ।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "d0bfd0df3ecd0d7f": {
+      "translation": "विशेषताएं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "6da5100c388f6595": {
+      "translation": "\"The quick brown fox jumps over the lazy dog.\"\n\n\"यह फुर्तीला भूरा लोमड़ी आलसी कुत्ते के ऊपर से कूदता है।\"",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "c7836a7b7798edb5": {
+      "translation": "ज़रूर, मैं आपकी मदद कर सकता हूँ। कृपया वह अंग्रेजी पाठ प्रदान करें जिसका आप हिंदी में अनुवाद करवाना चाहते हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "9efb65c8a640ff8a": {
+      "translation": "ओलामा: प्रॉम्प्ट इंटेलिजेंस (Ollama: प्रॉम्प्ट इंटेलिजेंस)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5785eb8dbf54f714": {
+      "translation": "वेब सॉकेट।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "a829a50e7a860373": {
+      "translation": "वास्तविक समय में प्रगति की जानकारी।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "25e83924042d2f44": {
+      "translation": "psutil एक पायथन लाइब्रेरी है जो सिस्टम की जानकारी और संसाधनों को प्रबंधित करने में मदद करती है।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e2e4070fee812c07": {
+      "translation": "सिस्टम की स्वास्थ्य निगरानी।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "3cbc2376704aefb1": {
+      "translation": "ग्रैडियो",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e4285706d3f62291": {
+      "translation": "वेब इंटरफेस।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "66cb2d5d957afeaa": {
+      "translation": "पायडैंटिक।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "a0da5816d48dd76c": {
+      "translation": "कॉन्फ़िगरेशन की वैधता की जांच।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e4b2362aa5d161b7": {
+      "translation": "ओपनटेलमेट्री (OpenTelemetry)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "84a51e3edeace7ae": {
+      "translation": "वितरित ट्रेसिंग।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5fdc05f1cc3b69d1": {
+      "translation": "एआई (कृत्रिम बुद्धिमत्ता) + वेबसॉकेट।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "069ec31ad11cc4d6": {
+      "translation": "अनुशंसित पैकेज।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "0b9a591886938278": {
+      "translation": "उपरोक्त सभी।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "13cc2ed3eac469aa": {
+      "translation": "सब कुछ।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "1960f0711b88c994": {
+      "translation": "आवश्यकताएं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "279eb045d989abfe": {
+      "translation": "- पायथन 3.10 या उससे ऊपर का संस्करण\n- कॉमफीयूआई स्थानीय रूप से चल रहा होना चाहिए (डिफ़ॉल्ट: `http://localhost:8188`)\n- वैकल्पिक: एआई प्रॉम्प्ट को बेहतर बनाने के लिए ओलामा का उपयोग किया जा सकता है।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "98a2f8cba1b36eff": {
+      "translation": "उपयोग.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "83b3af66531c2ff4": {
+      "translation": "इसका उपयोग पुस्तकालय के रूप में करें।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "ae7a049811dd3d7a": {
+      "translation": "एआई (कृत्रिम बुद्धिमत्ता) के साथ उन्नत।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "ef308421b59cb51c": {
+      "translation": "वीडियो निर्माण।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5efc1720ab91d738": {
+      "translation": "वेब यूआई (Web UI) को शुरू करें।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "08f248f720a1efef": {
+      "translation": "या फिर, कमांड लाइन के माध्यम से:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5bfa3339ad56bfc5": {
+      "translation": "**यूआई विशेषताएं (संस्करण 2.5.1):**\n- **छवि निर्माण:** टेक्स्ट से छवि निर्माण (txt2img) जिसमें पूर्व-निर्धारित सेटिंग्स और एआई प्रॉम्प्ट एन्हांसमेंट शामिल हैं।\n- **वीडियो निर्माण:** एनिमेट डिफ, एलटीएक्स, हुनयुआन, वान का समर्थन।\n- **कतार और इतिहास:** वास्तविक समय में कतार प्रबंधन, कार्यों का इतिहास।\n- **वर्कफ़्लो:** वर्कफ़्लो टेम्पलेट्स को ब्राउज़ करें, आयात करें और बनाएं।\n- **मॉडल ब्राउज़र:** चेकपॉइंट, लोरा, मोशन मॉडल देखें।\n- **सेटिंग्स:** कनेक्शन प्रबंधन, टाइमआउट, सिस्टम जानकारी।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "d03f7aa7959f91c8": {
+      "translation": "**विषय:** समुद्री धुंध - हल्के नीले-हरे रंग की बारीकियां, जो गर्म, तटस्थ पृष्ठभूमि पर दिखाई देती हैं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "42ba247518c5d677": {
+      "translation": "वीडियो मॉडल (संस्करण 2.5.0)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "27a3048957fdd8ec": {
+      "translation": "समर्थित मॉडल।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "af4b9c14b40df728": {
+      "translation": "गुणवत्ता।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e0f72e4533570a66": {
+      "translation": "सबसे उपयुक्त/बेहतरीन।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "1cb2d43271f2ec1d": {
+      "translation": "\"Please provide the English text you would like me to translate into Hindi.\"",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "6856609e96918c18": {
+      "translation": "उत्कृष्ट।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "a0e934c44a360ab5": {
+      "translation": "सामान्य उपयोग, RTX 3080 या उससे बेहतर ग्राफिक्स कार्ड।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "6197ff83f769398f": {
+      "translation": "उच्च गुणवत्ता, RTX 4080 या उससे बेहतर।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5659e0080c486eeb": {
+      "translation": "6-16 जीबी",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "3d723863bb0c2e76": {
+      "translation": "माध्यम।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5c4c1ee2cc12f1f1": {
+      "translation": "कम कीमत वाले ग्राफिक्स कार्ड, दक्षता।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e18d866f7bd1bd94": {
+      "translation": "पाठ का पालन।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "06d76989bb04b4dd": {
+      "translation": "एनिमेट डिफ (AnimateDiff)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "fc61c789f5c71db3": {
+      "translation": "त्वरित पूर्वावलोकन।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "ddd863ded6e2aeec": {
+      "translation": "छवि से वीडियो।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "98cda340b2cdb835": {
+      "translation": "कॉगवीडियोएक्स।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "53394d70f944801d": {
+      "translation": "विरासत समर्थन।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "bc0d6d05b4c0a0fb": {
+      "translation": "वीडियो प्रीसेट।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "eebe349fe2bd740a": {
+      "translation": "फ़ीचर फ़्लैग्स (फीचर झंडे)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "294bcad6f848ce74": {
+      "translation": "जांच करें कि कौन-कौन सी सुविधाएँ उपलब्ध हैं:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "24a9dd70096d913a": {
+      "translation": "वेबसोकेट प्रगति।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "cd33d54feef8ec6e": {
+      "translation": "एपीआई संदर्भ मार्गदर्शिका।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "3b833aa12848fc3c": {
+      "translation": "मुख्य पाठ्यक्रम।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "9c382f4dced6e981": {
+      "translation": "त्रुटि प्रबंधन।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "c601496221a20045": {
+      "translation": "आर्किटेक्चर।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "2289b861bcc236c9": {
+      "translation": "ComfyUI नोड की आवश्यकताएं।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "998b5c2eda6c38d0": {
+      "translation": "वीडियो बनाने के लिए।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "2a680ed28e2e7e99": {
+      "translation": "इन अनुकूलित नोड्स को स्थापित करें:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e661069f4a09edb3": {
+      "translation": "**मुख्य भाग:**\n- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - वीडियो एन्कोडिंग",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "8c9c9c554590438b": {
+      "translation": "**मॉडल-विशिष्ट:**\n- LTX-Video 2: ComfyUI का अंतर्निहित समर्थन (नवीनतम संस्करण)\n- Hunyuan 1.5: [ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)\n- Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)\n- AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "5e01a0f14e715183": {
+      "translation": "संबंधित परियोजनाएं",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "b945a23c09f32264": {
+      "translation": "[**MCP Tool Shop**](https://mcp-tool-shop.github.io/) का हिस्सा — स्थानीय हार्डवेयर के लिए ओपन-सोर्स मशीन लर्निंग उपकरण।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "e390b99054e624fe": {
+      "translation": "- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - मशीन लर्निंग विकास टूलकिट\n- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - सभी उपकरणों को देखें",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "cfbc372f8058f151": {
+      "translation": "लाइसेंस",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "64c67a5dbd6173aa": {
+      "translation": "MIT लाइसेंस - [LICENSE](LICENSE) देखें",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "4e8133210bd702a6": {
+      "translation": "योगदान",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "64499674e6b8adc5": {
+      "translation": "योगदान का स्वागत है! कृपया एक मुद्दा या पुल अनुरोध खोलें।",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434605
+    },
+    "00e129d02f011583": {
+      "translation": "रुचि के क्षेत्र:\n- अतिरिक्त वीडियो मॉडल समर्थन\n- वर्कफ़्लो टेम्पलेट\n- दस्तावेज़\n- बग फिक्स",
+      "model": "translategemma:12b",
+      "timestamp": 1772021434606
+    },
+    "ae2f4323a09fe4a8": {
+      "translation": "Comfy Headless",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "bcf2c6fa752741f4": {
+      "translation": "**Rendere accessibile la potenza di ComfyUI senza la complessità**",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "b0ada5822b79e7d3": {
+      "translation": "Perché Comfy Headless?",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "b0d5bcd7d10d7054": {
+      "translation": "Problema",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "4517dbae8cc3b5e6": {
+      "translation": "Soluzione",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "859008cc19c8d7e4": {
+      "translation": "---------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "db5b48a0e074d983": {
+      "translation": "----------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "ff7a6841934da31c": {
+      "translation": "L'interfaccia a nodi di ComfyUI è eccessivamente complessa.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "db130f39923b360f": {
+      "translation": "Preset semplici e API Python pulita.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "962f9b936c19cfcb": {
+      "translation": "La creazione di prompt è difficile.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "391fb40859fcad49": {
+      "translation": "Miglioramento dei prompt basato sull'intelligenza artificiale.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "a3dd893083963bd3": {
+      "translation": "La generazione di video è complessa.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "afca0f87dc84c8e4": {
+      "translation": "Generazione di video in una sola riga, con preset di modelli.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "2b390ebbbe4d7e26": {
+      "translation": "Non si sa quali impostazioni utilizzare.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "f1347364bad66ce8": {
+      "translation": "Impostazioni ottimali per l'obiettivo desiderato, applicate automaticamente.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "d7e9780fb2074bec": {
+      "translation": "Guida rapida",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "d9b7c0ce6ab5e4e1": {
+      "translation": "Filosofia",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "ee77b3eda29d486a": {
+      "translation": "- **Per gli utenti**: Preset semplici e miglioramento dei prompt basato sull'intelligenza artificiale.\n- **Per gli sviluppatori**: API pulita con compilazione del flusso di lavoro basata su modelli.\n- **Per tutti**: Impostazioni ottimali per l'obiettivo desiderato, applicate automaticamente.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "7b0c73c0f5463dff": {
+      "translation": "Installazione",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "b0c83029d40d5368": {
+      "translation": "Installazione modulare (v2.5.0+)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "6dc594693c43c99b": {
+      "translation": "Installare solo ciò di cui si ha bisogno:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "8f7da8407bfdf5eb": {
+      "translation": "Componenti aggiuntivi disponibili",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "9630bde7cfbbe404": {
+      "translation": "Dipendenze",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "bd2eda68a403934d": {
+      "translation": "Funzionalità",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "4f16a25e942668c8": {
+      "translation": "-------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "f341a9fdde789589": {
+      "translation": "--------------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "05b336e4c3fe1bde": {
+      "translation": "Intelligenza dei prompt di Ollama",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "ab5e14f5464ab6da": {
+      "translation": "WebSockets",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "e8054dfcd798708e": {
+      "translation": "Aggiornamenti in tempo reale dello stato di avanzamento",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "158b70bf8bd430f4": {
+      "translation": "psutil",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "c58d19fdd656e913": {
+      "translation": "Monitoraggio dello stato del sistema",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "cccdd15649ad66d4": {
+      "translation": "Gradio",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "7da57bbffed2f27a": {
+      "translation": "Interfaccia web",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "1685add25f7bc397": {
+      "translation": "Pydantic",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "d4197ad7fdbce5c5": {
+      "translation": "Validazione della configurazione",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "f329be9f4fcbe0c3": {
+      "translation": "OpenTelemetry",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "6da4693ecf6d708c": {
+      "translation": "Tracciamento distribuito",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "b893176f18b9136b": {
+      "translation": "AI + WebSocket",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "4875608910896e27": {
+      "translation": "Pacchetto consigliato",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "6b3e248f7eb5bf05": {
+      "translation": "Tutti quelli sopra elencati",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "8dfb1d646af2545d": {
+      "translation": "Tutto",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "c6432f90e01826d3": {
+      "translation": "Requisiti",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "77c21b634c890735": {
+      "translation": "- Python 3.10+\n- ComfyUI in esecuzione localmente (predefinito: `http://localhost:8188`)\n- Facoltativo: Ollama per il miglioramento dei prompt basato sull'intelligenza artificiale",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "dce66a0db971cc12": {
+      "translation": "Utilizzo",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "e53646e824b4640b": {
+      "translation": "Utilizzo come libreria",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "b1662d3318cdc16a": {
+      "translation": "Con miglioramento dell'intelligenza artificiale",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "a07772edf8ee79bf": {
+      "translation": "Generazione di video",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "0c8b0c8ab5c78ed4": {
+      "translation": "Avviare l'interfaccia web",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "aee217c3071f98da": {
+      "translation": "Oppure tramite riga di comando:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "7d0d3af762b341da": {
+      "translation": "**Funzionalità dell'interfaccia utente (v2.5.1):**\n- **Generazione di immagini** - txt2img con preset, miglioramento dei prompt basato sull'intelligenza artificiale\n- **Generazione di video** - Supporto per AnimateDiff, LTX, Hunyuan, Wan\n- **Coda e cronologia** - Gestione della coda in tempo reale, cronologia dei lavori\n- **Flussi di lavoro** - Sfoglia, importa e crea modelli di flusso di lavoro\n- **Browser dei modelli** - Visualizza checkpoint, LoRA, modelli di movimento\n- **Impostazioni** - Gestione delle connessioni, timeout, informazioni sul sistema",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "f1b538a6f381f2c4": {
+      "translation": "**Tema:** Ocean Mist - accenti in verde acqua su sfondi neutri.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "efd8872aed8fa1ca": {
+      "translation": "Modelli per video (v2.5.0)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "ee7d2920c8050386": {
+      "translation": "Modelli supportati",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "99f316d37e891776": {
+      "translation": "Qualità",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "196591fbc2ad79ea": {
+      "translation": "Ideale per",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "a8e2cbb75c81ee97": {
+      "translation": "------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "1baf11893845ae57": {
+      "translation": "Eccellente",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "9119bbbf362b9248": {
+      "translation": "Uso generale, RTX 3080+",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "b140b69880c2b574": {
+      "translation": "Alta qualità, RTX 4080+",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "767c237309e38813": {
+      "translation": "6-16GB",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "f2d80dad6cabc8cd": {
+      "translation": "Medio",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "b84f9f676f0e9689": {
+      "translation": "GPU di fascia bassa, efficienza",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "4b88156e75ee1314": {
+      "translation": "Adesione al testo",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "7f22d8eb2653b272": {
+      "translation": "AnimateDiff",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "fce5256dd399064a": {
+      "translation": "Anteprime rapide",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "e5d62898e1be553e": {
+      "translation": "Da immagine a video",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "c257d1dfa7b9d0cc": {
+      "translation": "CogVideoX",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "54cb21fc7829ab29": {
+      "translation": "Supporto legacy",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "cf4ca43d68e2b499": {
+      "translation": "Preset per video",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "6ff3f5240d7e26ba": {
+      "translation": "Flag delle funzionalità",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "6b2ca333c8e54660": {
+      "translation": "Verificare quali funzionalità sono disponibili:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "d2c2d9eef529a223": {
+      "translation": "Aggiornamenti dello stato tramite WebSocket",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "7881d0120b404a26": {
+      "translation": "Riferimento API",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "abc22003766c3d88": {
+      "translation": "Classi principali",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "1638f704210b3f06": {
+      "translation": "Gestione degli errori",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "2467ff9891958ea0": {
+      "translation": "Architettura",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "af9937259940013f": {
+      "translation": "Requisiti dei nodi ComfyUI",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "8e0883ebdf5ccf4e": {
+      "translation": "Per la generazione di video",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "23374b5506ab7db4": {
+      "translation": "Installare questi nodi personalizzati:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "126a5aa3979b79c3": {
+      "translation": "**Componenti principali:**\n- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - Codifica video",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "30857939cbf42e80": {
+      "translation": "**Specifici per modello:**\n- LTX-Video 2: Supporto integrato per ComfyUI (versioni recenti)\n- Hunyuan 1.5: [ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)\n- Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)\n- AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "2f7c1121266af499": {
+      "translation": "Progetti correlati",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "706ce9cc9f367bbc": {
+      "translation": "Parte di [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — strumenti open-source per l'apprendimento automatico, progettati per hardware locale.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "31a91d8ee13f53f3": {
+      "translation": "- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - Kit di sviluppo per l'apprendimento automatico\n- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Esplora tutti gli strumenti",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "0870aa1dcfea97cc": {
+      "translation": "Licenza",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "09e3648ddd61f8ad": {
+      "translation": "Licenza MIT - vedi [LICENSE](LICENSE)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "137a2378c67aaccf": {
+      "translation": "Contributi",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "52f3293cb1995d3c": {
+      "translation": "I contributi sono benvenuti! Si prega di aprire una segnalazione di bug o una richiesta di modifica.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "88c0801d6f38d247": {
+      "translation": "Aree di interesse:\n- Supporto aggiuntivo per modelli video\n- Modelli di flusso di lavoro\n- Documentazione\n- Correzioni di bug",
+      "model": "translategemma:12b",
+      "timestamp": 1772021488804
+    },
+    "23fdd7764f3bdc3f": {
+      "translation": "Comfy Headless",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "10370188a6fc1725": {
+      "translation": "**Tornando o poder do ComfyUI acessível sem a complexidade**",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "f6086023e667e6c3": {
+      "translation": "Por que Comfy Headless?",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "7584865271ef289d": {
+      "translation": "Problema",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "c25c96493067e597": {
+      "translation": "Solução",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "eeb243aa53a24f8e": {
+      "translation": "---------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "f5f497abcadce090": {
+      "translation": "----------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "7bbb4af6c966d8e8": {
+      "translation": "A interface de nós do ComfyUI é complexa.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "0df57a114f3585a0": {
+      "translation": "Presets simples e API Python limpa.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "0a961fd0ab7a0a26": {
+      "translation": "A criação de prompts é difícil.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "9f5b0ceca785da65": {
+      "translation": "Aprimoramento de prompts com inteligência artificial.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "637a0b6ebd0edb6e": {
+      "translation": "A geração de vídeos é complexa.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "b276a63df475ed68": {
+      "translation": "Geração de vídeo em uma única linha, com presets de modelos.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "87dfae96f210a53f": {
+      "translation": "Não se sabe quais configurações usar.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "eb30743dcc2a50fd": {
+      "translation": "As melhores configurações para sua intenção, automaticamente.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "c88bcdb0dd505b6b": {
+      "translation": "Início Rápido",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "8e683a85231e8417": {
+      "translation": "Filosofia",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "09803c03e56bdd95": {
+      "translation": "- **Para Usuários**: Presets simples e aprimoramento de prompts com inteligência artificial.\n- **Para Desenvolvedores**: API limpa com compilação de fluxo de trabalho baseada em templates.\n- **Para Todos**: As melhores configurações para sua intenção, automaticamente.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "eb9ad24c5bdd2790": {
+      "translation": "Instalação",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "91c0f61d97186244": {
+      "translation": "Instalação Modular (v2.5.0+)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "d5e5611845e1daac": {
+      "translation": "Instale apenas o que você precisa:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "73c765684561eb59": {
+      "translation": "Recursos Adicionais Disponíveis",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "ef00283dce94593f": {
+      "translation": "Dependências",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "6fbe4c0ef1edf268": {
+      "translation": "Recursos",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "1f04ef9e8cc1d860": {
+      "translation": "-------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "5a4ab7c6a6ad8087": {
+      "translation": "--------------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "7a74273c617ab816": {
+      "translation": "Inteligência de prompt Ollama",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "f4c6756ae33c45a6": {
+      "translation": "Websockets",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "408e34e3f05f4a2f": {
+      "translation": "Atualizações de progresso em tempo real.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "9cc8d0b88088fd9b": {
+      "translation": "psutil",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "a1855faf8e30bb5d": {
+      "translation": "Monitoramento da saúde do sistema.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "b5e2c8b1f6816faf": {
+      "translation": "gradio",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "32d52ff9005ecb7d": {
+      "translation": "Interface web.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "880a243fcce14391": {
+      "translation": "pydantic",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "3f10654a961f3eb3": {
+      "translation": "Validação de configuração.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "037cda4a8297d46f": {
+      "translation": "opentelemetry",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "7779c940256718d7": {
+      "translation": "Rastreamento distribuído.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "a3ce6ef57a7b0e53": {
+      "translation": "IA + Websocket",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "3af23d20977de68a": {
+      "translation": "Pacote recomendado",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "57609afc9eb9a740": {
+      "translation": "Todos os itens acima.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "77038e9803478d58": {
+      "translation": "Tudo.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "50763a2dcc8127ff": {
+      "translation": "Requisitos",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "1f6bfe966cf42888": {
+      "translation": "- Python 3.10+\n- ComfyUI rodando localmente (padrão: `http://localhost:8188`)\n- Opcional: Ollama para aprimoramento de prompts com IA.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "2dc7b1f6ea4a38fe": {
+      "translation": "Uso",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "4903faad192efb68": {
+      "translation": "Use como uma Biblioteca",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "3ddbc3752186bd6f": {
+      "translation": "Com Aprimoramento de IA",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "6f200173f3ed6201": {
+      "translation": "Geração de Vídeos",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "464e03bbd04cf707": {
+      "translation": "Inicie a Interface Web",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "7d67295dea14d9ae": {
+      "translation": "Ou via linha de comando:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "603b58ff90ad7238": {
+      "translation": "**Recursos da Interface (v2.5.1):**\n- **Geração de Imagens** - txt2img com presets, aprimoramento de prompts com IA.\n- **Geração de Vídeos** - Suporte para AnimateDiff, LTX, Hunyuan, Wan.\n- **Fila e Histórico** - Gerenciamento de fila em tempo real, histórico de tarefas.\n- **Fluxos de Trabalho** - Navegue, importe e crie modelos de fluxo de trabalho.\n- **Navegador de Modelos** - Visualize checkpoints, LoRAs, modelos de movimento.\n- **Configurações** - Gerenciamento de conexão, timeouts, informações do sistema.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "dc0786c6a5610a0f": {
+      "translation": "**Tema:** Ocean Mist - toques suaves em tons de verde-água em fundos neutros.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "7b3af7c0e81aa5b2": {
+      "translation": "Modelos de Vídeo (v2.5.0)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "175c519dc2b4663d": {
+      "translation": "Modelos Suportados",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "2b68bf6a965914a2": {
+      "translation": "Qualidade",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "fcbc6f7df26a73a6": {
+      "translation": "Ideal para",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "93982127e708d976": {
+      "translation": "------",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "c859231602af1909": {
+      "translation": "Excelente",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "b2034a3e22bcfe08": {
+      "translation": "Uso geral, RTX 3080+",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "0e1daa4baedaeecd": {
+      "translation": "Alta qualidade, RTX 4080+",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "3110332a8c40fd12": {
+      "translation": "6-16GB",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "ffbc2e4f57e362b1": {
+      "translation": "Médio",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "be6d07246d9d0b90": {
+      "translation": "GPUs de baixo custo, eficiência.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "d7edf7e9ff7a86e5": {
+      "translation": "Adesão ao texto",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "8bf2564434296755": {
+      "translation": "AnimateDiff",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "9551e6bbd2491984": {
+      "translation": "Pré-visualizações rápidas",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "b478b79d97ba42d2": {
+      "translation": "Imagem para vídeo",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "51135cf1385fc912": {
+      "translation": "CogVideoX",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "f68f917764a2d632": {
+      "translation": "Suporte legado",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "a0426e799a974450": {
+      "translation": "Presets de Vídeo",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "6df2b2103d17263a": {
+      "translation": "Flags de Recursos",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "a55d125dff6278a4": {
+      "translation": "Verifique quais recursos estão disponíveis:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "233ca86e4decebaa": {
+      "translation": "Progresso via Websocket",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "835bc14fd333f961": {
+      "translation": "Referência da API",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "a587dd35f38e7dd1": {
+      "translation": "Classes Principais",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "f8cd6909618d47ec": {
+      "translation": "Tratamento de Erros",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "57a87b809fa8de1a": {
+      "translation": "Arquitetura",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "c46ffd1449272a89": {
+      "translation": "Requisitos de Nós do ComfyUI",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "1a18c05b6a13b0c2": {
+      "translation": "Para Geração de Vídeo",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "ec6c54f7b7ffca1e": {
+      "translation": "Instale estes nós personalizados:",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "1e7fa033e00d7f26": {
+      "translation": "**Núcleo:**\n- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - Codificação de vídeo",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "e3450cfed1c3bcf3": {
+      "translation": "**Específico para cada modelo:**\n- LTX-Video 2: Suporte integrado para ComfyUI (versões recentes)\n- Hunyuan 1.5: [ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)\n- Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)\n- AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "989f40c287471598": {
+      "translation": "Projetos relacionados",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "57598dbba0fe3a4c": {
+      "translation": "Parte de [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — conjunto de ferramentas de aprendizado de máquina de código aberto para hardware local.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "21494f8d2002133b": {
+      "translation": "- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - Kit de desenvolvimento para aprendizado de máquina\n- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Navegue por todas as ferramentas",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "2aca9b0e72841008": {
+      "translation": "Licença",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "36aed30ae734fd73": {
+      "translation": "Licença MIT - veja [LICENSE](LICENSE)",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "f6c8880997fa829d": {
+      "translation": "Contribuições",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "f11f18240d8789f3": {
+      "translation": "Contribuições são bem-vindas! Por favor, abra um problema ou solicitação de alteração.",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    },
+    "6db7197933f081f9": {
+      "translation": "Áreas de interesse:\n- Suporte adicional para modelos de vídeo\n- Modelos de fluxo de trabalho\n- Documentação\n- Correção de bugs",
+      "model": "translategemma:12b",
+      "timestamp": 1772021541245
+    }
+  }
+}

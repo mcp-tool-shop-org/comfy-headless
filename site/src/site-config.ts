@@ -14,7 +14,7 @@ export const config: SiteConfig = {
     headlineAccent: 'minus the complexity.',
     description: 'Production-ready headless client for ComfyUI. AI-powered prompt enhancement, 5+ video models, modular installs, and a Gradio UI — all from a clean Python API.',
     primaryCta: { href: '#quickstart', label: 'Quick start' },
-    secondaryCta: { href: '#features', label: 'See features' },
+    secondaryCta: { href: 'handbook/', label: 'Read the Handbook' },
     previews: [
       {
         label: 'Install',

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.6] - 2026-02-27
+
+### Added
+- SHIP_GATE.md and SCORECARD.md (Shipcheck audit — 50/50)
+- Security & Data Scope section in README
+- Codecov badge in README
+
+### Changed
+- Standard report email in SECURITY.md
+- Removed redundant h1 heading (logo contains product name)
+
 ## [2.5.1] - 2026-01-18
 
 ### Security
