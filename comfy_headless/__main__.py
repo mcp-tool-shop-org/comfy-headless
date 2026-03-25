@@ -21,8 +21,31 @@ def main():
     )
     parser.add_argument("--version", "-v", action="store_true", help="Show version and exit")
     parser.add_argument("--check", action="store_true", help="Check feature availability and exit")
+    parser.add_argument("--diagnose", action="store_true", help="Show diagnostic info and exit")
 
     args = parser.parse_args()
+
+    # Diagnose
+    if args.diagnose:
+        import platform
+
+        from . import __version__
+        from .feature_flags import FEATURES
+
+        print(f"comfy-headless v{__version__}")
+        print(f"Python {platform.python_version()} ({platform.platform()})")
+        print(f"\nFeatures:")
+        for name, available in sorted(FEATURES.items()):
+            status = "[+]" if available else "[ ]"
+            print(f"  {status} {name}")
+        print(f"\nDefault ComfyUI URL: http://localhost:8188")
+        try:
+            from .config import settings
+
+            print(f"Config URL: {settings.comfyui.url}")
+        except Exception:
+            print("Config: using defaults")
+        sys.exit(0)
 
     # Version check
     if args.version:

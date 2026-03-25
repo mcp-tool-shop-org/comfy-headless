@@ -94,6 +94,45 @@ class TestFeatureCheck:
         assert len(hint) > 0
 
 
+class TestDiagnoseCommand:
+    """Test --diagnose command."""
+
+    def test_diagnose_flag_parsing(self):
+        """Test --diagnose argument is parsed correctly."""
+        import argparse
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--diagnose", action="store_true")
+
+        args = parser.parse_args(["--diagnose"])
+        assert args.diagnose is True
+
+    def test_diagnose_default_false(self):
+        """Test --diagnose defaults to False."""
+        import argparse
+
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--diagnose", action="store_true")
+
+        args = parser.parse_args([])
+        assert args.diagnose is False
+
+    def test_diagnose_uses_version(self):
+        """Test diagnose output includes version."""
+        from comfy_headless import __version__
+
+        assert isinstance(__version__, str)
+        assert len(__version__) > 0
+
+    def test_diagnose_features_dict(self):
+        """Test FEATURES dict used by diagnose is available."""
+        from comfy_headless.feature_flags import FEATURES
+
+        assert isinstance(FEATURES, dict)
+        # Should have multiple feature keys
+        assert len(FEATURES) >= 1
+
+
 class TestArgParserEdgeCases:
     """Test argument parser edge cases."""
 

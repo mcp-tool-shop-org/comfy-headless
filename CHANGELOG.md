@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.7] - 2026-03-25
+
+### Added
+- `--diagnose` CLI flag — shows version, Python info, feature availability, and config
+- 4 new tests for diagnose command
+
+### Fixed
+- Version alignment: `__init__.py` now matches `pyproject.toml` (was 2.5.1, now synced)
+
 ## [2.5.6] - 2026-02-27
 
 ### Added

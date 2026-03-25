@@ -318,7 +318,7 @@ from .workflows import (
     validate_workflow_dag,
 )
 
-__version__ = "2.5.1"
+__version__ = "2.5.7"
 
 # Lazy loading for optional features with helpful error messages
 _LAZY_IMPORTS = {

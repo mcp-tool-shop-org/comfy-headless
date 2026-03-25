@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "comfy-headless"
-version = "2.5.6"
+version = "2.5.7"
 description = "Production-ready headless client for ComfyUI with AI-powered prompt intelligence, video generation, and modular architecture"
 readme = "README.md"
 license = "MIT"
