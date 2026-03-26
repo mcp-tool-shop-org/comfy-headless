@@ -34,11 +34,11 @@ def main():
 
         print(f"comfy-headless v{__version__}")
         print(f"Python {platform.python_version()} ({platform.platform()})")
-        print(f"\nFeatures:")
+        print("\nFeatures:")
         for name, available in sorted(FEATURES.items()):
             status = "[+]" if available else "[ ]"
             print(f"  {status} {name}")
-        print(f"\nDefault ComfyUI URL: http://localhost:8188")
+        print("\nDefault ComfyUI URL: http://localhost:8188")
         try:
             from .config import settings
 
