@@ -34,6 +34,7 @@ Comfy Headless is a Python library that wraps ComfyUI's full power behind a clea
 | [Configuration](./configuration/) | Feature flags, WebSocket progress, and runtime settings |
 | [API Reference](./api-reference/) | Core classes, error handling, and the full public API surface |
 | [Architecture](./architecture/) | Project structure, module responsibilities, and ComfyUI node requirements |
+| [For Beginners](./beginners/) | New to Comfy Headless? Start here |
 
 ## Philosophy
 
