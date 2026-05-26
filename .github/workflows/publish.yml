@@ -15,23 +15,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-  dry_run:
-        description: 'Dry run (test build without publishing)'
-        required: false
-        default: 'false'
-        type: boolean
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-<<<<<<< HEAD
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
-=======
->>>>>>> fe772d4 (fix: streamline publish workflow — test on ubuntu-latest, add concurrency)
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -65,7 +52,6 @@ jobs:
           name: dist
           path: dist/
 
-<<<<<<< HEAD
   test-install:
     needs: build
     runs-on: ${{ matrix.os }}
@@ -96,8 +82,6 @@ jobs:
       - name: Test CLI
         run: comfy-headless --version
 
-=======
->>>>>>> fe772d4 (fix: streamline publish workflow — test on ubuntu-latest, add concurrency)
   publish-pypi:
     needs: build
     runs-on: ubuntu-latest
