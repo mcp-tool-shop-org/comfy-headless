@@ -630,7 +630,9 @@ class VideoWorkflowBuilder:
             prompt: Positive prompt
             negative: Negative prompt
             settings: Video settings
-            init_image: Base64 image for img2vid (SVD)
+            init_image: Name of an image already present in ComfyUI's input
+                folder, as returned by ``ComfyClient.upload_image()["ref"]``.
+                Wired straight into a core ``LoadImage`` node.
 
         Returns:
             ComfyUI workflow JSON
@@ -812,7 +814,12 @@ class VideoWorkflowBuilder:
         seed: int,
         init_image: str | None = None,
     ) -> dict[str, Any]:
-        """Build Stable Video Diffusion workflow (img2vid)."""
+        """
+        Build Stable Video Diffusion workflow (img2vid).
+
+        ``init_image`` is a ComfyUI-side image name (see the class docstring),
+        not image data.
+        """
         if not init_image:
             raise ValueError("SVD requires an init_image")
 
@@ -822,7 +829,7 @@ class VideoWorkflowBuilder:
         num_frames = 25 if settings.model == VideoModel.SVD_XT else 14
 
         return {
-            "1": {"class_type": "LoadImageFromBase64", "inputs": {"base64_data": init_image}},
+            "1": {"class_type": "LoadImage", "inputs": {"image": init_image}},
             "2": {"class_type": "ImageOnlyCheckpointLoader", "inputs": {"ckpt_name": model_name}},
             "3": {
                 "class_type": "SVD_img2vid_Conditioning",
@@ -1224,8 +1231,8 @@ class VideoWorkflowBuilder:
         # Image-to-video variant
         if init_image:
             workflow["2.5"] = {
-                "class_type": "LoadImageFromBase64",
-                "inputs": {"base64_data": init_image},
+                "class_type": "LoadImage",
+                "inputs": {"image": init_image},
             }
             workflow["3"] = {
                 "class_type": "LTXVImgToVideo",
@@ -1339,8 +1346,8 @@ class VideoWorkflowBuilder:
         # Image-to-video extension
         if init_image:
             workflow["11"] = {
-                "class_type": "LoadImageFromBase64",
-                "inputs": {"base64_data": init_image},
+                "class_type": "LoadImage",
+                "inputs": {"image": init_image},
             }
             workflow["12"] = {
                 "class_type": "CLIPVisionLoader",

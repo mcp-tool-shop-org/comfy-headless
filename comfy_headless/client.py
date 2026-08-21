@@ -18,9 +18,11 @@ Usage:
 """
 
 import json
+import mimetypes
 import time
 import uuid
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -31,6 +33,10 @@ from .config import settings
 from .exceptions import (
     ComfyUIConnectionError,
     ComfyUIOfflineError,
+    InvalidParameterError,
+    SecurityError,
+    UploadError,
+    ValidationError,
 )
 from .logging_config import LogContext, get_logger
 from .retry import RateLimiter, get_circuit_breaker
@@ -87,6 +93,145 @@ def _safe_get_nested(data: Any, *keys: str, default: Any = None) -> Any:
         if current is None:
             return default
     return current
+
+
+# =============================================================================
+# UPLOAD HELPERS
+# =============================================================================
+
+# Folder types accepted by ComfyUI's /upload/* routes.
+UPLOAD_FOLDER_TYPES = ("input", "temp", "output")
+
+# Magic-byte signatures used to pick an extension when raw bytes are uploaded
+# without a filename. ComfyUI stores whatever name we send, and node COMBO
+# lists filter by extension, so guessing well matters.
+_IMAGE_MAGIC: tuple[tuple[bytes, str], ...] = (
+    (b"\x89PNG\r\n\x1a\n", ".png"),
+    (b"\xff\xd8\xff", ".jpg"),
+    (b"GIF87a", ".gif"),
+    (b"GIF89a", ".gif"),
+    (b"BM", ".bmp"),
+)
+
+
+def _sniff_image_extension(data: bytes) -> str:
+    """Guess a file extension from image magic bytes (defaults to .png)."""
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return ".webp"
+    for magic, ext in _IMAGE_MAGIC:
+        if data.startswith(magic):
+            return ext
+    return ".png"
+
+
+def _normalize_upload_subfolder(subfolder: str | None) -> str:
+    """
+    Normalize a server-side subfolder and reject traversal attempts.
+
+    ComfyUI interprets the subfolder relative to its input directory, so a
+    caller-supplied value must never be able to climb out of it.
+
+    Raises:
+        SecurityError: If the subfolder looks like a traversal attempt
+    """
+    if not subfolder:
+        return ""
+
+    normalized = str(subfolder).replace("\\", "/").strip("/")
+    if not normalized:
+        return ""
+
+    parts = [part for part in normalized.split("/") if part not in ("", ".")]
+    if any(part == ".." for part in parts) or ":" in normalized:
+        logger.warning("Rejected upload subfolder", extra={"upload_subfolder": str(subfolder)})
+        raise SecurityError(
+            "Invalid upload subfolder: possible traversal attempt",
+            suggestions=["Use a simple relative subfolder name such as 'refs'"],
+        )
+    return "/".join(parts)
+
+
+def _resolve_upload_payload(
+    path_or_bytes: "str | Path | bytes | bytearray | memoryview",
+    filename: str | None,
+) -> tuple[bytes, str]:
+    """
+    Read an upload source into (bytes, filename).
+
+    Args:
+        path_or_bytes: Local file path or raw image bytes
+        filename: Explicit name to store on the server (optional)
+
+    Returns:
+        Tuple of (file bytes, filename to send)
+
+    Raises:
+        InvalidParameterError: If the source type is unsupported
+        ValidationError: If the file cannot be read
+    """
+    if isinstance(path_or_bytes, (bytes, bytearray, memoryview)):
+        data = bytes(path_or_bytes)
+        name = filename or f"comfy_headless_{uuid.uuid4().hex[:8]}{_sniff_image_extension(data)}"
+        return data, name
+
+    if isinstance(path_or_bytes, (str, Path)):
+        source = Path(path_or_bytes)
+        try:
+            data = source.read_bytes()
+        except OSError as e:
+            raise ValidationError(
+                f"Unable to read image file: {source}",
+                user_message="That image file could not be read",
+                details={"path": str(source)},
+                suggestions=["Check the path exists and is readable"],
+                cause=e,
+            ) from e
+        return data, filename or source.name
+
+    raise InvalidParameterError(
+        parameter="path_or_bytes",
+        value=type(path_or_bytes).__name__,
+        reason="expected a file path or raw image bytes",
+    )
+
+
+def _normalize_original_ref(original_ref: "dict | str") -> str:
+    """
+    Serialize the ``original_ref`` field for /upload/mask.
+
+    Accepts either the dict returned by :meth:`ComfyClient.upload_image` or a
+    bare filename, and emits the JSON blob ComfyUI expects.
+
+    Raises:
+        ValidationError: If no usable filename can be found
+    """
+    if isinstance(original_ref, str):
+        name: str | None = original_ref
+        subfolder: Any = ""
+        folder_type: Any = "input"
+    elif isinstance(original_ref, dict):
+        name = original_ref.get("name") or original_ref.get("filename")
+        subfolder = original_ref.get("subfolder", "")
+        folder_type = original_ref.get("type", "input")
+    else:
+        raise ValidationError(
+            f"Invalid original_ref type: {type(original_ref).__name__}",
+            suggestions=["Pass the dict returned by upload_image(), or a filename string"],
+        )
+
+    if not isinstance(name, str) or not name:
+        raise ValidationError(
+            "original_ref must identify the base image by name",
+            suggestions=["Pass the dict returned by upload_image(), or a filename string"],
+        )
+
+    return json.dumps(
+        {
+            "filename": name,
+            "subfolder": subfolder if isinstance(subfolder, str) else "",
+            "type": folder_type if isinstance(folder_type, str) and folder_type else "input",
+        }
+    )
 
 
 # Lazy import for video module to avoid circular imports
@@ -894,6 +1039,286 @@ class ComfyClient:
         return None
 
     # =========================================================================
+    # ASSET UPLOADS
+    # =========================================================================
+
+    def _upload_asset(
+        self,
+        endpoint: str,
+        path_or_bytes: "str | Path | bytes | bytearray | memoryview",
+        *,
+        filename: str | None = None,
+        subfolder: str = "",
+        overwrite: bool = False,
+        folder_type: str = "input",
+        extra_fields: dict[str, str] | None = None,
+    ) -> dict:
+        """
+        Shared multipart uploader for /upload/image and /upload/mask.
+
+        Args:
+            endpoint: Upload route (e.g. "/upload/image")
+            path_or_bytes: Local file path or raw image bytes
+            filename: Name to store on the server (defaults to the source name)
+            subfolder: Optional subfolder beneath the target folder
+            overwrite: Replace an existing file instead of letting the server rename
+            folder_type: "input" (default), "temp", or "output"
+            extra_fields: Additional multipart form fields
+
+        Returns:
+            Dict with the server-reported name/subfolder/type plus a ready-to-use
+            "ref" string for a LoadImage node.
+
+        Raises:
+            InvalidParameterError: If folder_type or the source type is invalid
+            SecurityError: If the subfolder looks like a traversal attempt
+            ValidationError: If the source cannot be read or is empty
+            UploadError: If the server rejects the upload or answers unexpectedly
+            ComfyUIConnectionError: If the connection fails
+        """
+        if folder_type not in UPLOAD_FOLDER_TYPES:
+            raise InvalidParameterError(
+                parameter="type",
+                value=folder_type,
+                reason="unsupported ComfyUI folder type",
+                allowed_values=list(UPLOAD_FOLDER_TYPES),
+            )
+
+        safe_subfolder = _normalize_upload_subfolder(subfolder)
+        data, raw_name = _resolve_upload_payload(path_or_bytes, filename)
+
+        # Strip any directory component: only the basename is ever sent, so a
+        # crafted filename cannot place the file outside the target folder.
+        safe_name = Path(str(raw_name).replace("\\", "/")).name
+        if not safe_name:
+            raise ValidationError(
+                "Upload filename cannot be empty",
+                suggestions=["Pass filename='myimage.png' explicitly"],
+            )
+        if not data:
+            raise ValidationError(
+                "Refusing to upload empty image data",
+                details={"filename": safe_name},
+                suggestions=["Check the source file is not zero bytes"],
+            )
+
+        content_type = mimetypes.guess_type(safe_name)[0] or "application/octet-stream"
+        files = {"image": (safe_name, data, content_type)}
+
+        form: dict[str, str] = {"type": folder_type}
+        if safe_subfolder:
+            form["subfolder"] = safe_subfolder
+        if overwrite:
+            # Only sent when True on purpose: some ComfyUI builds treat the mere
+            # presence of this field as truthy, so a literal "false" could
+            # silently clobber an existing file.
+            form["overwrite"] = "true"
+        if extra_fields:
+            form.update(extra_fields)
+
+        request_id = str(uuid.uuid4())[:8]
+
+        with LogContext(request_id):
+            # NOTE: logging's `extra` cannot carry reserved LogRecord attribute
+            # names ("filename", "module", ...), hence the upload_* prefixes.
+            logger.info(
+                "Uploading asset to ComfyUI",
+                extra={
+                    "endpoint": endpoint,
+                    "upload_filename": safe_name,
+                    "upload_subfolder": safe_subfolder,
+                    "upload_type": folder_type,
+                    "upload_bytes": len(data),
+                },
+            )
+
+            response = self._post(
+                endpoint,
+                files=files,
+                data=form,
+                timeout=settings.comfyui.timeout_image,
+            )
+
+            if not response.ok:
+                raw_body = getattr(response, "text", "") or ""
+                raise UploadError(
+                    message=f"Upload failed with status {response.status_code}",
+                    filename=safe_name,
+                    subfolder=safe_subfolder or None,
+                    endpoint=endpoint,
+                    status_code=response.status_code,
+                    request_id=request_id,
+                    details={"response_body": raw_body[:200] if isinstance(raw_body, str) else ""},
+                )
+
+            try:
+                payload = _safe_json_parse(response, f"uploading to {endpoint}")
+            except ComfyUIConnectionError as e:
+                raise UploadError(
+                    message=f"ComfyUI returned a non-JSON response from {endpoint}",
+                    filename=safe_name,
+                    subfolder=safe_subfolder or None,
+                    endpoint=endpoint,
+                    request_id=request_id,
+                    cause=e,
+                    suggestions=["Confirm the server really is ComfyUI and not a proxy"],
+                ) from e
+
+            if not isinstance(payload, dict):
+                raise UploadError(
+                    message=f"Unexpected upload response shape from {endpoint}",
+                    filename=safe_name,
+                    subfolder=safe_subfolder or None,
+                    endpoint=endpoint,
+                    request_id=request_id,
+                    details={"response_type": type(payload).__name__},
+                )
+
+            # The SERVER is authoritative about the stored name. With
+            # overwrite=false a name collision makes ComfyUI store the file
+            # under a new name (a counter is appended) and report it here, so
+            # never assume it matches what was sent. Falling back to the local
+            # filename would silently point the workflow at the wrong image.
+            stored_name = payload.get("name") or payload.get("filename")
+            if not isinstance(stored_name, str) or not stored_name:
+                raise UploadError(
+                    message=f"Upload response from {endpoint} did not report a stored filename",
+                    filename=safe_name,
+                    subfolder=safe_subfolder or None,
+                    endpoint=endpoint,
+                    request_id=request_id,
+                    details={"response_keys": sorted(str(k) for k in payload)},
+                    suggestions=[
+                        "Expected JSON like {'name': ..., 'subfolder': ..., 'type': ...}",
+                        "The server may be an incompatible or proxied ComfyUI build",
+                    ],
+                )
+
+            raw_subfolder = payload.get("subfolder")
+            stored_subfolder = raw_subfolder if isinstance(raw_subfolder, str) else safe_subfolder
+            raw_type = payload.get("type")
+            stored_type = raw_type if isinstance(raw_type, str) and raw_type else folder_type
+
+            if stored_name != safe_name:
+                logger.warning(
+                    "ComfyUI stored the upload under a different name (collision rename)",
+                    extra={"requested_name": safe_name, "stored_name": stored_name},
+                )
+
+            ref = f"{stored_subfolder}/{stored_name}" if stored_subfolder else stored_name
+            logger.info("Upload complete", extra={"upload_ref": ref, "upload_type": stored_type})
+
+            return {
+                "name": stored_name,
+                "subfolder": stored_subfolder,
+                "type": stored_type,
+                "ref": ref,
+            }
+
+    def upload_image(
+        self,
+        path_or_bytes: "str | Path | bytes | bytearray | memoryview",
+        *,
+        filename: str | None = None,
+        subfolder: str = "",
+        overwrite: bool = False,
+        type: str = "input",
+    ) -> dict:
+        """
+        Upload an image into ComfyUI's input folder (POST /upload/image).
+
+        This is how an image gets *into* ComfyUI for img2img, ControlNet, Edit,
+        image-to-3D and image-to-video workflows. Feed the returned "ref" to a
+        core LoadImage node:
+
+            uploaded = client.upload_image("photo.png")
+            workflow["1"] = {
+                "class_type": "LoadImage",
+                "inputs": {"image": uploaded["ref"]},
+            }
+
+        The name in the response is authoritative. With overwrite=False (the
+        default) ComfyUI renames on collision rather than clobbering, so the
+        stored name may differ from the one sent - always use the returned value.
+
+        The upload can be verified by reading the file back off the server:
+
+            client.get_image(uploaded["name"], uploaded["subfolder"], "input")
+
+        Args:
+            path_or_bytes: Local file path or raw image bytes
+            filename: Name to store on the server (defaults to the source name;
+                required in spirit for raw bytes, where a name is generated)
+            subfolder: Optional subfolder beneath the target folder
+            overwrite: Replace an existing file instead of letting the server rename
+            type: "input" (default), "temp", or "output"
+
+        Returns:
+            Dict with "name", "subfolder", "type" as reported by the server, plus
+            "ref" - the exact string to hand a LoadImage node.
+
+        Raises:
+            InvalidParameterError: If type or the source type is invalid
+            SecurityError: If the subfolder looks like a traversal attempt
+            ValidationError: If the source cannot be read or is empty
+            UploadError: If the server rejects the upload or answers unexpectedly
+            ComfyUIConnectionError: If the connection fails
+        """
+        return self._upload_asset(
+            "/upload/image",
+            path_or_bytes,
+            filename=filename,
+            subfolder=subfolder,
+            overwrite=overwrite,
+            folder_type=type,
+        )
+
+    def upload_mask(
+        self,
+        path_or_bytes: "str | Path | bytes | bytearray | memoryview",
+        original_ref: "dict | str",
+        *,
+        filename: str | None = None,
+        subfolder: str = "",
+        overwrite: bool = False,
+        type: str = "input",
+    ) -> dict:
+        """
+        Upload a mask for an already-uploaded image (POST /upload/mask).
+
+        Used for inpainting / mask-editing flows. ``original_ref`` identifies the
+        base image the mask belongs to and accepts either the dict returned by
+        :meth:`upload_image` or a bare filename.
+
+            base = client.upload_image("photo.png")
+            mask = client.upload_mask("mask.png", base)
+
+        Args:
+            path_or_bytes: Local file path or raw mask-image bytes
+            original_ref: The base image (upload_image() result dict, or filename)
+            filename: Name to store on the server (defaults to the source name)
+            subfolder: Optional subfolder beneath the target folder
+            overwrite: Replace an existing file instead of letting the server rename
+            type: "input" (default), "temp", or "output"
+
+        Returns:
+            Same shape as :meth:`upload_image`.
+
+        Raises:
+            Same as :meth:`upload_image`, plus ValidationError if original_ref
+            does not identify a base image.
+        """
+        return self._upload_asset(
+            "/upload/mask",
+            path_or_bytes,
+            filename=filename,
+            subfolder=subfolder,
+            overwrite=overwrite,
+            folder_type=type,
+            extra_fields={"original_ref": _normalize_original_ref(original_ref)},
+        )
+
+    # =========================================================================
     # FILE DOWNLOADS
     # =========================================================================
 
@@ -1425,7 +1850,9 @@ class ComfyClient:
             negative_prompt: What to avoid
             preset: Video preset (quick, standard, quality, cinematic, portrait,
                    action, svd_short, svd_long, cogvideo, hunyuan, hunyuan_fast)
-            init_image: Base64 image for img2vid models (SVD)
+            init_image: Image name for img2vid models (SVD/LTXV/Wan). Upload the
+                   image first with upload_image() and pass its "ref" value; it
+                   is wired into a core LoadImage node.
             wait: Whether to wait for completion
             timeout: Generation timeout
             on_progress: Optional callback(progress: 0.0-1.0, status: str) for progress updates

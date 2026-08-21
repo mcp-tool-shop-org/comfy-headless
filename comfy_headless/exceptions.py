@@ -54,6 +54,8 @@ __all__ = [
     "QueueError",
     "GenerationTimeoutError",
     "GenerationFailedError",
+    # Upload
+    "UploadError",
     # Workflow errors
     "WorkflowError",
     "WorkflowCompilationError",
@@ -473,6 +475,43 @@ class NoOutputError(GenerationError):
         if prompt_id:
             details["prompt_id"] = prompt_id
         super().__init__(message, code="NO_OUTPUT", details=details, **kwargs)
+
+
+# =============================================================================
+# UPLOAD ERRORS
+# =============================================================================
+
+
+class UploadError(ComfyHeadlessError):
+    """Failed to upload an asset (image/mask) to ComfyUI's input folder."""
+
+    _default_user_message = "Unable to upload the image to ComfyUI"
+    _default_eli5_message = "The picture couldn't be sent to the image generator"
+    _default_suggestions = [
+        "Check that ComfyUI is running and reachable",
+        "Verify the file exists and is a readable image",
+        "Confirm the ComfyUI server accepts uploads on /upload/image",
+    ]
+
+    def __init__(
+        self,
+        message: str = "Failed to upload image",
+        filename: str | None = None,
+        subfolder: str | None = None,
+        endpoint: str | None = None,
+        status_code: int | None = None,
+        **kwargs,
+    ):
+        details = kwargs.pop("details", {})
+        if filename:
+            details["filename"] = filename
+        if subfolder:
+            details["subfolder"] = subfolder
+        if endpoint:
+            details["endpoint"] = endpoint
+        if status_code is not None:
+            details["status_code"] = status_code
+        super().__init__(message, code="UPLOAD_ERROR", details=details, **kwargs)
 
 
 # =============================================================================
