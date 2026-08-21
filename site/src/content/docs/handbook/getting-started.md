@@ -131,6 +131,28 @@ print(get_recommended_preset(vram_gb=16))
 
 See [Video Models](../video-models/) for the full list and what each family needs.
 
+## Your first mesh, track, and caption
+
+The same client covers the other profiles — every call returns the same dict shape, and
+`get_file()` fetches any output type:
+
+```python
+# 3D: image in, GLB out (all core nodes)
+result = client.generate_3d("character.png")
+open("character.glb", "wb").write(client.get_file(**result["meshes"][0]))
+
+# Audio: text-to-music (all core nodes, MIT weights)
+result = client.generate_audio(tags="lo-fi, jazz, mellow", seconds=30)
+open("track.flac", "wb").write(client.get_file(**result["audios"][0]))
+
+# Inference: ask about an image (needs the comfyui-florence2 pack)
+result = client.run_inference("photo.png", task="caption")
+print(result["text"])
+```
+
+See [The Six Profiles](../profiles/) for what each profile can do and which (few) need
+custom node packs.
+
 ## Before you spend a long run
 
 Video graphs can require custom node packs. Ask first rather than discovering it at submit

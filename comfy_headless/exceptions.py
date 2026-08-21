@@ -68,6 +68,7 @@ __all__ = [
     "ValidationError",
     "InvalidPromptError",
     "InvalidParameterError",
+    "GraphAddressError",
     "DimensionError",
     "SecurityError",
     # Exception groups
@@ -740,6 +741,27 @@ class InvalidParameterError(ValidationError):
         super().__init__(
             msg, code="INVALID_PARAMETER", user_message=user_msg, details=details, **kwargs
         )
+
+
+class GraphAddressError(ValidationError):
+    """
+    A graph address (node id or dotted field path) cannot be applied.
+
+    Raised by the addressing layer (v3.1.0) when a dotted sub-field path is
+    malformed, targets a node that does not exist, or writes into a
+    dynamic-combo branch that the selected choice does not activate
+    (e.g. ``format.quality`` while ``format="flac"``). Failing at
+    construction time replaces ComfyUI's opaque ``required_input_missing``
+    rejection -- and catches the worse case where the server accepts a field
+    from an inactive branch and silently ignores it.
+    """
+
+    _default_user_message = "Invalid workflow field address"
+    _default_eli5_message = "That setting doesn't exist where the workflow tried to put it"
+
+    def __init__(self, message: str, **kwargs):
+        kwargs.setdefault("code", "GRAPH_ADDRESS")
+        super().__init__(message, **kwargs)
 
 
 class DimensionError(ValidationError):

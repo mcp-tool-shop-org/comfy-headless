@@ -1,0 +1,663 @@
+{
+  "entries": [
+    {
+      "id": "node-facts",
+      "keywords": [
+        "nodes",
+        "packs",
+        "provenance",
+        "history",
+        "retrieval"
+      ],
+      "kind": "node-facts",
+      "path": "nodes.json",
+      "profile": "cross-cutting",
+      "summary": "Machine-readable: pack membership for every non-core class_type, pack install metadata, output-node classes, and /history output keys per terminator.",
+      "title": "Node provenance and retrieval contract"
+    },
+    {
+      "id": "page-addressing",
+      "keywords": [
+        "addressing",
+        "types",
+        "union",
+        "dynamic-combo",
+        "dotted-fields",
+        "validate_node_input",
+        "typestate"
+      ],
+      "kind": "knowledge-page",
+      "path": "addressing.md",
+      "profile": "cross-cutting",
+      "summary": "The three mechanics under every profile \u2014 server-parity union type matching, dotted dynamic-combo sub-fields, and presence-aware conditional inputs.",
+      "title": "Addressing and typing layer"
+    },
+    {
+      "id": "profile-audio",
+      "keywords": [
+        "audio",
+        "music",
+        "ace-step",
+        "lyrics",
+        "stems",
+        "separation",
+        "flac",
+        "saveaudioadvanced"
+      ],
+      "kind": "profile-guide",
+      "path": "profiles/audio.md",
+      "profile": "audio",
+      "summary": "ACE-Step 1.5 text-to-music (all core, MIT weights) plus pack-based stem separation, with the two coupling invariants enforced in the builder.",
+      "title": "Audio profile"
+    },
+    {
+      "id": "profile-image",
+      "keywords": [
+        "image",
+        "txt2img",
+        "qwen",
+        "sdxl",
+        "edit",
+        "controlnet",
+        "inpaint",
+        "upscale"
+      ],
+      "kind": "profile-guide",
+      "path": "profiles/image.md",
+      "profile": "image",
+      "summary": "Text-to-image (SD1.5/SDXL templates + Qwen-Image-2512), instruction editing (Qwen-Edit-2511), and union ControlNet on one code path.",
+      "title": "Image profile"
+    },
+    {
+      "id": "profile-inference",
+      "keywords": [
+        "inference",
+        "caption",
+        "tag",
+        "detect",
+        "segment",
+        "ocr",
+        "florence2",
+        "savetext"
+      ],
+      "kind": "profile-guide",
+      "path": "profiles/inference.md",
+      "profile": "inference",
+      "summary": "Non-generative model calls \u2014 caption, tag, detect, segment, OCR \u2014 through Florence-2, with every graph guaranteed to terminate in an output node.",
+      "title": "Inference profile"
+    },
+    {
+      "id": "profile-metadata",
+      "keywords": [
+        "metadata",
+        "provenance",
+        "png",
+        "text-chunks",
+        "extra_pnginfo",
+        "rerun",
+        "workflow-export"
+      ],
+      "kind": "profile-guide",
+      "path": "profiles/metadata.md",
+      "profile": "metadata",
+      "summary": "Provenance round-trip \u2014 read the runnable graph back out of an output PNG, re-run it verbatim, and write custom provenance via extra_pnginfo.",
+      "title": "Metadata profile"
+    },
+    {
+      "id": "profile-three_d",
+      "keywords": [
+        "3d",
+        "mesh",
+        "glb",
+        "hunyuan3d",
+        "voxel",
+        "image-to-3d",
+        "savegLB"
+      ],
+      "kind": "profile-guide",
+      "path": "profiles/three_d.md",
+      "profile": "three_d",
+      "summary": "Image-to-mesh via Hunyuan3D-2, entirely core nodes, exporting GLB through SaveGLB and retrieved like any other output.",
+      "title": "3D profile"
+    },
+    {
+      "id": "profile-video",
+      "keywords": [
+        "video",
+        "animatediff",
+        "svd",
+        "hunyuan",
+        "ltxv",
+        "wan",
+        "mochi",
+        "i2v",
+        "vhs",
+        "savevideo"
+      ],
+      "kind": "profile-guide",
+      "path": "profiles/video.md",
+      "profile": "video",
+      "summary": "26 presets across 9 model families (AnimateDiff, SVD, CogVideoX, Hunyuan 1.0/1.5, LTXV, Wan, Mochi) with t2v/i2v legs and a pack-free core terminator option.",
+      "title": "Video profile"
+    },
+    {
+      "id": "page-retrieval",
+      "keywords": [
+        "retrieval",
+        "history",
+        "view",
+        "outputs",
+        "download",
+        "images",
+        "audio",
+        "3d",
+        "text"
+      ],
+      "kind": "knowledge-page",
+      "path": "retrieval.md",
+      "profile": "cross-cutting",
+      "summary": "How every output type gets back to a headless caller \u2014 one route (/view), one discovery mechanism (/history outputs keys), per-terminator keys verified in server source.",
+      "title": "Retrieval contract"
+    },
+    {
+      "id": "page-traps",
+      "keywords": [
+        "traps",
+        "pitfalls",
+        "deprecated",
+        "latent",
+        "namespace",
+        "python-3.14",
+        "lifecycle"
+      ],
+      "kind": "knowledge-page",
+      "path": "traps.md",
+      "profile": "cross-cutting",
+      "summary": "The mistakes that already cost sessions \u2014 wrong loaders, wrong latents, deprecated terminators, silent i2v downgrades, environment and release traps.",
+      "title": "Traps \u2014 already paid for, do not rediscover"
+    },
+    {
+      "id": "wf-3d_hunyuan3d_v2_standard",
+      "keywords": [
+        "3d",
+        "mesh",
+        "glb",
+        "hunyuan3d",
+        "image-to-3d",
+        "standard"
+      ],
+      "kind": "workflow",
+      "path": "workflows/3d_hunyuan3d_v2_standard.json",
+      "profile": "3d",
+      "python_entrypoint": "comfy_headless.build_3d_workflow(image_ref, preset='standard')",
+      "required_packs": [],
+      "summary": "Pure image-conditioned: no text prompt anywhere in the graph.",
+      "title": "Hunyuan3D-2 image-to-mesh (standard)"
+    },
+    {
+      "id": "wf-3d_hunyuan3d_v2_draft",
+      "keywords": [
+        "3d",
+        "mesh",
+        "glb",
+        "hunyuan3d",
+        "image-to-3d",
+        "draft"
+      ],
+      "kind": "workflow",
+      "path": "workflows/3d_hunyuan3d_v2_draft.json",
+      "profile": "3d",
+      "python_entrypoint": "comfy_headless.build_3d_workflow(image_ref, preset='draft')",
+      "required_packs": [],
+      "summary": "Pure image-conditioned: no text prompt anywhere in the graph.",
+      "title": "Hunyuan3D-2 image-to-mesh (draft)"
+    },
+    {
+      "id": "wf-3d_hunyuan3d_v2_detail",
+      "keywords": [
+        "3d",
+        "mesh",
+        "glb",
+        "hunyuan3d",
+        "image-to-3d",
+        "detail"
+      ],
+      "kind": "workflow",
+      "path": "workflows/3d_hunyuan3d_v2_detail.json",
+      "profile": "3d",
+      "python_entrypoint": "comfy_headless.build_3d_workflow(image_ref, preset='detail')",
+      "required_packs": [],
+      "summary": "Pure image-conditioned: no text prompt anywhere in the graph.",
+      "title": "Hunyuan3D-2 image-to-mesh (detail)"
+    },
+    {
+      "id": "wf-audio_ace_step_15_music",
+      "keywords": [
+        "audio",
+        "music",
+        "ace-step",
+        "text-to-music",
+        "music"
+      ],
+      "kind": "workflow",
+      "path": "workflows/audio_ace_step_15_music.json",
+      "profile": "audio",
+      "python_entrypoint": "comfy_headless.build_audio_workflow(tags, preset='music')",
+      "required_packs": [],
+      "summary": "Encoder 'duration' and latent 'seconds' are ONE parameter, driven from AudioSettings.seconds -- never set separately.",
+      "title": "ACE-Step 1.5 text-to-music (music)"
+    },
+    {
+      "id": "wf-audio_ace_step_15_music_long",
+      "keywords": [
+        "audio",
+        "music",
+        "ace-step",
+        "text-to-music",
+        "music_long"
+      ],
+      "kind": "workflow",
+      "path": "workflows/audio_ace_step_15_music_long.json",
+      "profile": "audio",
+      "python_entrypoint": "comfy_headless.build_audio_workflow(tags, preset='music_long')",
+      "required_packs": [],
+      "summary": "Encoder 'duration' and latent 'seconds' are ONE parameter, driven from AudioSettings.seconds -- never set separately.",
+      "title": "ACE-Step 1.5 text-to-music (music_long)"
+    },
+    {
+      "id": "wf-audio_ace_step_15_jingle",
+      "keywords": [
+        "audio",
+        "music",
+        "ace-step",
+        "text-to-music",
+        "jingle"
+      ],
+      "kind": "workflow",
+      "path": "workflows/audio_ace_step_15_jingle.json",
+      "profile": "audio",
+      "python_entrypoint": "comfy_headless.build_audio_workflow(tags, preset='jingle')",
+      "required_packs": [],
+      "summary": "Encoder 'duration' and latent 'seconds' are ONE parameter, driven from AudioSettings.seconds -- never set separately.",
+      "title": "ACE-Step 1.5 text-to-music (jingle)"
+    },
+    {
+      "id": "wf-audio_ace_step_15_music_mp3",
+      "keywords": [
+        "audio",
+        "music",
+        "ace-step",
+        "text-to-music",
+        "music_mp3"
+      ],
+      "kind": "workflow",
+      "path": "workflows/audio_ace_step_15_music_mp3.json",
+      "profile": "audio",
+      "python_entrypoint": "comfy_headless.build_audio_workflow(tags, preset='music_mp3')",
+      "required_packs": [],
+      "summary": "Encoder 'duration' and latent 'seconds' are ONE parameter, driven from AudioSettings.seconds -- never set separately.",
+      "title": "ACE-Step 1.5 text-to-music (music_mp3)"
+    },
+    {
+      "id": "wf-audio_ace_step_15_draft",
+      "keywords": [
+        "audio",
+        "music",
+        "ace-step",
+        "text-to-music",
+        "draft"
+      ],
+      "kind": "workflow",
+      "path": "workflows/audio_ace_step_15_draft.json",
+      "profile": "audio",
+      "python_entrypoint": "comfy_headless.build_audio_workflow(tags, preset='draft')",
+      "required_packs": [],
+      "summary": "Encoder 'duration' and latent 'seconds' are ONE parameter, driven from AudioSettings.seconds -- never set separately.",
+      "title": "ACE-Step 1.5 text-to-music (draft)"
+    },
+    {
+      "id": "wf-audio_separation_stems",
+      "keywords": [
+        "audio",
+        "stems",
+        "separation",
+        "vocals",
+        "demucs-style"
+      ],
+      "kind": "workflow",
+      "path": "workflows/audio_separation_stems.json",
+      "profile": "audio",
+      "python_entrypoint": "comfy_headless.build_audio_separation_workflow(audio_ref)",
+      "required_packs": [
+        "audio-separation-nodes-comfyui"
+      ],
+      "summary": "AudioSeparation is pack audio-separation-nodes-comfyui, NOT core.",
+      "title": "Stem separation (bass / drums / other / vocals)"
+    },
+    {
+      "id": "wf-inference_florence2_caption",
+      "keywords": [
+        "inference",
+        "florence2",
+        "caption",
+        "vision"
+      ],
+      "kind": "workflow",
+      "path": "workflows/inference_florence2_caption.json",
+      "profile": "inference",
+      "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='caption')",
+      "required_packs": [
+        "comfyui-florence2"
+      ],
+      "summary": "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'.",
+      "title": "Florence-2 caption"
+    },
+    {
+      "id": "wf-inference_florence2_detailed_caption",
+      "keywords": [
+        "inference",
+        "florence2",
+        "detailed_caption",
+        "vision"
+      ],
+      "kind": "workflow",
+      "path": "workflows/inference_florence2_detailed_caption.json",
+      "profile": "inference",
+      "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='detailed_caption')",
+      "required_packs": [
+        "comfyui-florence2"
+      ],
+      "summary": "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'.",
+      "title": "Florence-2 detailed_caption"
+    },
+    {
+      "id": "wf-inference_florence2_more_detailed_caption",
+      "keywords": [
+        "inference",
+        "florence2",
+        "more_detailed_caption",
+        "vision"
+      ],
+      "kind": "workflow",
+      "path": "workflows/inference_florence2_more_detailed_caption.json",
+      "profile": "inference",
+      "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='more_detailed_caption')",
+      "required_packs": [
+        "comfyui-florence2"
+      ],
+      "summary": "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'.",
+      "title": "Florence-2 more_detailed_caption"
+    },
+    {
+      "id": "wf-inference_florence2_tag",
+      "keywords": [
+        "inference",
+        "florence2",
+        "tag",
+        "vision"
+      ],
+      "kind": "workflow",
+      "path": "workflows/inference_florence2_tag.json",
+      "profile": "inference",
+      "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='tag')",
+      "required_packs": [
+        "comfyui-florence2"
+      ],
+      "summary": "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'.",
+      "title": "Florence-2 tag"
+    },
+    {
+      "id": "wf-inference_florence2_detect",
+      "keywords": [
+        "inference",
+        "florence2",
+        "detect",
+        "vision"
+      ],
+      "kind": "workflow",
+      "path": "workflows/inference_florence2_detect.json",
+      "profile": "inference",
+      "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='detect', text_input=...)",
+      "required_packs": [
+        "comfyui-florence2",
+        "comfyui-segment-anything-2"
+      ],
+      "summary": "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'.",
+      "title": "Florence-2 detect"
+    },
+    {
+      "id": "wf-inference_florence2_segment",
+      "keywords": [
+        "inference",
+        "florence2",
+        "segment",
+        "vision"
+      ],
+      "kind": "workflow",
+      "path": "workflows/inference_florence2_segment.json",
+      "profile": "inference",
+      "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='segment', text_input=...)",
+      "required_packs": [
+        "comfyui-florence2"
+      ],
+      "summary": "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'.",
+      "title": "Florence-2 segment"
+    },
+    {
+      "id": "wf-inference_florence2_ocr",
+      "keywords": [
+        "inference",
+        "florence2",
+        "ocr",
+        "vision"
+      ],
+      "kind": "workflow",
+      "path": "workflows/inference_florence2_ocr.json",
+      "profile": "inference",
+      "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='ocr')",
+      "required_packs": [
+        "comfyui-florence2"
+      ],
+      "summary": "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'.",
+      "title": "Florence-2 ocr"
+    },
+    {
+      "id": "wf-image_qwen_txt2img_2512",
+      "keywords": [
+        "image",
+        "qwen",
+        "txt2img",
+        "dit",
+        "unetloader"
+      ],
+      "kind": "workflow",
+      "path": "workflows/image_qwen_txt2img_2512.json",
+      "profile": "image",
+      "python_entrypoint": "comfy_headless.compile_workflow(prompt, template_id='qwen_txt2img')",
+      "required_packs": [],
+      "summary": "Qwen loads via UNETLoader (diffusion_models), NOT CheckpointLoaderSimple.",
+      "title": "Qwen-Image-2512 text-to-image"
+    },
+    {
+      "id": "wf-image_qwen_edit_2511",
+      "keywords": [
+        "image",
+        "qwen",
+        "edit",
+        "reference",
+        "instruction"
+      ],
+      "kind": "workflow",
+      "path": "workflows/image_qwen_edit_2511.json",
+      "profile": "image",
+      "python_entrypoint": "comfy_headless.build_qwen_edit_workflow(prompt, image_refs)",
+      "required_packs": [],
+      "summary": "References enter TextEncodeQwenImageEditPlus as discrete image1..image3 inputs (max 3), NOT a batched list.",
+      "title": "Qwen-Image-Edit-2511 instruction edit (2 references)"
+    },
+    {
+      "id": "wf-image_controlnet_union_qwen",
+      "keywords": [
+        "image",
+        "controlnet",
+        "union",
+        "qwen",
+        "depth",
+        "canny"
+      ],
+      "kind": "workflow",
+      "path": "workflows/image_controlnet_union_qwen.json",
+      "profile": "image",
+      "python_entrypoint": "comfy_headless.build_controlnet_workflow(prompt, control_image_ref, base='qwen')",
+      "required_packs": [],
+      "summary": "SetUnionControlNetType enum values are verbatim literals; slash-grouped entries like 'canny/lineart/anime_lineart/mlsd' are SINGLE choices.",
+      "title": "Union ControlNet on qwen"
+    },
+    {
+      "id": "wf-image_controlnet_union_sdxl",
+      "keywords": [
+        "image",
+        "controlnet",
+        "union",
+        "sdxl",
+        "depth",
+        "canny"
+      ],
+      "kind": "workflow",
+      "path": "workflows/image_controlnet_union_sdxl.json",
+      "profile": "image",
+      "python_entrypoint": "comfy_headless.build_controlnet_workflow(prompt, control_image_ref, base='sdxl')",
+      "required_packs": [],
+      "summary": "SetUnionControlNetType enum values are verbatim literals; slash-grouped entries like 'canny/lineart/anime_lineart/mlsd' are SINGLE choices.",
+      "title": "Union ControlNet on sdxl"
+    },
+    {
+      "id": "wf-video_standard",
+      "keywords": [
+        "video",
+        "standard",
+        "standard"
+      ],
+      "kind": "workflow",
+      "path": "workflows/video_standard.json",
+      "profile": "video",
+      "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='standard')",
+      "required_packs": [
+        "comfyui-animatediff-evolved",
+        "comfyui-videohelpersuite"
+      ],
+      "summary": "VHS_VideoCombine is the default terminator; VideoSettings(output='core') swaps in CreateVideo -> SaveVideo.",
+      "title": "Video preset standard"
+    },
+    {
+      "id": "wf-video_hunyuan15_720p",
+      "keywords": [
+        "video",
+        "hunyuan15",
+        "hunyuan15_720p"
+      ],
+      "kind": "workflow",
+      "path": "workflows/video_hunyuan15_720p.json",
+      "profile": "video",
+      "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='hunyuan15_720p')",
+      "required_packs": [
+        "comfyui-videohelpersuite"
+      ],
+      "summary": "VHS_VideoCombine is the default terminator; VideoSettings(output='core') swaps in CreateVideo -> SaveVideo.",
+      "title": "Video preset hunyuan15_720p"
+    },
+    {
+      "id": "wf-video_hunyuan15_i2v",
+      "keywords": [
+        "video",
+        "hunyuan15",
+        "hunyuan15_i2v"
+      ],
+      "kind": "workflow",
+      "path": "workflows/video_hunyuan15_i2v.json",
+      "profile": "video",
+      "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='hunyuan15_i2v')",
+      "required_packs": [
+        "comfyui-videohelpersuite"
+      ],
+      "summary": "VHS_VideoCombine is the default terminator; VideoSettings(output='core') swaps in CreateVideo -> SaveVideo.",
+      "title": "Video preset hunyuan15_i2v"
+    },
+    {
+      "id": "wf-video_ltx_standard",
+      "keywords": [
+        "video",
+        "ltx",
+        "ltx_standard"
+      ],
+      "kind": "workflow",
+      "path": "workflows/video_ltx_standard.json",
+      "profile": "video",
+      "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='ltx_standard')",
+      "required_packs": [
+        "comfyui-videohelpersuite"
+      ],
+      "summary": "LTXV keeps its LTXVScheduler -> KSamplerSelect -> SamplerCustom leg; a plain KSampler would silently drop the SIGMAS config.",
+      "title": "Video preset ltx_standard"
+    },
+    {
+      "id": "wf-video_wan_14b",
+      "keywords": [
+        "video",
+        "wan",
+        "wan_14b"
+      ],
+      "kind": "workflow",
+      "path": "workflows/video_wan_14b.json",
+      "profile": "video",
+      "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='wan_14b')",
+      "required_packs": [
+        "comfyui-videohelpersuite"
+      ],
+      "summary": "VHS_VideoCombine is the default terminator; VideoSettings(output='core') swaps in CreateVideo -> SaveVideo.",
+      "title": "Video preset wan_14b"
+    },
+    {
+      "id": "wf-video_mochi",
+      "keywords": [
+        "video",
+        "mochi",
+        "mochi"
+      ],
+      "kind": "workflow",
+      "path": "workflows/video_mochi.json",
+      "profile": "video",
+      "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='mochi')",
+      "required_packs": [
+        "comfyui-videohelpersuite"
+      ],
+      "summary": "VHS_VideoCombine is the default terminator; VideoSettings(output='core') swaps in CreateVideo -> SaveVideo.",
+      "title": "Video preset mochi"
+    },
+    {
+      "id": "wf-video_standard_core_output",
+      "keywords": [
+        "video",
+        "savevideo",
+        "core",
+        "no-pack",
+        "dynamic-combo"
+      ],
+      "kind": "workflow",
+      "path": "workflows/video_standard_core_output.json",
+      "profile": "video",
+      "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='standard', output='core')",
+      "required_packs": [
+        "comfyui-animatediff-evolved"
+      ],
+      "summary": "Drops the comfyui-videohelpersuite dependency.",
+      "title": "Video with core CreateVideo -> SaveVideo terminator"
+    }
+  ],
+  "generated_by": "scripts/gen_kb.py (do not hand-edit generated entries)",
+  "how_to_use": "This index is the entry point for the comfy-headless knowledge base. Pick entries by 'profile' (image, video, 3d, audio, inference, metadata) and 'kind': 'profile-guide' pages carry the verified facts and traps for one profile; 'workflow' entries are runnable API-format reference graphs with placeholder inputs (see each file's 'placeholders'); 'knowledge-page' entries are cross-cutting (addressing/typing rules, retrieval contract, traps); 'node-facts' is the machine-readable pack/provenance registry. Read the profile guide before editing a graph; every class_type in these graphs was verified against the live ComfyUI catalog on the date above.",
+  "kb_version": 1,
+  "package": "comfy-headless",
+  "package_version": "3.1.0",
+  "verified_against_catalog": "2026-08-21"
+}

@@ -1,0 +1,140 @@
+{
+  "class_types": [
+    "CLIPLoader",
+    "CLIPTextEncode",
+    "EmptySD3LatentImage",
+    "KSampler",
+    "ModelSamplingAuraFlow",
+    "SaveImage",
+    "UNETLoader",
+    "VAEDecode",
+    "VAELoader"
+  ],
+  "client_method": "ComfyClient.queue_prompt(compiled.workflow)",
+  "graph": {
+    "1": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "qwen_image_2512_fp8_e4m3fn.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "10": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "filename_prefix": "comfy_headless_qwen",
+        "images": [
+          "9",
+          0
+        ]
+      }
+    },
+    "2": {
+      "class_type": "ModelSamplingAuraFlow",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "shift": 3.1
+      }
+    },
+    "3": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+        "device": "default",
+        "type": "qwen_image"
+      }
+    },
+    "4": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "PROMPT_TEXT"
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "3",
+          0
+        ],
+        "text": "ugly, blurry, low quality, distorted"
+      }
+    },
+    "6": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "qwen_image_vae.safetensors"
+      }
+    },
+    "7": {
+      "class_type": "EmptySD3LatentImage",
+      "inputs": {
+        "batch_size": 1,
+        "height": 1328,
+        "width": 1328
+      }
+    },
+    "8": {
+      "class_type": "KSampler",
+      "inputs": {
+        "cfg": 2.5,
+        "denoise": 1.0,
+        "latent_image": [
+          "7",
+          0
+        ],
+        "model": [
+          "2",
+          0
+        ],
+        "negative": [
+          "5",
+          0
+        ],
+        "positive": [
+          "4",
+          0
+        ],
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "seed": 0,
+        "steps": 20
+      }
+    },
+    "9": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "8",
+          0
+        ],
+        "vae": [
+          "6",
+          0
+        ]
+      }
+    }
+  },
+  "history_output_keys": [
+    "images"
+  ],
+  "id": "image_qwen_txt2img_2512",
+  "notes": [
+    "Qwen loads via UNETLoader (diffusion_models), NOT CheckpointLoaderSimple.",
+    "Latent is EmptySD3LatentImage (16-channel); EmptyLatentImage is garbage here.",
+    "Defaults: steps 20, cfg 2.5 (not 7.0), shift 3.1, 1328x1328."
+  ],
+  "placeholders": {},
+  "profile": "image",
+  "python_entrypoint": "comfy_headless.compile_workflow(prompt, template_id='qwen_txt2img')",
+  "required_packs": {},
+  "title": "Qwen-Image-2512 text-to-image",
+  "verified_against_catalog": "2026-08-21"
+}

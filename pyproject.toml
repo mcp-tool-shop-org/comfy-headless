@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "comfy-headless"
-version = "3.0.1"
-description = "Drive ComfyUI from Python. Builds and runs ComfyUI API-format graphs - image and video generation, 24 video presets, verified node types, no node canvas."
+version = "3.1.0"
+description = "Drive ComfyUI from Python. Builds and runs ComfyUI API-format graphs - image, video, 3D, audio, inference and provenance profiles, verified node types, no node canvas."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"

@@ -3,7 +3,7 @@ import type { SiteConfig } from '@mcptoolshop/site-theme';
 export const config: SiteConfig = {
   title: 'comfy-headless',
   description:
-    'Drive ComfyUI from Python. Builds and runs ComfyUI API-format graphs — image and video generation, verified node types, and a clean API with no node canvas.',
+    'Drive ComfyUI from Python. Builds and runs ComfyUI API-format graphs — image, video, 3D, audio, inference and provenance profiles, verified node types, and a clean API with no node canvas.',
   logoBadge: 'CH',
   brandName: 'comfy-headless',
   repoUrl: 'https://github.com/mcp-tool-shop-org/comfy-headless',
@@ -15,7 +15,7 @@ export const config: SiteConfig = {
     headline: 'Drive ComfyUI from Python.',
     headlineAccent: 'No node graph.',
     description:
-      'comfy-headless builds ComfyUI API-format graphs and runs them. 8 image presets, 24 video presets across 9 model families, optional AI prompt enhancement — and every node type it emits is verified against the live ComfyUI catalog.',
+      'comfy-headless builds ComfyUI API-format graphs and runs them. Six workflow profiles — image, video, 3D, inference, metadata, audio — 26 video presets across 9 model families, optional AI prompt enhancement, and every node type it emits is verified against the live ComfyUI catalog.',
     primaryCta: { href: '#quickstart', label: 'Quick start' },
     secondaryCta: { href: 'handbook/', label: 'Read the Handbook' },
     previews: [
@@ -42,12 +42,16 @@ export const config: SiteConfig = {
       subtitle: 'A clean API over the full ComfyUI feature set.',
       features: [
         {
+          title: 'Six workflow profiles',
+          desc: 'Image (SDXL + Qwen-Image txt2img, edit, ControlNet), video, 3D meshes (Hunyuan3D-2), audio (ACE-Step 1.5 music + stem separation), inference (caption, tag, detect, segment, OCR) and provenance — one client, one retrieval path.',
+        },
+        {
           title: 'Verified node graphs',
           desc: 'Every node type this library emits is checked against the live ComfyUI catalog. Ask a server what it is missing before you spend a run — dependency errors name the node and the pack that provides it, not a bare validation failure.',
         },
         {
-          title: '24 video presets, 9 families',
-          desc: 'LTX-Video, Hunyuan 1.5, Wan, Mochi, SVD, AnimateDiff and CogVideoX, each with curated resolution, frame count and step settings. Six of the nine run on stock ComfyUI core nodes — no wrapper packs.',
+          title: '26 video presets, 9 families',
+          desc: 'LTX-Video, Hunyuan 1.5 (t2v and true i2v), Wan, Mochi, SVD, AnimateDiff and CogVideoX, each with curated resolution, frame count and step settings. Six of the nine run on stock ComfyUI core nodes — no wrapper packs.',
         },
         {
           title: 'AI prompt intelligence',
@@ -93,6 +97,22 @@ export const config: SiteConfig = {
         {
           title: 'Generate video',
           code: 'from comfy_headless import ComfyClient, get_recommended_preset\n\nclient = ComfyClient()\npreset = get_recommended_preset(vram_gb=16)  # sized to your card\nresult = client.generate_video(\n    "a slow pan across a mountain range",\n    preset=preset,\n)\nprint(result["videos"])',
+        },
+        {
+          title: 'Generate a 3D mesh',
+          code: '# Hunyuan3D-2, all core nodes — no wrapper packs\nresult = client.generate_3d("character.png", preset="detail")\nglb = client.get_file(**result["meshes"][0])\nopen("character.glb", "wb").write(glb)',
+        },
+        {
+          title: 'Generate music',
+          code: '# ACE-Step 1.5 — MIT weights, all core nodes\nresult = client.generate_audio(\n    tags="lo-fi, jazz, mellow, rainy night",\n    preset="music", seconds=30,\n)\nflac = client.get_file(**result["audios"][0])',
+        },
+        {
+          title: 'Ask about an image',
+          code: 'r = client.run_inference("photo.png", task="caption")\nprint(r["text"])\n\nr = client.run_inference(\n    "photo.png", task="detect", text_input="the red car"\n)\nprint(r["text"])  # bounding boxes as JSON',
+        },
+        {
+          title: 'Re-run a PNG’s graph',
+          code: 'from comfy_headless import extract_prompt_graph\n\ngraph = extract_prompt_graph("output.png")\nresult = client.rerun_from_png("output.png")',
         },
         {
           title: 'Check before you run',

@@ -76,6 +76,7 @@ from .exceptions import (
     ErrorLevel,
     GenerationFailedError,
     GenerationTimeoutError,
+    GraphAddressError,
     InvalidParameterError,
     InvalidPromptError,
     MissingNodePackError,
@@ -239,6 +240,42 @@ else:
 # Workflow system (v2.4: versioning, caching, DAG validation, snapshots)
 # Help system
 from ._version import __version__  # noqa: E402  (single source of truth)
+
+# Addressing / typing layer (v3.1.0)
+from .addressing import (
+    HISTORY_OUTPUT_KEYS,
+    KNOWN_OUTPUT_NODE_CLASSES,
+    SAVE_AUDIO_FORMAT,
+    SAVE_VIDEO_CODEC,
+    DynamicCombo,
+    GraphTypeChecker,
+    TypeIssue,
+    TypeMatch,
+    extract_object_info_types,
+    get_node_input,
+    has_output_node,
+    join_field_path,
+    match_types,
+    parse_field_path,
+    require_output_node,
+    set_node_input,
+    validate_node_input,
+)
+
+# Audio module (v3.1.0)
+from .audio import (
+    AUDIO_MODEL_INFO,
+    AUDIO_PRESETS,
+    SEPARATION_STEMS,
+    AudioFormat,
+    AudioModel,
+    AudioSettings,
+    AudioWorkflowBuilder,
+    build_audio_separation_workflow,
+    build_audio_workflow,
+    get_audio_builder,
+    list_audio_presets,
+)
 from .help_system import (
     HelpLevel,
     HelpRegistry,
@@ -255,6 +292,34 @@ from .help_system import (
     set_help_level,
 )
 
+# Inference module (v3.1.0)
+from .inference import (
+    FLORENCE2_TASKS,
+    INFERENCE_MODEL_INFO,
+    InferenceSettings,
+    InferenceTask,
+    InferenceWorkflowBuilder,
+    build_inference_workflow,
+    get_inference_builder,
+)
+
+# Metadata / provenance module (v3.1.0)
+from .metadata import (
+    ProvenanceRecord,
+    extract_prompt_graph,
+    read_png_text_chunks,
+    read_workflow_metadata,
+)
+
+# Custom node pack registry (v3.1.0: shared by all profiles)
+from .node_packs import (
+    NODE_PACK_INFO,
+    NODE_PACKS,
+    NodePack,
+    get_node_pack,
+    required_node_packs,
+)
+
 # Secrets management
 from .secrets_manager import (
     SecretsManager,
@@ -268,6 +333,19 @@ from .secrets_manager import (
     mask_url_credentials,
     redact_dict,
     verify_hashed_secret,
+)
+
+# 3D module (v3.1.0)
+from .three_d import (
+    THREE_D_MODEL_INFO,
+    THREE_D_PRESETS,
+    MeshAlgorithm,
+    ThreeDModel,
+    ThreeDSettings,
+    ThreeDWorkflowBuilder,
+    build_3d_workflow,
+    get_three_d_builder,
+    list_3d_presets,
 )
 
 # Validation (Pydantic-based)
@@ -299,6 +377,8 @@ from .video import (
 )
 from .workflows import (
     GENERATION_PRESETS,
+    # v3.1.0: Qwen / ControlNet
+    UNION_CONTROL_TYPES,
     # v2.4: DAG validation
     DAGValidator,
     # v2.4: Snapshot management
@@ -311,8 +391,11 @@ from .workflows import (
     WorkflowTemplate,
     # v2.4: Versioning
     WorkflowVersion,
+    build_controlnet_workflow,
+    build_qwen_edit_workflow,
     compile_workflow,
     compute_workflow_hash,
+    create_qwen_txt2img_template,
     get_compiler,
     get_library,
     get_snapshot_manager,
@@ -520,6 +603,71 @@ __all__ = [
     "build_video_workflow",
     "list_video_presets",
     "get_recommended_preset",
+    # Addressing / typing layer (v3.1.0)
+    "validate_node_input",
+    "match_types",
+    "TypeMatch",
+    "TypeIssue",
+    "GraphTypeChecker",
+    "extract_object_info_types",
+    "parse_field_path",
+    "join_field_path",
+    "set_node_input",
+    "get_node_input",
+    "DynamicCombo",
+    "SAVE_AUDIO_FORMAT",
+    "SAVE_VIDEO_CODEC",
+    "KNOWN_OUTPUT_NODE_CLASSES",
+    "HISTORY_OUTPUT_KEYS",
+    "has_output_node",
+    "require_output_node",
+    "GraphAddressError",
+    # Node pack registry (v3.1.0)
+    "NodePack",
+    "NODE_PACKS",
+    "NODE_PACK_INFO",
+    "get_node_pack",
+    "required_node_packs",
+    # 3D (v3.1.0)
+    "ThreeDModel",
+    "MeshAlgorithm",
+    "ThreeDSettings",
+    "ThreeDWorkflowBuilder",
+    "THREE_D_PRESETS",
+    "THREE_D_MODEL_INFO",
+    "build_3d_workflow",
+    "get_three_d_builder",
+    "list_3d_presets",
+    # Audio (v3.1.0)
+    "AudioModel",
+    "AudioFormat",
+    "AudioSettings",
+    "AudioWorkflowBuilder",
+    "AUDIO_PRESETS",
+    "AUDIO_MODEL_INFO",
+    "SEPARATION_STEMS",
+    "build_audio_workflow",
+    "build_audio_separation_workflow",
+    "get_audio_builder",
+    "list_audio_presets",
+    # Inference (v3.1.0)
+    "InferenceTask",
+    "InferenceSettings",
+    "InferenceWorkflowBuilder",
+    "INFERENCE_MODEL_INFO",
+    "FLORENCE2_TASKS",
+    "build_inference_workflow",
+    "get_inference_builder",
+    # Metadata / provenance (v3.1.0)
+    "ProvenanceRecord",
+    "read_png_text_chunks",
+    "read_workflow_metadata",
+    "extract_prompt_graph",
+    # Qwen / ControlNet image extensions (v3.1.0)
+    "create_qwen_txt2img_template",
+    "build_qwen_edit_workflow",
+    "build_controlnet_workflow",
+    "UNION_CONTROL_TYPES",
     # Validation
     "validate_prompt",
     "sanitize_prompt",

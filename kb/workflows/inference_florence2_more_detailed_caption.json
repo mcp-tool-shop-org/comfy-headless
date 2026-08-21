@@ -1,0 +1,79 @@
+{
+  "class_types": [
+    "DownloadAndLoadFlorence2Model",
+    "Florence2Run",
+    "LoadImage",
+    "SaveText"
+  ],
+  "client_method": "ComfyClient.run_inference(image, task=...)",
+  "graph": {
+    "1": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "INPUT_IMAGE_REF.png"
+      }
+    },
+    "2": {
+      "class_type": "DownloadAndLoadFlorence2Model",
+      "inputs": {
+        "attention": "sdpa",
+        "model": "microsoft/Florence-2-large",
+        "precision": "fp16"
+      }
+    },
+    "3": {
+      "class_type": "Florence2Run",
+      "inputs": {
+        "do_sample": true,
+        "fill_mask": false,
+        "florence2_model": [
+          "2",
+          0
+        ],
+        "image": [
+          "1",
+          0
+        ],
+        "keep_model_loaded": false,
+        "max_new_tokens": 1024,
+        "num_beams": 3,
+        "output_mask_select": "",
+        "seed": 1,
+        "task": "more_detailed_caption",
+        "text_input": "QUERY_TEXT"
+      }
+    },
+    "4": {
+      "class_type": "SaveText",
+      "inputs": {
+        "filename_prefix": "inference/ComfyUI",
+        "format": "txt",
+        "text": [
+          "3",
+          2
+        ]
+      }
+    }
+  },
+  "history_output_keys": [
+    "files",
+    "text"
+  ],
+  "id": "inference_florence2_more_detailed_caption",
+  "notes": [
+    "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'."
+  ],
+  "placeholders": {
+    "INPUT_IMAGE_REF.png": "server-side image name from ComfyClient.upload_image()['ref']"
+  },
+  "profile": "inference",
+  "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='more_detailed_caption')",
+  "required_packs": {
+    "comfyui-florence2": [
+      "DownloadAndLoadFlorence2Model",
+      "Florence2Run"
+    ]
+  },
+  "title": "Florence-2 more_detailed_caption",
+  "verified_against_catalog": "2026-08-21"
+}

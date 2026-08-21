@@ -36,11 +36,22 @@ audited against the live ComfyUI catalog. Nine no longer existed. They're gone, 
 that used them are rebuilt on verified nodes, and the library can now tell you what a
 server is missing *before* you spend a run on it.
 
+**v3.1 extends that discipline to six workflow profiles** — **Image, Video, 3D,
+Inference, Metadata, Audio** — on a shared addressing/typing layer that speaks ComfyUI's
+own validation rules: union type matching transcribed from the server's validator, dotted
+dynamic-combo fields (`codec.encoding.crf`), and conditional inputs that refuse
+inactive-branch values at construction time. Same route surface as before — meshes, music
+and captions come back through `/history` + `/view` like everything else.
+
 | Problem | What comfy-headless does |
 |---------|--------------------------|
 | The node interface is a lot | Presets and a clean Python API |
 | Prompt engineering is hard | Optional AI enhancement via local Ollama |
-| Video generation is fiddly | 24 presets across 9 model families |
+| Video generation is fiddly | 26 presets across 9 model families |
+| "I need a mesh from this image" | `generate_3d()` — Hunyuan3D-2, all core nodes |
+| "I need music / stems" | `generate_audio()` (ACE-Step 1.5), `separate_audio()` |
+| "What's in this image?" | `run_inference()` — caption, tag, detect, segment, OCR |
+| "Which graph made this PNG?" | `extract_prompt_graph()` / `rerun_from_png()` |
 | "Which settings do I use?" | Recommendations sized to your VRAM |
 | Graphs fail with cryptic errors | Dependency check names the node *and* the pack |
 
@@ -130,12 +141,58 @@ analysis = analyze_prompt("a cyberpunk city at night")
 print(analysis.intent, analysis.styles, analysis.suggested_preset)
 ```
 
+### Qwen-Image (new in 3.1)
+
+Qwen-Image-2512 text-to-image ships as the `qwen_txt2img` template, with the recipe the
+model actually wants baked in: `UNETLoader` path, 16-channel `EmptySD3LatentImage`
+(the SDXL latent produces garbage on DiT models), steps 20, **cfg 2.5**, shift 3.1,
+native 1328×1328 bucket:
+
+```python
+from comfy_headless import compile_workflow
+
+compiled = compile_workflow("a castle above the clouds", template_id="qwen_txt2img")
+prompt_id = client.queue_prompt(compiled.workflow)
+```
+
+Instruction editing with up to three reference images (Qwen-Image-Edit-2511):
+
+```python
+result = client.edit_image(
+    "make it night, keep the composition",
+    images=["photo.png"],          # local paths, bytes, or uploaded refs — 1 to 3
+)
+```
+
+References feed `TextEncodeQwenImageEditPlus` as discrete `image1..image3` inputs and do
+not pass through VAEEncode — the graph shape the node actually expects.
+
+### ControlNet (new in 3.1)
+
+One code path covers Qwen and SDXL union ControlNets:
+
+```python
+from comfy_headless import build_controlnet_workflow
+
+workflow = build_controlnet_workflow(
+    "a stone fortress at dawn",
+    control_image_ref=client.upload_image("depth.png")["ref"],
+    control_type="depth",      # verbatim enum; "auto" makes the model infer
+    base="qwen",               # or "sdxl"
+)
+client.queue_prompt(workflow)
+```
+
+Only the core `Canny` preprocessor is emitted (`preprocess="canny"`); other hint types
+expect a pre-made control image, because their preprocessors live in a custom pack this
+library does not silently require.
+
 ## Video
 
 ```python
 from comfy_headless import list_video_presets, get_recommended_preset
 
-print(list_video_presets())                  # 24 presets
+print(list_video_presets())                  # 26 presets
 print(get_recommended_preset(vram_gb=16))    # picks one that fits
 
 result = client.generate_video(
@@ -171,6 +228,12 @@ joined with any subfolder, which is exactly what the graph needs.
 > **Changed in 3.0:** `init_image` is a server-side filename. Earlier versions accepted
 > base64 data and smuggled it through a third-party node that does not exist on a stock
 > ComfyUI install. See the [CHANGELOG](CHANGELOG.md).
+
+> **New in 3.1:** Hunyuan 1.5 image-to-video is real i2v — presets `hunyuan15_i2v` and
+> `hunyuan15_i2v_fast` build on the core `HunyuanVideo15ImageToVideo` node and require an
+> `init_image` (v3.0 silently built a text-to-video graph instead). And
+> `output="core"` swaps the `VHS_VideoCombine` terminator for core
+> `CreateVideo → SaveVideo`, dropping the Video Helper Suite dependency entirely.
 
 ### Model families
 
@@ -210,6 +273,118 @@ print(report["required_packs"])    # what this graph needs
 # or raise MissingNodePackError, naming the class and the pack that provides it
 client.require_workflow_dependencies(workflow)
 ```
+
+You can also type-check a graph's edges against the live server, using the server's own
+acceptance rule (so a `MESH` feeding a `FILE_3D_*` union input is never a false
+rejection):
+
+```python
+report = client.check_workflow_types(workflow)
+print(report["errors"])     # edges the server would reject
+print(report["warnings"])   # accepted edges with partial type overlap
+```
+
+## 3D (new in 3.1)
+
+Image-to-mesh via **Hunyuan3D-2** — entirely ComfyUI core nodes, no wrapper packs, no new
+routes. The GLB registers in `/history` exactly like a PNG does and downloads through
+`/view`:
+
+```python
+result = client.generate_3d("character.png", preset="detail")
+# presets: standard / draft / detail
+glb = client.get_file(**result["meshes"][0])
+open("character.glb", "wb").write(glb)
+```
+
+`generate_3d` accepts a local path, raw bytes, an `upload_image()` dict, or a server-side
+ref, and uploads automatically when needed. It is pure image-conditioning — there is no
+text prompt in the graph. Tunables: `steps` (30), `cfg` (5.5), `octree_resolution` (256),
+`threshold` (0.6), `seed`.
+
+Wrapper-pack 3D models (TRELLIS, TripoSG, ...) are deliberately not emitted —
+ComfyUI-3D-Pack's native dependencies are the least stable in the ecosystem.
+
+## Audio (new in 3.1)
+
+Text-to-music via **ACE-Step 1.5** — MIT-licensed code *and* weights, native core nodes,
+zero packs. The turbo checkpoint runs at 8 steps / cfg 1:
+
+```python
+result = client.generate_audio(
+    tags="lo-fi, jazz, mellow, rainy night",
+    lyrics="",                       # empty = instrumental
+    preset="music",                  # music / music_long / jingle / music_mp3 / draft
+    seconds=30,
+)
+flac = client.get_file(**result["audios"][0])
+```
+
+The builder enforces the model's coupling invariant for you: the encoder's `duration` and
+the latent's `seconds` are one logical parameter, driven from a single field — the runtime
+does not cross-validate them, and a mismatch completes "successfully" with silently wrong
+output. Output goes through `SaveAudioAdvanced` (the only non-deprecated audio save node);
+`flac` output emits no quality field at all, `mp3`/`opus` emit the dotted
+`format.quality` sub-field.
+
+Stem separation (requires the `audio-separation-nodes-comfyui` pack):
+
+```python
+result = client.separate_audio("song.flac")            # bass, drums, other, vocals
+result = client.separate_audio("song.flac", stems=["vocals"])
+```
+
+## Inference (new in 3.1)
+
+Non-generative model calls — ask questions about an image instead of making one. Runs on
+Florence-2 (pack `comfyui-florence2`; the detect task adds
+`comfyui-segment-anything-2`):
+
+```python
+r = client.run_inference("photo.png", task="caption")
+print(r["text"])                     # the caption, read straight from /history
+
+r = client.run_inference("photo.png", task="tag")               # booru-style tags
+r = client.run_inference("photo.png", task="ocr")
+r = client.run_inference("photo.png", task="detect", text_input="the red car")
+print(r["text"])                     # bounding-box coordinates as JSON
+
+r = client.run_inference("photo.png", task="segment", text_input="the person")
+mask_png = client.get_file(**r["images"][0])
+```
+
+The profile's load-bearing rule: a result reaches `/history` only through an output node.
+Every inference graph terminates in core `SaveText` (which reports the text inline — no
+second round-trip) or `SaveImage` for masks, and the builder refuses to emit a graph that
+would run green and return nothing.
+
+## Provenance (new in 3.1)
+
+ComfyUI embeds the **exact API-format graph** in every output PNG. comfy-headless reads
+it back — pure stdlib, no Pillow — and can re-run it verbatim:
+
+```python
+from comfy_headless import read_workflow_metadata, extract_prompt_graph
+
+record = read_workflow_metadata("output.png")
+print(record.prompt is not None)     # the machine-runnable graph
+print(record.extra)                  # your custom keys land here
+
+graph = extract_prompt_graph("output.png")   # raises with a hint if scrubbed
+result = client.rerun_from_png("output.png") # re-POSTs it verbatim
+```
+
+Write custom provenance without any custom node — anything in `extra_pnginfo` becomes a
+PNG text chunk in the outputs:
+
+```python
+client.queue_prompt(workflow, extra_pnginfo={"myapp:run_id": "r-2026-077"})
+```
+
+Known limits, documented rather than hidden: WebP/JPEG carry the same data in EXIF (a
+different reader path, not implemented); video outputs don't embed the graph; hardened
+deployments may strip unknown keys; and GUI→API conversion has no server route — use
+ComfyUI's "Workflow → Export (API)".
 
 ## Configuration
 
@@ -286,6 +461,7 @@ from comfy_headless import (
     ValidationError,
     UploadError,              # new in 3.0
     MissingNodePackError,     # new in 3.0
+    GraphAddressError,        # new in 3.1 — bad dotted field / inactive combo branch
 )
 
 try:
@@ -304,7 +480,9 @@ your call ─→ build API-format graph ─→ POST /prompt ─→ poll /history
 
 The library talks to seven ComfyUI routes — `/system_stats`, `/object_info`, `/queue`,
 `/history`, `/prompt`, `/interrupt`, `/view` — plus `/upload/image` and `/upload/mask` for
-binary input.
+binary input (audio uploads ride `/upload/image` too; the server has no audio-specific
+route). All six profiles fit inside that surface: v3.1 added meshes, music, captions and
+provenance without adding a single route.
 
 `/object_info` is the authority on what a given server can run. It is a live endpoint, not
 a versioned artifact: there is no core-node registry to pin against. So the library
@@ -324,7 +502,14 @@ client.wait_for_completion(prompt_id)
 
 Full handbook:
 **[mcp-tool-shop-org.github.io/comfy-headless](https://mcp-tool-shop-org.github.io/comfy-headless/handbook/)**
-— getting started, usage, configuration, API reference, video models, architecture.
+— getting started, usage, the six profiles, video models, configuration, API reference,
+architecture.
+
+**In-repo knowledge base** for LLMs and contributors: [`kb/`](kb/README.md) — a
+machine-readable [`index.json`](kb/index.json) over per-profile fact pages, runnable
+reference graphs (`kb/workflows/*.json`, generated from the builders themselves so they
+cannot drift), and node provenance (`kb/nodes.json`). `python scripts/gen_kb.py`
+regenerates it; the test suite fails if code and KB disagree.
 
 ## Security & data scope
 

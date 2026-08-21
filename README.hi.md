@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <strong>ComfyUI को पायथन से चलाएं, बिना किसी जटिल नोड ग्राफ के।</strong>
+  <strong>Drive ComfyUI from Python. No node graph.</strong>
 </p>
 
 <p align="center">
@@ -28,11 +28,17 @@ comfy-headless, **ComfyUI API-प्रारूप ग्राफ़** बन�
 
 **v3.0 वह रिलीज़ है जिसने इसे गंभीरता से लिया।** इस लाइब्रेरी द्वारा उत्सर्जित प्रत्येक नोड प्रकार की लाइव ComfyUI कैटलॉग के विरुद्ध ऑडिट किया गया था। अब नौ मौजूद नहीं हैं। वे चले गए हैं, उनका उपयोग करने वाले ग्राफ़ सत्यापित नोड्स पर फिर से बनाए जाते हैं, और लाइब्रेरी अब आपको यह बता सकती है कि किसी सर्वर में क्या गायब है *इससे पहले* कि आप उस पर कोई रन खर्च करें।
 
+**v3.1 इस ढांचे को छह वर्कफ़्लो प्रोफाइल तक विस्तारित करता है** — **इमेज, वीडियो, 3D, अनुमान, मेटाडेटा, ऑडियो** — एक साझा एड्रेसिंग/टाइपिंग लेयर पर जो ComfyUI के अपने सत्यापन नियमों का पालन करता है: सर्वर के वैलिडेटर से ट्रांसक्रिप्ट किए गए यूनियन टाइप मिलान, डॉटेड डायनामिक-कॉम्बो फ़ील्ड (`codec.encoding.crf`), और सशर्त इनपुट जो निर्माण समय पर निष्क्रिय शाखा मानों को अस्वीकार करते हैं। पहले की तरह ही रूट सतह — मेश, संगीत और कैप्शन `/history` + `/view` के माध्यम से वापस आते हैं जैसे कि अन्य सभी चीजें।
+
 | समस्या | comfy-headless क्या करता है |
 |---------|--------------------------|
 | नोड इंटरफ़ेस बहुत अधिक है | प्रीसेट और एक स्वच्छ पायथन API |
 | प्रॉम्प्ट इंजीनियरिंग कठिन है | स्थानीय Ollama के माध्यम से वैकल्पिक AI संवर्धन |
 | वीडियो निर्माण जटिल है | 9 मॉडल परिवारों में 24 प्रीसेट |
+| "मुझे इस छवि से एक मेश चाहिए।" | `generate_3d()` — हुनयुआन3D-2, सभी मुख्य नोड |
+| "मुझे संगीत/स्टेम की आवश्यकता है।" | `generate_audio()` (ACE-स्टेप 1.5), `separate_audio()` |
+| "इस छवि में क्या है?" | `run_inference()` — कैप्शन, टैग, डिटेक्ट, सेगमेंट, ओसीआर |
+| "इस पीएनजी को किस ग्राफ़ ने बनाया?" | `extract_prompt_graph()` / `rerun_from_png()` |
 | "मुझे कौन सी सेटिंग्स का उपयोग करना चाहिए?" | आपके VRAM के अनुसार अनुशंसाएँ |
 | ग्राफ़ अस्पष्ट त्रुटियों के साथ विफल हो जाते हैं | निर्भरता जांच नोड *और* पैक दोनों को नाम देती है |
 
@@ -118,12 +124,52 @@ analysis = analyze_prompt("a cyberpunk city at night")
 print(analysis.intent, analysis.styles, analysis.suggested_preset)
 ```
 
+### क्वेन-इमेज (3.1 में नया)
+
+क्वेन-इमेज-2512 टेक्स्ट-टू-इमेज `qwen_txt2img` टेम्पलेट के रूप में शिप किया जाता है, जिसमें वह रेसिपी शामिल होती है जो मॉडल वास्तव में चाहता है: `UNETLoader` पथ, 16-चैनल `EmptySD3LatentImage` (एसडीएक्सएल लेटेंट डीआईटी मॉडल पर कचरा उत्पन्न करता है), चरण 20, **cfg 2.5**, शिफ्ट 3.1, मूल 1328×1328 बकेट:
+
+```python
+from comfy_headless import compile_workflow
+
+compiled = compile_workflow("a castle above the clouds", template_id="qwen_txt2img")
+prompt_id = client.queue_prompt(compiled.workflow)
+```
+
+तीन संदर्भ छवियों तक के साथ निर्देश संपादन (क्वेन-इमेज-एडिट-2511):
+
+```python
+result = client.edit_image(
+    "make it night, keep the composition",
+    images=["photo.png"],          # local paths, bytes, or uploaded refs — 1 to 3
+)
+```
+
+संदर्भ `TextEncodeQwenImageEditPlus` को अलग `image1..image3` इनपुट के रूप में फीड करते हैं और VAEEncode से नहीं गुजरते हैं — ग्राफ़ उस आकार का होता है जिसकी वास्तव में नोड अपेक्षा करता है।
+
+### कंट्रोलनेट (3.1 में नया)
+
+एक कोड पथ क्वेएन और एसडीएक्सएल यूनियन कंट्रोलनेट्स को कवर करता है:
+
+```python
+from comfy_headless import build_controlnet_workflow
+
+workflow = build_controlnet_workflow(
+    "a stone fortress at dawn",
+    control_image_ref=client.upload_image("depth.png")["ref"],
+    control_type="depth",      # verbatim enum; "auto" makes the model infer
+    base="qwen",               # or "sdxl"
+)
+client.queue_prompt(workflow)
+```
+
+केवल मुख्य `Canny` प्रीप्रोसेसर उत्सर्जित होता है (`preprocess="canny"`); अन्य संकेत प्रकार एक पूर्व-निर्मित नियंत्रण छवि की अपेक्षा करते हैं, क्योंकि उनके प्रीप्रोसेसर एक कस्टम पैक में रहते हैं जिसकी यह लाइब्रेरी चुपचाप आवश्यकता नहीं करती है।
+
 ## वीडियो
 
 ```python
 from comfy_headless import list_video_presets, get_recommended_preset
 
-print(list_video_presets())                  # 24 presets
+print(list_video_presets())                  # 26 presets
 print(get_recommended_preset(vram_gb=16))    # picks one that fits
 
 result = client.generate_video(
@@ -153,6 +199,8 @@ result = client.generate_video(
 प्रतिक्रिया से `name` पढ़ें, न कि आपके द्वारा भेजी गई फ़ाइल का नाम दोबारा उपयोग करें - ComfyUI टकराव पर नाम बदलता है, इसलिए दोनों हमेशा समान नहीं होते हैं। `ref` वही मान है जो पहले से किसी भी सबफ़ोल्डर के साथ जोड़ा गया है, जो ठीक वही है जिसकी ग्राफ़ को आवश्यकता होती है।
 
 > **3.0 में बदला गया:** `init_image` सर्वर-साइड फ़ाइल नाम है। पुराने संस्करणों ने base64 डेटा स्वीकार किया और इसे एक तीसरे पक्ष के नोड के माध्यम से पारित किया जो स्टॉक ComfyUI इंस्टॉलेशन पर मौजूद नहीं है। [CHANGELOG](CHANGELOG.md) देखें।
+
+> **3.1 में नया:** हुनयुआन 1.5 इमेज-टू-वीडियो वास्तविक i2v है — प्रीसेट `hunyuan15_i2v` और `hunyuan15_i2v_fast` मुख्य `HunyuanVideo15ImageToVideo` नोड पर आधारित हैं और एक `init_image` (v3.0 ने चुपचाप एक टेक्स्ट-टू-वीडियो ग्राफ़ बनाया) की आवश्यकता होती है। और `output="core"` मुख्य `CreateVideo → SaveVideo` के लिए `VHS_VideoCombine` टर्मिनेटर को बदलता है, जिससे वीडियो हेल्पर सूट निर्भरता पूरी तरह से समाप्त हो जाती है।
 
 ### मॉडल परिवार
 
@@ -186,6 +234,94 @@ print(report["required_packs"])    # what this graph needs
 # or raise MissingNodePackError, naming the class and the pack that provides it
 client.require_workflow_dependencies(workflow)
 ```
+
+आप लाइव सर्वर के विरुद्ध किसी ग्राफ़ के किनारों का टाइप-चेक भी कर सकते हैं, सर्वर के अपने स्वीकृति नियम का उपयोग करके (इसलिए `MESH` जो `FILE_3D_*` यूनियन इनपुट को फीड करता है, वह कभी भी गलत अस्वीकृति नहीं होगी):
+
+```python
+report = client.check_workflow_types(workflow)
+print(report["errors"])     # edges the server would reject
+print(report["warnings"])   # accepted edges with partial type overlap
+```
+
+## 3D (3.1 में नया)
+
+इमेज-टू-मेश **हुनयुआन3D-2** के माध्यम से — पूरी तरह से ComfyUI कोर नोड, कोई रैपर पैक नहीं, कोई नया रूट नहीं। GLB `/history` में बिल्कुल उसी तरह पंजीकृत होता है जैसे कि एक PNG और `/view` के माध्यम से डाउनलोड किया जाता है:
+
+```python
+result = client.generate_3d("character.png", preset="detail")
+# presets: standard / draft / detail
+glb = client.get_file(**result["meshes"][0])
+open("character.glb", "wb").write(glb)
+```
+
+`generate_3d` एक स्थानीय पथ, कच्चे बाइट्स, एक `upload_image()` डिक्ट या सर्वर-साइड रेफ़ स्वीकार करता है, और आवश्यकता पड़ने पर स्वचालित रूप से अपलोड करता है। यह शुद्ध छवि-कंडीशनिंग है — ग्राफ़ में कोई टेक्स्ट प्रॉम्प्ट नहीं है। ट्यून करने योग्य: `steps` (30), `cfg` (5.5), `octree_resolution` (256), `threshold` (0.6), `seed`।
+
+रैपर-पैक 3D मॉडल (ट्रेलीस, ट्रिपोएसजी, ...) को जानबूझकर उत्सर्जित नहीं किया जाता है — ComfyUI-3D-पैक की मूल निर्भरताएँ पारिस्थितिकी तंत्र में सबसे कम स्थिर हैं।
+
+## ऑडियो (3.1 में नया)
+
+टेक्स्ट-टू-म्यूजिक **ACE-स्टेप 1.5** के माध्यम से — एमआईटी-लाइसेंस प्राप्त कोड *और* भार, मूल कोर नोड, शून्य पैक। टर्बो चेकपॉइंट 8 चरणों / cfg 1 पर चलता है:
+
+```python
+result = client.generate_audio(
+    tags="lo-fi, jazz, mellow, rainy night",
+    lyrics="",                       # empty = instrumental
+    preset="music",                  # music / music_long / jingle / music_mp3 / draft
+    seconds=30,
+)
+flac = client.get_file(**result["audios"][0])
+```
+
+बिल्डर आपके लिए मॉडल की कपलिंग अपरिवर्तनीयता को लागू करता है: एनकोडर का `duration` और लेटेंट का `seconds` एक तार्किक पैरामीटर है, जो एक एकल फ़ील्ड से संचालित होता है — रनटाइम उन्हें क्रॉस-वैलिडेट नहीं करता है, और बेमेल "सफलतापूर्वक" गलत आउटपुट के साथ पूरा हो जाता है। आउटपुट `SaveAudioAdvanced` (एकमात्र गैर-अप्रचलित ऑडियो सेव नोड) से गुजरता है; `flac` आउटपुट कोई गुणवत्ता फ़ील्ड उत्सर्जित नहीं करता है, `mp3`/`opus` डॉटेड `format.quality` सब-फ़ील्ड उत्सर्जित करते हैं।
+
+स्टेम पृथक्करण (`audio-separation-nodes-comfyui` पैक की आवश्यकता होती है):
+
+```python
+result = client.separate_audio("song.flac")            # bass, drums, other, vocals
+result = client.separate_audio("song.flac", stems=["vocals"])
+```
+
+## अनुमान (3.1 में नया)
+
+गैर-उत्पादक मॉडल कॉल — एक छवि बनाने के बजाय, किसी छवि के बारे में प्रश्न पूछें। फ्लोरेंस-2 पर चलता है (पैक `comfyui-florence2`; डिटेक्ट कार्य `comfyui-segment-anything-2` जोड़ता है):
+
+```python
+r = client.run_inference("photo.png", task="caption")
+print(r["text"])                     # the caption, read straight from /history
+
+r = client.run_inference("photo.png", task="tag")               # booru-style tags
+r = client.run_inference("photo.png", task="ocr")
+r = client.run_inference("photo.png", task="detect", text_input="the red car")
+print(r["text"])                     # bounding-box coordinates as JSON
+
+r = client.run_inference("photo.png", task="segment", text_input="the person")
+mask_png = client.get_file(**r["images"][0])
+```
+
+प्रोफ़ाइल का भार-असर नियम: एक परिणाम केवल एक आउटपुट नोड के माध्यम से `/history` तक पहुँचता है। प्रत्येक अनुमान ग्राफ़ मुख्य `SaveText` में समाप्त होता है (जो पाठ को इनलाइन रूप से रिपोर्ट करता है — कोई दूसरा राउंड-ट्रिप नहीं) या मास्क के लिए `SaveImage`, और बिल्डर एक ऐसे ग्राफ़ को उत्सर्जित करने से इनकार कर देता है जो चलेगा और कुछ भी वापस नहीं करेगा।
+
+## उत्पत्ति (3.1 में नया)
+
+ComfyUI प्रत्येक आउटपुट PNG में **सटीक API-प्रारूप ग्राफ़** को एम्बेड करता है। comfy-headless इसे वापस पढ़ता है — शुद्ध stdlib, कोई पिलो नहीं — और इसे शाब्दिक रूप से फिर से चला सकता है:
+
+```python
+from comfy_headless import read_workflow_metadata, extract_prompt_graph
+
+record = read_workflow_metadata("output.png")
+print(record.prompt is not None)     # the machine-runnable graph
+print(record.extra)                  # your custom keys land here
+
+graph = extract_prompt_graph("output.png")   # raises with a hint if scrubbed
+result = client.rerun_from_png("output.png") # re-POSTs it verbatim
+```
+
+किसी भी कस्टम नोड के बिना कस्टम उत्पत्ति लिखें — `extra_pnginfo` में कुछ भी आउटपुट में एक PNG टेक्स्ट चंक बन जाता है:
+
+```python
+client.queue_prompt(workflow, extra_pnginfo={"myapp:run_id": "r-2026-077"})
+```
+
+ज्ञात सीमाएँ, छिपी हुई नहीं बल्कि प्रलेखित: WebP/JPEG EXIF में समान डेटा ले जाते हैं (एक अलग रीडर पथ, लागू नहीं किया गया); वीडियो आउटपुट ग्राफ़ को एम्बेड नहीं करते हैं; सख्त परिनियोजन अज्ञात कुंजियों को हटा सकते हैं; और GUI→API रूपांतरण में कोई सर्वर रूट नहीं है — ComfyUI के "वर्कफ़्लो → निर्यात (API)" का उपयोग करें।
 
 ## कॉन्फ़िगरेशन
 
@@ -261,6 +397,7 @@ from comfy_headless import (
     ValidationError,
     UploadError,              # new in 3.0
     MissingNodePackError,     # new in 3.0
+    GraphAddressError,        # new in 3.1 — bad dotted field / inactive combo branch
 )
 
 try:
@@ -277,7 +414,7 @@ your call ─→ build API-format graph ─→ POST /prompt ─→ poll /history
                      └─ validated against GET /object_info
 ```
 
-लाइब्रेरी सात ComfyUI मार्गों से बात करती है — `/system_stats`, `/object_info`, `/queue`, `/history`, `/prompt`, `/interrupt`, `/view` — साथ ही बाइनरी इनपुट के लिए `/upload/image` और `/upload/mask`।
+लाइब्रेरी सात ComfyUI मार्गों से बात करती है — `/system_stats`, `/object_info`, `/queue`, `/history`, `/prompt`, `/interrupt`, `/view` — साथ ही बाइनरी इनपुट के लिए `/upload/image` और `/upload/mask` (ऑडियो अपलोड भी `/upload/image` पर चलते हैं; सर्वर में कोई ऑडियो-विशिष्ट मार्ग नहीं है)। छह प्रोफाइल सभी उस सतह के भीतर फिट होते हैं: v3.1 ने एक भी रूट जोड़े बिना मेश, संगीत, कैप्शन और उत्पत्ति जोड़ी।
 
 `/object_info` यह निर्धारित करता है कि कोई दिया गया सर्वर क्या चला सकता है। यह एक लाइव एंडपॉइंट है, संस्करणित कलाकृति नहीं: इसे पिन करने के लिए कोई कोर-नोड रजिस्ट्री नहीं है। इसलिए लाइब्रेरी मान्य किए गए ग्राफ़ को अनुमान लगाने के बजाय लक्ष्य सर्वर की वास्तविक सूची के विरुद्ध सत्यापित करती है
 एक निश्चित नोड सेट का। `check_workflow_dependencies()` वह जाँच है, और यह एक सुविधा होने के बजाय भार-असर ढांचा है।
@@ -293,7 +430,9 @@ client.wait_for_completion(prompt_id)
 ## दस्तावेज़
 
 पूर्ण हैंडबुक:
-**[mcp-tool-shop-org.github.io/comfy-headless](https://mcp-tool-shop-org.github.io/comfy-headless/handbook/)** — आरंभ करना, उपयोग, कॉन्फ़िगरेशन, एपीआई संदर्भ, वीडियो मॉडल, आर्किटेक्चर।
+**[mcp-tool-shop-org.github.io/comfy-headless](https://mcp-tool-shop-org.github.io/comfy-headless/handbook/)** — आरंभ करना, उपयोग, छह प्रोफाइल, वीडियो मॉडल, कॉन्फ़िगरेशन, API संदर्भ, आर्किटेक्चर।
+
+**इन-रेपो नॉलेज बेस** एलएलएम और योगदानकर्ताओं के लिए: [`kb/`](kb/README.md) — एक मशीन-पठनीय [`index.json`](kb/index.json) प्रति-प्रोफ़ाइल तथ्य पृष्ठों, चलाने योग्य संदर्भ ग्राफ़ (`kb/workflows/*.json`, स्वयं बिल्डरों से उत्पन्न ताकि वे अलग न हों), और नोड उत्पत्ति (`kb/nodes.json`)। `python scripts/gen_kb.py` इसे पुन: उत्पन्न करता है; परीक्षण सूट विफल हो जाता है यदि कोड और KB असहमत हैं।
 
 ## सुरक्षा और डेटा दायरा
 

@@ -1,0 +1,169 @@
+{
+  "class_types": [
+    "CLIPLoader",
+    "CLIPTextEncode",
+    "CheckpointLoaderSimple",
+    "EmptyLTXVLatentVideo",
+    "KSamplerSelect",
+    "LTXVConditioning",
+    "LTXVScheduler",
+    "SamplerCustom",
+    "VAEDecode",
+    "VHS_VideoCombine"
+  ],
+  "client_method": "ComfyClient.generate_video(prompt, preset=...)",
+  "graph": {
+    "1": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "ltx-video-2b-v0.9.5.safetensors"
+      }
+    },
+    "10": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "9",
+          0
+        ],
+        "vae": [
+          "1",
+          2
+        ]
+      }
+    },
+    "11": {
+      "class_type": "VHS_VideoCombine",
+      "inputs": {
+        "filename_prefix": "comfy_headless_ltxv",
+        "format": "video/h264-mp4",
+        "frame_rate": 24,
+        "images": [
+          "10",
+          0
+        ],
+        "save_output": true
+      }
+    },
+    "2": {
+      "class_type": "CLIPLoader",
+      "inputs": {
+        "clip_name": "t5xxl_fp16.safetensors",
+        "device": "default",
+        "type": "ltxv"
+      }
+    },
+    "3": {
+      "class_type": "EmptyLTXVLatentVideo",
+      "inputs": {
+        "batch_size": 1,
+        "height": 512,
+        "length": 97,
+        "width": 768
+      }
+    },
+    "4": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "2",
+          0
+        ],
+        "text": "PROMPT_TEXT"
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "2",
+          0
+        ],
+        "text": "NEGATIVE_TEXT"
+      }
+    },
+    "6": {
+      "class_type": "LTXVConditioning",
+      "inputs": {
+        "frame_rate": 24,
+        "negative": [
+          "5",
+          0
+        ],
+        "positive": [
+          "4",
+          0
+        ]
+      }
+    },
+    "7": {
+      "class_type": "LTXVScheduler",
+      "inputs": {
+        "base_shift": 0.95,
+        "latent": [
+          "3",
+          0
+        ],
+        "max_shift": 2.05,
+        "steps": 30,
+        "stretch": true,
+        "terminal": 0.1
+      }
+    },
+    "8": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler"
+      }
+    },
+    "9": {
+      "class_type": "SamplerCustom",
+      "inputs": {
+        "add_noise": true,
+        "cfg": 3.0,
+        "latent_image": [
+          "3",
+          0
+        ],
+        "model": [
+          "1",
+          0
+        ],
+        "negative": [
+          "6",
+          1
+        ],
+        "noise_seed": 0,
+        "positive": [
+          "6",
+          0
+        ],
+        "sampler": [
+          "8",
+          0
+        ],
+        "sigmas": [
+          "7",
+          0
+        ]
+      }
+    }
+  },
+  "history_output_keys": [
+    "gifs"
+  ],
+  "id": "video_ltx_standard",
+  "notes": [
+    "LTXV keeps its LTXVScheduler -> KSamplerSelect -> SamplerCustom leg; a plain KSampler would silently drop the SIGMAS config."
+  ],
+  "placeholders": {},
+  "profile": "video",
+  "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='ltx_standard')",
+  "required_packs": {
+    "comfyui-videohelpersuite": [
+      "VHS_VideoCombine"
+    ]
+  },
+  "title": "Video preset ltx_standard",
+  "verified_against_catalog": "2026-08-21"
+}

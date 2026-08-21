@@ -976,9 +976,12 @@ VERIFIED_CORE_NODES = frozenset(
         "CLIPVisionEncode",
         "CLIPVisionLoader",
         "CheckpointLoaderSimple",
+        "CreateVideo",
         "DualCLIPLoader",
         "EmptyHunyuanLatentVideo",
         "EmptyHunyuanVideo15Latent",
+        "HunyuanVideo15ImageToVideo",
+        "SaveVideo",
         "EmptyLTXVLatentVideo",
         "EmptyMochiLatentVideo",
         "FluxGuidance",
@@ -1039,12 +1042,13 @@ def _every_workflow():
     for name, preset in VIDEO_PRESETS.items():
         for init_image in (None, _SAMPLE_IMAGE):
             for interpolate in (False, True):
-                for upscale in (False, True):
+                for upscale, output in ((False, "vhs"), (True, "vhs"), (False, "core")):
                     for precision in ("fp16", "fp8", "bf16"):
                         settings = copy.deepcopy(preset)
                         settings.interpolate = interpolate
                         settings.upscale = upscale
                         settings.precision = precision
+                        settings.output = output
                         try:
                             workflow = builder.build(
                                 prompt="a cat walking",
@@ -1114,7 +1118,102 @@ class TestNodeCatalogContract:
     def test_every_workflow_has_an_output_node(self):
         """A graph with no output node produces nothing."""
         for preset, workflow in _every_workflow():
-            assert "VHS_VideoCombine" in _class_types(workflow), f"{preset} has no output node"
+            classes = _class_types(workflow)
+            assert "VHS_VideoCombine" in classes or "SaveVideo" in classes, (
+                f"{preset} has no output node"
+            )
+
+    def test_core_output_swaps_terminator_and_keeps_links(self):
+        """output='core' replaces VHS_VideoCombine with CreateVideo->SaveVideo."""
+        import copy
+
+        from comfy_headless.video import VIDEO_PRESETS, VideoWorkflowBuilder
+
+        builder = VideoWorkflowBuilder()
+        settings = copy.deepcopy(VIDEO_PRESETS["standard"])
+        settings.output = "core"
+        workflow = builder.build("a cat", "blurry", settings)
+
+        classes = _class_types(workflow)
+        assert "VHS_VideoCombine" not in classes
+        assert {"CreateVideo", "SaveVideo"} <= classes
+
+        create = _node_of_type(workflow, "CreateVideo")
+        save = _node_of_type(workflow, "SaveVideo")
+        # The images link that fed VHS now feeds CreateVideo.
+        assert isinstance(create["inputs"]["images"], list)
+        # SaveVideo consumes the created VIDEO and uses auto codec via the
+        # dynamic-combo layer (auto activates no sub-fields).
+        assert save["inputs"]["codec"] == "auto"
+        assert save["inputs"]["format"] == "auto"
+        assert not any(k.startswith("codec.") for k in save["inputs"])
+        # No dangling links after the swap.
+        ids = set(workflow)
+        for node in workflow.values():
+            for value in node.get("inputs", {}).values():
+                if isinstance(value, list) and len(value) == 2:
+                    assert str(value[0]) in ids
+
+    def test_hunyuan15_i2v_builds_real_i2v_graph(self):
+        """The v3.0 gap: HUNYUAN_15_I2V silently built t2v. Now it must not."""
+        import copy
+
+        from comfy_headless.video import VIDEO_PRESETS, VideoWorkflowBuilder
+
+        builder = VideoWorkflowBuilder()
+        settings = copy.deepcopy(VIDEO_PRESETS["hunyuan15_i2v"])
+        workflow = builder.build("a cat", "blurry", settings, init_image=_SAMPLE_IMAGE)
+
+        classes = _class_types(workflow)
+        assert "HunyuanVideo15ImageToVideo" in classes
+        assert "EmptyHunyuanVideo15Latent" not in classes
+        i2v = _node_of_type(workflow, "HunyuanVideo15ImageToVideo")
+        # start_image wired from LoadImage; guider/sampler rewired to i2v outputs
+        assert isinstance(i2v["inputs"]["start_image"], list)
+        guider = _node_of_type(workflow, "CFGGuider")
+        assert guider["inputs"]["positive"][1] == 0
+        assert guider["inputs"]["negative"][1] == 1
+        sampler = _node_of_type(workflow, "SamplerCustomAdvanced")
+        assert sampler["inputs"]["latent_image"][1] == 2
+        # i2v checkpoint, not t2v
+        unet = _node_of_type(workflow, "UNETLoader")
+        assert "_i2v_" in unet["inputs"]["unet_name"]
+
+    def test_hunyuan15_i2v_without_image_raises(self):
+        import copy
+
+        from comfy_headless.video import VIDEO_PRESETS, VideoWorkflowBuilder
+
+        builder = VideoWorkflowBuilder()
+        settings = copy.deepcopy(VIDEO_PRESETS["hunyuan15_i2v"])
+        with pytest.raises(ValueError, match="init_image"):
+            builder.build("a cat", "blurry", settings, init_image=None)
+
+    def test_hunyuan15_i2v_distilled_uses_i2v_distilled_checkpoint(self):
+        import copy
+
+        from comfy_headless.video import VIDEO_PRESETS, VideoWorkflowBuilder
+
+        builder = VideoWorkflowBuilder()
+        settings = copy.deepcopy(VIDEO_PRESETS["hunyuan15_i2v_fast"])
+        workflow = builder.build("a cat", "blurry", settings, init_image=_SAMPLE_IMAGE)
+        unet = _node_of_type(workflow, "UNETLoader")
+        assert unet["inputs"]["unet_name"] == (
+            "hunyuanvideo1.5_480p_i2v_cfg_distilled_fp16.safetensors"
+        )
+
+    def test_build_video_workflow_overrides_keep_variant(self):
+        """The v3.0 bug: overrides dropped variant/upscale/shift/precision."""
+        from comfy_headless.video import build_video_workflow
+
+        workflow = build_video_workflow(
+            prompt="x", negative="y", preset="hunyuan15_fast", width=640, height=640
+        )
+        unets = [n for n in workflow.values() if n["class_type"] == "UNETLoader"]
+        assert unets, "hunyuan15_fast should load through UNETLoader"
+        assert "distilled" in unets[0]["inputs"]["unet_name"], (
+            "variant='distilled' must survive an unrelated override"
+        )
 
     def test_get_node_pack_returns_none_for_core(self):
         from comfy_headless.video import get_node_pack
