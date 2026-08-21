@@ -26,6 +26,8 @@ Usage:
     from comfy_headless.http_client import get_http_client, get_async_http_client
 """
 
+from __future__ import annotations
+
 from typing import Any
 
 from .config import settings
@@ -265,7 +267,7 @@ class AsyncHttpClient:
         logger.debug("AsyncHttpClient initialized", extra={"base_url": self.base_url})
 
     @property
-    def client(self) -> "httpx.AsyncClient":
+    def client(self) -> httpx.AsyncClient:
         """Lazy-initialize the underlying async client."""
         if self._client is None:
             self._client = httpx.AsyncClient(

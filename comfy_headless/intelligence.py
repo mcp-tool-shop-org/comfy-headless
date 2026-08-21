@@ -22,6 +22,8 @@ v2.4.0 Enhancements (2026 Best Practices):
 - Structured input/output (JSON mode)
 """
 
+from __future__ import annotations
+
 import hashlib
 import json
 import re

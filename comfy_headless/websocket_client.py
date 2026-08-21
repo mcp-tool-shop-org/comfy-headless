@@ -26,6 +26,8 @@ Features:
 - Async-native design
 """
 
+from __future__ import annotations
+
 import asyncio
 import json
 import uuid

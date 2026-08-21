@@ -8,6 +8,8 @@ Features:
 - 2026 Design Best Practices (Warm Neutral + Emerald themes)
 """
 
+from __future__ import annotations
+
 import random
 import tempfile
 import time
