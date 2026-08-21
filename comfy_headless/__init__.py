@@ -78,12 +78,14 @@ from .exceptions import (
     GenerationTimeoutError,
     InvalidParameterError,
     InvalidPromptError,
+    MissingNodePackError,
     OllamaConnectionError,
     QueueError,
     Result,
     RetryExhaustedError,
     SecurityError,
     TemplateNotFoundError,
+    UploadError,
     ValidationError,
     VerbosityLevel,
     WorkflowCompilationError,
@@ -318,7 +320,7 @@ from .workflows import (
     validate_workflow_dag,
 )
 
-__version__ = "2.5.7"
+__version__ = "3.0.0"
 
 # Lazy loading for optional features with helpful error messages
 _LAZY_IMPORTS = {
@@ -401,8 +403,10 @@ __all__ = [
     "QueueError",
     "GenerationTimeoutError",
     "GenerationFailedError",
+    "UploadError",
     "WorkflowCompilationError",
     "TemplateNotFoundError",
+    "MissingNodePackError",
     "RetryExhaustedError",
     "CircuitOpenError",
     "ValidationError",

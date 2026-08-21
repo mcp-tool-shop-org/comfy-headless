@@ -54,10 +54,13 @@ __all__ = [
     "QueueError",
     "GenerationTimeoutError",
     "GenerationFailedError",
+    # Upload
+    "UploadError",
     # Workflow errors
     "WorkflowError",
     "WorkflowCompilationError",
     "TemplateNotFoundError",
+    "MissingNodePackError",
     # Retry/circuit errors
     "RetryExhaustedError",
     "CircuitOpenError",
@@ -476,6 +479,43 @@ class NoOutputError(GenerationError):
 
 
 # =============================================================================
+# UPLOAD ERRORS
+# =============================================================================
+
+
+class UploadError(ComfyHeadlessError):
+    """Failed to upload an asset (image/mask) to ComfyUI's input folder."""
+
+    _default_user_message = "Unable to upload the image to ComfyUI"
+    _default_eli5_message = "The picture couldn't be sent to the image generator"
+    _default_suggestions = [
+        "Check that ComfyUI is running and reachable",
+        "Verify the file exists and is a readable image",
+        "Confirm the ComfyUI server accepts uploads on /upload/image",
+    ]
+
+    def __init__(
+        self,
+        message: str = "Failed to upload image",
+        filename: str | None = None,
+        subfolder: str | None = None,
+        endpoint: str | None = None,
+        status_code: int | None = None,
+        **kwargs,
+    ):
+        details = kwargs.pop("details", {})
+        if filename:
+            details["filename"] = filename
+        if subfolder:
+            details["subfolder"] = subfolder
+        if endpoint:
+            details["endpoint"] = endpoint
+        if status_code is not None:
+            details["status_code"] = status_code
+        super().__init__(message, code="UPLOAD_ERROR", details=details, **kwargs)
+
+
+# =============================================================================
 # WORKFLOW ERRORS
 # =============================================================================
 
@@ -534,6 +574,101 @@ class TemplateNotFoundError(WorkflowError):
         details = kwargs.pop("details", {})
         details["template_id"] = template_id
         super().__init__(msg, code="TEMPLATE_NOT_FOUND", details=details, **kwargs)
+
+
+class MissingNodePackError(WorkflowError):
+    """
+    A workflow references node types that this ComfyUI server does not have.
+
+    Raised before submitting to ``/prompt`` so the caller gets a named cause
+    ("class X is missing -- install pack Y") instead of ComfyUI's opaque
+    validation rejection.
+    """
+
+    _default_user_message = "ComfyUI is missing nodes this workflow needs"
+    _default_eli5_message = "ComfyUI needs an add-on installed before it can make this"
+
+    def __init__(
+        self,
+        missing: dict[str, Any] | None = None,
+        message: str | None = None,
+        **kwargs,
+    ):
+        """
+        Args:
+            missing: ``{class_type: pack_info_or_None}``. ``pack_info`` may be
+                a dict (see ``video.NodePack.to_dict``) or a plain pack id
+                string; ``None`` means the provider is unknown.
+            message: Override the technical message.
+        """
+        missing = missing or {}
+        msg = message or _format_missing_nodes(missing)
+
+        details = kwargs.pop("details", {})
+        details["missing_nodes"] = sorted(missing)
+        details["packs"] = sorted(
+            {
+                (pack.get("id") if isinstance(pack, dict) else pack)
+                for pack in missing.values()
+                if pack
+            }
+        )
+
+        suggestions = kwargs.pop("suggestions", None) or _missing_node_suggestions(missing)
+
+        super().__init__(
+            msg,
+            code="MISSING_NODE_PACK",
+            details=details,
+            suggestions=suggestions,
+            **kwargs,
+        )
+
+
+def _format_missing_nodes(missing: dict[str, Any]) -> str:
+    """Build the technical message for MissingNodePackError."""
+    if not missing:
+        return "Workflow references node types that are not installed"
+    parts = []
+    for class_type in sorted(missing):
+        pack = missing[class_type]
+        pack_id = pack.get("id") if isinstance(pack, dict) else pack
+        if pack_id and pack_id != "unknown":
+            parts.append(f"{class_type} (provided by {pack_id})")
+        else:
+            parts.append(f"{class_type} (provider unknown)")
+    return "Missing node types: " + "; ".join(parts)
+
+
+def _missing_node_suggestions(missing: dict[str, Any]) -> list[str]:
+    """Build actionable install hints for MissingNodePackError."""
+    suggestions: list[str] = []
+    seen: set[str] = set()
+    unknown: list[str] = []
+
+    for class_type in sorted(missing):
+        pack = missing[class_type]
+        pack_id = pack.get("id") if isinstance(pack, dict) else pack
+        if not pack_id or pack_id == "unknown":
+            unknown.append(class_type)
+            continue
+        if pack_id in seen:
+            continue
+        seen.add(pack_id)
+        if isinstance(pack, dict):
+            hint = pack.get("install_hint") or f"Install the '{pack_id}' custom node pack"
+            url = pack.get("url")
+            suggestions.append(f"{hint} ({url})" if url else hint)
+        else:
+            suggestions.append(f"Install the '{pack_id}' custom node pack")
+
+    if unknown:
+        suggestions.append(
+            "No known pack provides: "
+            + ", ".join(unknown)
+            + ". Check the node name against your ComfyUI version."
+        )
+    return suggestions
 
 
 class MissingParameterError(WorkflowError):
