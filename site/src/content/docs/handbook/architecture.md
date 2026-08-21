@@ -2,7 +2,7 @@
 title: Architecture
 description: How Comfy Headless works internally — the graph emitter model, the ComfyUI routes it uses, node provenance and validation, resilience, and the module map.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 ## The one idea

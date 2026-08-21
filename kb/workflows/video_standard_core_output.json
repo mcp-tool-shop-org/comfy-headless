@@ -1,0 +1,152 @@
+{
+  "class_types": [
+    "ADE_ApplyAnimateDiffModel",
+    "ADE_EmptyLatentImageLarge",
+    "ADE_LoadAnimateDiffModel",
+    "CLIPTextEncode",
+    "CheckpointLoaderSimple",
+    "CreateVideo",
+    "KSampler",
+    "SaveVideo",
+    "VAEDecode"
+  ],
+  "client_method": "ComfyClient.generate_video(prompt, preset='standard')",
+  "graph": {
+    "1": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "dreamshaper_8.safetensors"
+      }
+    },
+    "10": {
+      "class_type": "CreateVideo",
+      "inputs": {
+        "fps": 8.0,
+        "images": [
+          "8",
+          0
+        ]
+      }
+    },
+    "2": {
+      "class_type": "ADE_LoadAnimateDiffModel",
+      "inputs": {
+        "model_name": "v3_sd15_mm.ckpt"
+      }
+    },
+    "3": {
+      "class_type": "ADE_ApplyAnimateDiffModel",
+      "inputs": {
+        "model": [
+          "1",
+          0
+        ],
+        "motion_model": [
+          "2",
+          0
+        ],
+        "scale_multival": 1.0
+      }
+    },
+    "4": {
+      "class_type": "ADE_EmptyLatentImageLarge",
+      "inputs": {
+        "batch_size": 16,
+        "height": 512,
+        "width": 512
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "1",
+          1
+        ],
+        "text": "PROMPT_TEXT"
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "1",
+          1
+        ],
+        "text": "NEGATIVE_TEXT"
+      }
+    },
+    "7": {
+      "class_type": "KSampler",
+      "inputs": {
+        "cfg": 7.0,
+        "denoise": 1.0,
+        "latent_image": [
+          "4",
+          0
+        ],
+        "model": [
+          "3",
+          0
+        ],
+        "negative": [
+          "6",
+          0
+        ],
+        "positive": [
+          "5",
+          0
+        ],
+        "sampler_name": "euler",
+        "scheduler": "normal",
+        "seed": 0,
+        "steps": 20
+      }
+    },
+    "8": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "7",
+          0
+        ],
+        "vae": [
+          "1",
+          2
+        ]
+      }
+    },
+    "9": {
+      "class_type": "SaveVideo",
+      "inputs": {
+        "codec": "auto",
+        "filename_prefix": "comfy_headless_video",
+        "format": "auto",
+        "video": [
+          "10",
+          0
+        ]
+      }
+    }
+  },
+  "history_output_keys": [
+    "images"
+  ],
+  "id": "video_standard_core_output",
+  "notes": [
+    "Drops the comfyui-videohelpersuite dependency.",
+    "SaveVideo output registers in /history under 'images' with an 'animated' flag, not under 'gifs'."
+  ],
+  "placeholders": {},
+  "profile": "video",
+  "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='standard', output='core')",
+  "required_packs": {
+    "comfyui-animatediff-evolved": [
+      "ADE_ApplyAnimateDiffModel",
+      "ADE_EmptyLatentImageLarge",
+      "ADE_LoadAnimateDiffModel"
+    ]
+  },
+  "title": "Video with core CreateVideo -> SaveVideo terminator",
+  "verified_against_catalog": "2026-08-21"
+}

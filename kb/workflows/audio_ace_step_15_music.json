@@ -1,0 +1,138 @@
+{
+  "class_types": [
+    "CheckpointLoaderSimple",
+    "EmptyAceStep1.5LatentAudio",
+    "KSampler",
+    "SaveAudioAdvanced",
+    "TextEncodeAceStepAudio1.5",
+    "VAEDecodeAudio"
+  ],
+  "client_method": "ComfyClient.generate_audio(tags, ...)",
+  "graph": {
+    "1": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "ace_step_1.5_turbo_aio.safetensors"
+      }
+    },
+    "2": {
+      "class_type": "TextEncodeAceStepAudio1.5",
+      "inputs": {
+        "bpm": 120,
+        "cfg_scale": 2.0,
+        "clip": [
+          "1",
+          1
+        ],
+        "duration": 30.0,
+        "generate_audio_codes": true,
+        "keyscale": "C major",
+        "language": "en",
+        "lyrics": "",
+        "min_p": 0.0,
+        "seed": 0,
+        "tags": "PROMPT_TAGS",
+        "temperature": 0.85,
+        "timesignature": "4",
+        "top_k": 0,
+        "top_p": 0.9
+      }
+    },
+    "3": {
+      "class_type": "TextEncodeAceStepAudio1.5",
+      "inputs": {
+        "bpm": 120,
+        "cfg_scale": 2.0,
+        "clip": [
+          "1",
+          1
+        ],
+        "duration": 30.0,
+        "generate_audio_codes": false,
+        "keyscale": "C major",
+        "language": "en",
+        "lyrics": "",
+        "min_p": 0.0,
+        "seed": 0,
+        "tags": "",
+        "temperature": 0.85,
+        "timesignature": "4",
+        "top_k": 0,
+        "top_p": 0.9
+      }
+    },
+    "4": {
+      "class_type": "EmptyAceStep1.5LatentAudio",
+      "inputs": {
+        "batch_size": 1,
+        "seconds": 30.0
+      }
+    },
+    "5": {
+      "class_type": "KSampler",
+      "inputs": {
+        "cfg": 1.0,
+        "denoise": 1.0,
+        "latent_image": [
+          "4",
+          0
+        ],
+        "model": [
+          "1",
+          0
+        ],
+        "negative": [
+          "3",
+          0
+        ],
+        "positive": [
+          "2",
+          0
+        ],
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "seed": 0,
+        "steps": 8
+      }
+    },
+    "6": {
+      "class_type": "VAEDecodeAudio",
+      "inputs": {
+        "samples": [
+          "5",
+          0
+        ],
+        "vae": [
+          "1",
+          2
+        ]
+      }
+    },
+    "7": {
+      "class_type": "SaveAudioAdvanced",
+      "inputs": {
+        "audio": [
+          "6",
+          0
+        ],
+        "filename_prefix": "audio/ComfyUI",
+        "format": "flac"
+      }
+    }
+  },
+  "history_output_keys": [
+    "audio"
+  ],
+  "id": "audio_ace_step_15_music",
+  "notes": [
+    "Encoder 'duration' and latent 'seconds' are ONE parameter, driven from AudioSettings.seconds -- never set separately.",
+    "SaveAudioAdvanced is the only non-deprecated audio terminator; flac emits no format.quality key at all.",
+    "Fetch audio from /history outputs key 'audio' via GET /view."
+  ],
+  "placeholders": {},
+  "profile": "audio",
+  "python_entrypoint": "comfy_headless.build_audio_workflow(tags, preset='music')",
+  "required_packs": {},
+  "title": "ACE-Step 1.5 text-to-music (music)",
+  "verified_against_catalog": "2026-08-21"
+}

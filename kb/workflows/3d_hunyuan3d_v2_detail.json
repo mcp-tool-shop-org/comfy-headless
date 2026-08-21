@@ -1,0 +1,145 @@
+{
+  "class_types": [
+    "CLIPVisionEncode",
+    "CLIPVisionLoader",
+    "EmptyLatentHunyuan3Dv2",
+    "Hunyuan3Dv2Conditioning",
+    "ImageOnlyCheckpointLoader",
+    "KSampler",
+    "LoadImage",
+    "SaveGLB",
+    "VAEDecodeHunyuan3D",
+    "VoxelToMesh"
+  ],
+  "client_method": "ComfyClient.generate_3d(image, preset=...)",
+  "graph": {
+    "1": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "INPUT_IMAGE_REF.png"
+      }
+    },
+    "10": {
+      "class_type": "SaveGLB",
+      "inputs": {
+        "filename_prefix": "3d/ComfyUI",
+        "mesh": [
+          "9",
+          0
+        ]
+      }
+    },
+    "2": {
+      "class_type": "ImageOnlyCheckpointLoader",
+      "inputs": {
+        "ckpt_name": "hunyuan3d-dit-v2_fp16.safetensors"
+      }
+    },
+    "3": {
+      "class_type": "CLIPVisionLoader",
+      "inputs": {
+        "clip_name": "clip_vision_g.safetensors"
+      }
+    },
+    "4": {
+      "class_type": "CLIPVisionEncode",
+      "inputs": {
+        "clip_vision": [
+          "3",
+          0
+        ],
+        "crop": "center",
+        "image": [
+          "1",
+          0
+        ]
+      }
+    },
+    "5": {
+      "class_type": "Hunyuan3Dv2Conditioning",
+      "inputs": {
+        "clip_vision_output": [
+          "4",
+          0
+        ]
+      }
+    },
+    "6": {
+      "class_type": "EmptyLatentHunyuan3Dv2",
+      "inputs": {
+        "batch_size": 1,
+        "resolution": 3072
+      }
+    },
+    "7": {
+      "class_type": "KSampler",
+      "inputs": {
+        "cfg": 5.5,
+        "denoise": 1.0,
+        "latent_image": [
+          "6",
+          0
+        ],
+        "model": [
+          "2",
+          0
+        ],
+        "negative": [
+          "5",
+          1
+        ],
+        "positive": [
+          "5",
+          0
+        ],
+        "sampler_name": "euler",
+        "scheduler": "simple",
+        "seed": 0,
+        "steps": 50
+      }
+    },
+    "8": {
+      "class_type": "VAEDecodeHunyuan3D",
+      "inputs": {
+        "num_chunks": 8000,
+        "octree_resolution": 384,
+        "samples": [
+          "7",
+          0
+        ],
+        "vae": [
+          "2",
+          2
+        ]
+      }
+    },
+    "9": {
+      "class_type": "VoxelToMesh",
+      "inputs": {
+        "algorithm": "surface net",
+        "threshold": 0.6,
+        "voxel": [
+          "8",
+          0
+        ]
+      }
+    }
+  },
+  "history_output_keys": [
+    "3d"
+  ],
+  "id": "3d_hunyuan3d_v2_detail",
+  "notes": [
+    "Pure image-conditioned: no text prompt anywhere in the graph.",
+    "MESH feeds SaveGLB's FILE_3D_* union input (union-superset edge).",
+    "Fetch the GLB from /history outputs key '3d' via GET /view."
+  ],
+  "placeholders": {
+    "INPUT_IMAGE_REF.png": "server-side image name from ComfyClient.upload_image()['ref']"
+  },
+  "profile": "3d",
+  "python_entrypoint": "comfy_headless.build_3d_workflow(image_ref, preset='detail')",
+  "required_packs": {},
+  "title": "Hunyuan3D-2 image-to-mesh (detail)",
+  "verified_against_catalog": "2026-08-21"
+}

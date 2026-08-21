@@ -73,6 +73,13 @@ __all__ = [
     "create_txt2img_hires_template",
     "create_upscale_template",
     "create_inpaint_template",
+    "create_qwen_txt2img_template",
+    # Qwen / ControlNet builders (v3.1.0)
+    "build_qwen_edit_workflow",
+    "build_controlnet_workflow",
+    "QWEN_TXT2IMG_UNETS",
+    "QWEN_EDIT_UNETS",
+    "UNION_CONTROL_TYPES",
     # Convenience functions
     "compile_workflow",
     "get_preset_info",
@@ -2026,6 +2033,542 @@ def create_inpaint_template() -> WorkflowTemplate:
 
 
 # =============================================================================
+# QWEN-IMAGE FAMILY (v3.1.0)
+# =============================================================================
+#
+# Qwen-Image lives in models/diffusion_models and loads through UNETLoader --
+# NOT CheckpointLoaderSimple (searching the checkpoint namespace and
+# concluding "Qwen doesn't exist" is a known trap). Text encoding goes
+# through CLIPLoader with type="qwen_image", and the latent MUST be
+# EmptySD3LatentImage: the 16-channel DiT latent. EmptyLatentImage is the
+# 4-channel SD1.5/SDXL latent and produces garbage here.
+#
+# All class_types and model filenames verified against the live catalog
+# (2026-08-21).
+
+QWEN_TXT2IMG_UNETS = [
+    "qwen_image_2512_fp8_e4m3fn.safetensors",
+    "qwen_image_2512_bf16.safetensors",
+]
+QWEN_EDIT_UNETS = [
+    "qwen_image_edit_2511_fp8mixed.safetensors",
+    "qwen_image_edit_2511_int8_convrot.safetensors",
+    "qwen_image_edit_2509_bf16.safetensors",
+]
+QWEN_CLIP = "qwen_2.5_vl_7b_fp8_scaled.safetensors"
+QWEN_VAE = "qwen_image_vae.safetensors"
+
+# SetUnionControlNetType's enum, verbatim from the live schema. The
+# slash-grouped values are SINGLE literal choices, not alternatives to split.
+UNION_CONTROL_TYPES = [
+    "auto",
+    "openpose",
+    "depth",
+    "hed/pidi/scribble/ted",
+    "canny/lineart/anime_lineart/mlsd",
+    "normal",
+    "segment",
+    "tile",
+    "repaint",
+]
+
+
+def create_qwen_txt2img_template() -> WorkflowTemplate:
+    """
+    Create the Qwen-Image-2512 text-to-image template.
+
+    Defaults follow the model's published recipe, not the SDXL habits:
+    steps 20, cfg 2.5 (NOT 7.0), euler/simple, 1328x1328 native bucket,
+    ModelSamplingAuraFlow shift 3.1.
+    """
+    workflow = {
+        "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+                "unet_name": "qwen_image_2512_fp8_e4m3fn.safetensors",
+                "weight_dtype": "default",
+            },
+        },
+        "2": {
+            "class_type": "ModelSamplingAuraFlow",
+            "inputs": {"model": ["1", 0], "shift": 3.1},
+        },
+        "3": {
+            "class_type": "CLIPLoader",
+            "inputs": {"clip_name": QWEN_CLIP, "type": "qwen_image", "device": "default"},
+        },
+        "4": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["3", 0], "text": ""}},
+        "5": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["3", 0], "text": ""}},
+        "6": {"class_type": "VAELoader", "inputs": {"vae_name": QWEN_VAE}},
+        # 16-channel DiT latent -- EmptyLatentImage would be silent garbage.
+        "7": {
+            "class_type": "EmptySD3LatentImage",
+            "inputs": {"width": 1328, "height": 1328, "batch_size": 1},
+        },
+        "8": {
+            "class_type": "KSampler",
+            "inputs": {
+                "model": ["2", 0],
+                "positive": ["4", 0],
+                "negative": ["5", 0],
+                "latent_image": ["7", 0],
+                "seed": -1,
+                "steps": 20,
+                "cfg": 2.5,
+                "sampler_name": "euler",
+                "scheduler": "simple",
+                "denoise": 1.0,
+            },
+        },
+        "9": {"class_type": "VAEDecode", "inputs": {"samples": ["8", 0], "vae": ["6", 0]}},
+        "10": {
+            "class_type": "SaveImage",
+            "inputs": {"filename_prefix": "comfy_headless_qwen", "images": ["9", 0]},
+        },
+    }
+
+    parameters = {
+        "prompt": ParameterDef(
+            type=ParameterType.STRING,
+            node_id="4",
+            input_name="text",
+            required=True,
+            label="Prompt",
+        ),
+        "negative": ParameterDef(
+            type=ParameterType.STRING,
+            node_id="5",
+            input_name="text",
+            default="",
+            label="Negative Prompt",
+        ),
+        "unet": ParameterDef(
+            type=ParameterType.CHOICE,
+            node_id="1",
+            input_name="unet_name",
+            default="qwen_image_2512_fp8_e4m3fn.safetensors",
+            choices=QWEN_TXT2IMG_UNETS,
+            label="Diffusion model",
+        ),
+        "width": ParameterDef(
+            type=ParameterType.INT,
+            node_id="7",
+            input_name="width",
+            default=1328,
+            min=256,
+            max=2048,
+        ),
+        "height": ParameterDef(
+            type=ParameterType.INT,
+            node_id="7",
+            input_name="height",
+            default=1328,
+            min=256,
+            max=2048,
+        ),
+        "steps": ParameterDef(
+            type=ParameterType.INT, node_id="8", input_name="steps", default=20, min=1, max=100
+        ),
+        "cfg": ParameterDef(
+            type=ParameterType.FLOAT,
+            node_id="8",
+            input_name="cfg",
+            default=2.5,
+            min=1.0,
+            max=15.0,
+        ),
+        "seed": ParameterDef(type=ParameterType.INT, node_id="8", input_name="seed", default=-1),
+        "shift": ParameterDef(
+            type=ParameterType.FLOAT,
+            node_id="2",
+            input_name="shift",
+            default=3.1,
+            min=0.5,
+            max=12.0,
+            description="ModelSamplingAuraFlow shift",
+        ),
+    }
+
+    presets = {
+        "qwen_square": PresetDef(
+            name="Qwen Square",
+            description="Native 1328x1328 bucket",
+            parameters={"width": 1328, "height": 1328},
+        ),
+        "qwen_portrait": PresetDef(
+            name="Qwen Portrait",
+            description="Native portrait bucket",
+            parameters={"width": 768, "height": 1344},
+        ),
+        "qwen_landscape": PresetDef(
+            name="Qwen Landscape",
+            description="Native landscape bucket",
+            parameters={"width": 1344, "height": 768},
+        ),
+    }
+
+    return WorkflowTemplate(
+        id="qwen_txt2img",
+        name="Qwen-Image 2512 Text to Image",
+        description="Qwen-Image-2512 DiT text-to-image (UNETLoader path, 16-channel latent)",
+        category=WorkflowCategory.TEXT_TO_IMAGE,
+        workflow=workflow,
+        parameters=parameters,
+        presets=presets,
+        min_vram_gb=16,
+        tags=["qwen", "txt2img", "dit"],
+    )
+
+
+def build_qwen_edit_workflow(
+    prompt: str,
+    image_refs: "list[str] | tuple[str, ...]",
+    negative: str = "",
+    unet: str = "qwen_image_edit_2511_fp8mixed.safetensors",
+    width: int = 1328,
+    height: int = 1328,
+    steps: int = 20,
+    cfg: float = 2.5,
+    shift: float = 3.1,
+    seed: int = -1,
+    filename_prefix: str = "comfy_headless_qwen_edit",
+) -> dict[str, Any]:
+    """
+    Build a Qwen-Image-Edit-2511 workflow.
+
+    The reference-image mechanism, verbatim from the live schema: reference
+    images go into ``TextEncodeQwenImageEditPlus`` as up to three DISCRETE
+    inputs ``image1``/``image2``/``image3`` -- not a batched list -- and they
+    do NOT pass through VAEEncode. The VAE is wired into the encoder's
+    ``vae`` input and raw IMAGE goes into ``image1..3``. This node replaces
+    the positive CLIPTextEncode; the negative stays a plain CLIPTextEncode.
+
+    Args:
+        prompt: Edit instruction.
+        image_refs: 1-3 server-side image refs (from
+            ``ComfyClient.upload_image()["ref"]``).
+        negative: Negative prompt.
+        unet: Edit checkpoint (see ``QWEN_EDIT_UNETS``).
+        width/height/steps/cfg/shift/seed: Sampling parameters.
+        filename_prefix: Output prefix.
+
+    Returns:
+        ComfyUI API-format workflow JSON.
+    """
+    from .exceptions import InvalidParameterError
+
+    refs = list(image_refs)
+    if not 1 <= len(refs) <= 3:
+        raise InvalidParameterError(
+            parameter="image_refs",
+            value=len(refs),
+            reason="Qwen-Image-Edit takes 1-3 reference images (image1..image3)",
+        )
+
+    if seed == -1:
+        seed = random.randint(0, 2**32 - 1)
+
+    workflow: dict[str, Any] = {
+        "1": {
+            "class_type": "UNETLoader",
+            "inputs": {"unet_name": unet, "weight_dtype": "default"},
+        },
+        "2": {
+            "class_type": "ModelSamplingAuraFlow",
+            "inputs": {"model": ["1", 0], "shift": shift},
+        },
+        "3": {
+            "class_type": "CLIPLoader",
+            "inputs": {"clip_name": QWEN_CLIP, "type": "qwen_image", "device": "default"},
+        },
+        "4": {"class_type": "VAELoader", "inputs": {"vae_name": QWEN_VAE}},
+    }
+
+    encode_inputs: dict[str, Any] = {
+        "clip": ["3", 0],
+        "prompt": prompt,
+        "vae": ["4", 0],
+    }
+    for i, ref in enumerate(refs, start=1):
+        node_id = str(4 + i)  # "5", "6", "7"
+        workflow[node_id] = {"class_type": "LoadImage", "inputs": {"image": ref}}
+        encode_inputs[f"image{i}"] = [node_id, 0]
+
+    workflow.update(
+        {
+            "8": {"class_type": "TextEncodeQwenImageEditPlus", "inputs": encode_inputs},
+            "9": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["3", 0], "text": negative}},
+            "10": {
+                "class_type": "EmptySD3LatentImage",
+                "inputs": {"width": width, "height": height, "batch_size": 1},
+            },
+            "11": {
+                "class_type": "KSampler",
+                "inputs": {
+                    "model": ["2", 0],
+                    "positive": ["8", 0],
+                    "negative": ["9", 0],
+                    "latent_image": ["10", 0],
+                    "seed": seed,
+                    "steps": steps,
+                    "cfg": cfg,
+                    "sampler_name": "euler",
+                    "scheduler": "simple",
+                    "denoise": 1.0,
+                },
+            },
+            "12": {"class_type": "VAEDecode", "inputs": {"samples": ["11", 0], "vae": ["4", 0]}},
+            "13": {
+                "class_type": "SaveImage",
+                "inputs": {"filename_prefix": filename_prefix, "images": ["12", 0]},
+            },
+        }
+    )
+    return workflow
+
+
+def build_controlnet_workflow(
+    prompt: str,
+    control_image_ref: str,
+    control_type: str = "auto",
+    base: str = "qwen",
+    negative: str = "",
+    strength: float = 1.0,
+    start_percent: float = 0.0,
+    end_percent: float = 1.0,
+    preprocess: str | None = None,
+    width: int | None = None,
+    height: int | None = None,
+    steps: int | None = None,
+    cfg: float | None = None,
+    seed: int = -1,
+    model_name: str | None = None,
+    control_net_name: str | None = None,
+    filename_prefix: str = "comfy_headless_controlnet",
+) -> dict[str, Any]:
+    """
+    Build a union-ControlNet text-to-image workflow (Qwen and SDXL share one
+    code path): ControlNetLoader -> SetUnionControlNetType ->
+    ControlNetApplyAdvanced.
+
+    Args:
+        prompt: Positive prompt.
+        control_image_ref: Server-side ref of the control hint image
+            (already preprocessed, unless ``preprocess`` is set).
+        control_type: One of ``UNION_CONTROL_TYPES`` (verbatim enum; the
+            slash-grouped entries are single literal values). Prefer an
+            explicit type over "auto" when you know the hint kind -- "auto"
+            asks the model to infer it.
+        base: "qwen" (Qwen-Image-2512 + Fun ControlNet Union) or "sdxl"
+            (SDXL + controlnet-union-sdxl-1.0).
+        strength/start_percent/end_percent: ControlNetApplyAdvanced schedule.
+        preprocess: Optional "canny" runs the core Canny edge detector on the
+            control image first. All other preprocessors (openpose, depth,
+            lineart, HED, MLSD, normal, tile) live in the
+            ``comfyui_controlnet_aux`` pack and are NOT emitted -- supply a
+            pre-made hint image instead.
+        width/height/steps/cfg: Default per base (Qwen: 1328/20/2.5,
+            SDXL: 1024/25/7.0).
+        model_name: Override the base diffusion model file.
+        control_net_name: Override the ControlNet file.
+
+    Returns:
+        ComfyUI API-format workflow JSON.
+    """
+    from .exceptions import InvalidParameterError
+
+    if control_type not in UNION_CONTROL_TYPES:
+        raise InvalidParameterError(
+            parameter="control_type",
+            value=control_type,
+            reason="not a SetUnionControlNetType value",
+            allowed_values=UNION_CONTROL_TYPES,
+        )
+    if base not in ("qwen", "sdxl"):
+        raise InvalidParameterError(
+            parameter="base",
+            value=base,
+            reason="unsupported ControlNet base",
+            allowed_values=["qwen", "sdxl"],
+        )
+    if preprocess not in (None, "canny"):
+        raise InvalidParameterError(
+            parameter="preprocess",
+            value=preprocess,
+            reason="only the core 'canny' preprocessor is emitted; others need comfyui_controlnet_aux",
+            allowed_values=["canny"],
+        )
+    if not control_image_ref:
+        raise ValueError("ControlNet requires a control image (control_image_ref)")
+
+    if seed == -1:
+        seed = random.randint(0, 2**32 - 1)
+
+    qwen = base == "qwen"
+    width = width or (1328 if qwen else 1024)
+    height = height or (1328 if qwen else 1024)
+    steps = steps or (20 if qwen else 25)
+    cfg = cfg if cfg is not None else (2.5 if qwen else 7.0)
+
+    workflow: dict[str, Any] = {
+        "5": {"class_type": "LoadImage", "inputs": {"image": control_image_ref}},
+        "7": {
+            "class_type": "SetUnionControlNetType",
+            "inputs": {"control_net": ["6", 0], "type": control_type},
+        },
+    }
+
+    control_image_source = ["5", 0]
+    if preprocess == "canny":
+        workflow["12"] = {
+            "class_type": "Canny",
+            "inputs": {"image": ["5", 0], "low_threshold": 0.4, "high_threshold": 0.8},
+        }
+        control_image_source = ["12", 0]
+
+    if qwen:
+        workflow.update(
+            {
+                "1": {
+                    "class_type": "UNETLoader",
+                    "inputs": {
+                        "unet_name": model_name or "qwen_image_2512_fp8_e4m3fn.safetensors",
+                        "weight_dtype": "default",
+                    },
+                },
+                "2": {
+                    "class_type": "ModelSamplingAuraFlow",
+                    "inputs": {"model": ["1", 0], "shift": 3.1},
+                },
+                "3": {
+                    "class_type": "CLIPLoader",
+                    "inputs": {
+                        "clip_name": QWEN_CLIP,
+                        "type": "qwen_image",
+                        "device": "default",
+                    },
+                },
+                "4": {"class_type": "VAELoader", "inputs": {"vae_name": QWEN_VAE}},
+                "6": {
+                    "class_type": "ControlNetLoader",
+                    "inputs": {
+                        "control_net_name": control_net_name
+                        or "Qwen-Image-2512-Fun-Controlnet-Union-2602.safetensors"
+                    },
+                },
+                "8": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["3", 0], "text": prompt}},
+                "9": {
+                    "class_type": "CLIPTextEncode",
+                    "inputs": {"clip": ["3", 0], "text": negative},
+                },
+                # Qwen-family ControlNets want the VAE wired into the apply node.
+                "10": {
+                    "class_type": "ControlNetApplyAdvanced",
+                    "inputs": {
+                        "positive": ["8", 0],
+                        "negative": ["9", 0],
+                        "control_net": ["7", 0],
+                        "image": control_image_source,
+                        "strength": strength,
+                        "start_percent": start_percent,
+                        "end_percent": end_percent,
+                        "vae": ["4", 0],
+                    },
+                },
+                "11": {
+                    "class_type": "EmptySD3LatentImage",
+                    "inputs": {"width": width, "height": height, "batch_size": 1},
+                },
+                "13": {
+                    "class_type": "KSampler",
+                    "inputs": {
+                        "model": ["2", 0],
+                        "positive": ["10", 0],
+                        "negative": ["10", 1],
+                        "latent_image": ["11", 0],
+                        "seed": seed,
+                        "steps": steps,
+                        "cfg": cfg,
+                        "sampler_name": "euler",
+                        "scheduler": "simple",
+                        "denoise": 1.0,
+                    },
+                },
+                "14": {
+                    "class_type": "VAEDecode",
+                    "inputs": {"samples": ["13", 0], "vae": ["4", 0]},
+                },
+                "15": {
+                    "class_type": "SaveImage",
+                    "inputs": {"filename_prefix": filename_prefix, "images": ["14", 0]},
+                },
+            }
+        )
+    else:
+        workflow.update(
+            {
+                "1": {
+                    "class_type": "CheckpointLoaderSimple",
+                    "inputs": {"ckpt_name": model_name or "sd_xl_base_1.0.safetensors"},
+                },
+                "6": {
+                    "class_type": "ControlNetLoader",
+                    "inputs": {
+                        "control_net_name": control_net_name
+                        or "controlnet-union-sdxl-1.0.safetensors"
+                    },
+                },
+                "8": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["1", 1], "text": prompt}},
+                "9": {
+                    "class_type": "CLIPTextEncode",
+                    "inputs": {"clip": ["1", 1], "text": negative},
+                },
+                "10": {
+                    "class_type": "ControlNetApplyAdvanced",
+                    "inputs": {
+                        "positive": ["8", 0],
+                        "negative": ["9", 0],
+                        "control_net": ["7", 0],
+                        "image": control_image_source,
+                        "strength": strength,
+                        "start_percent": start_percent,
+                        "end_percent": end_percent,
+                    },
+                },
+                "11": {
+                    "class_type": "EmptyLatentImage",
+                    "inputs": {"width": width, "height": height, "batch_size": 1},
+                },
+                "13": {
+                    "class_type": "KSampler",
+                    "inputs": {
+                        "model": ["1", 0],
+                        "positive": ["10", 0],
+                        "negative": ["10", 1],
+                        "latent_image": ["11", 0],
+                        "seed": seed,
+                        "steps": steps,
+                        "cfg": cfg,
+                        "sampler_name": "euler",
+                        "scheduler": "normal",
+                        "denoise": 1.0,
+                    },
+                },
+                "14": {
+                    "class_type": "VAEDecode",
+                    "inputs": {"samples": ["13", 0], "vae": ["1", 2]},
+                },
+                "15": {
+                    "class_type": "SaveImage",
+                    "inputs": {"filename_prefix": filename_prefix, "images": ["14", 0]},
+                },
+            }
+        )
+
+    return workflow
+
+
+# =============================================================================
 # TEMPLATE LIBRARY
 # =============================================================================
 
@@ -2048,6 +2591,7 @@ class TemplateLibrary:
             create_txt2img_hires_template(),
             create_upscale_template(),
             create_inpaint_template(),
+            create_qwen_txt2img_template(),
         ]
         for t in templates:
             self._templates[t.id] = t

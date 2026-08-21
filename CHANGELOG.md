@@ -7,6 +7,103 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-08-21
+
+The six-profile release: **Image, Video, 3D, Inference, Metadata, Audio**, on a
+shared addressing/typing layer. Every emitted `class_type` was verified against
+the live ComfyUI catalog on 2026-08-21; non-core nodes are declared in the
+shared pack registry so a missing dependency is reported by name before a run is
+spent on it.
+
+### Added
+
+- **Addressing / typing layer** (`comfy_headless.addressing`) — the shared
+  machinery under all six profiles:
+  - `validate_node_input()` — a transcription of ComfyUI's own
+    `comfy_execution/validation.py`, so the client can never be stricter than
+    the server. `match_types()` adds SUBSET / OVERLAP / DISJOINT resolution and
+    `GraphTypeChecker` applies it per edge; a union-superset edge (`MESH` into
+    SaveGLB's 14-member `FILE_3D_*` union) is never a false rejection, gated by
+    a zero-rejections corpus test over every graph the builders emit.
+  - Dotted dynamic-combo addressing: escape-aware field paths, no
+    auto-vivification, and presence-aware `DynamicCombo` specs
+    (`SAVE_AUDIO_FORMAT`, `SAVE_VIDEO_CODEC`) that refuse inactive-branch
+    fields at construction time (`format.quality` under `flac` raises;
+    `codec.encoding.crf` requires `codec=h264, encoding=re-encode`).
+  - The output-node guard (`require_output_node`) and the retrieval contract
+    (`HISTORY_OUTPUT_KEYS`): a graph whose data does not terminate in an
+    `OUTPUT_NODE` runs green and returns nothing.
+  - New exception: `GraphAddressError`.
+- **3D profile** (`comfy_headless.three_d`) — Hunyuan3D-2 image-to-mesh,
+  entirely core nodes (`ImageOnlyCheckpointLoader` → `Hunyuan3Dv2Conditioning`
+  → `KSampler` → `VAEDecodeHunyuan3D` → `VoxelToMesh` → `SaveGLB`). Presets
+  `standard` / `draft` / `detail`; `ComfyClient.generate_3d()`; GLB retrieval
+  through the existing `/history` + `/view` routes (outputs key `3d`).
+- **Audio profile** (`comfy_headless.audio`) — ACE-Step 1.5 text-to-music
+  (all core, MIT weights, 8 steps / cfg 1 turbo AIO), with the model's
+  duration/seconds coupling invariant enforced from a single settings field,
+  and terminating in `SaveAudioAdvanced` — the only non-deprecated audio save
+  node (`SaveAudio`/`SaveAudioMP3`/`SaveAudioOpus` all carry
+  `deprecated=true` and are never emitted). Stem separation via the
+  `audio-separation-nodes-comfyui` pack, wired by the documented output order
+  (bass, drums, other, vocals). `ComfyClient.generate_audio()`,
+  `separate_audio()`, `upload_audio()`.
+- **Inference profile** (`comfy_headless.inference`) — caption, tag, detect,
+  segment, OCR through Florence-2 (`comfyui-florence2`). Tagging rides the
+  PromptGen fine-tune (`prompt_gen_tags`) because no WD14 tagger class exists
+  in the live catalog; the detect leg bridges Florence2Run's JSON output
+  through `Florence2toCoordinates` because JSON → STRING is not a valid edge.
+  Every graph passes the output-node guard; `SaveText` reports results inline
+  (`text`) plus the written file (`files`), so `ComfyClient.run_inference()`
+  returns the caption with no second round-trip.
+- **Metadata profile** (`comfy_headless.metadata`) — provenance round-trip,
+  pure stdlib: `read_png_text_chunks` (tEXt/zTXt/iTXt, zip-bomb-capped),
+  `read_workflow_metadata`, `extract_prompt_graph`, and
+  `ComfyClient.rerun_from_png()` which re-POSTs the embedded API-format graph
+  verbatim. Custom provenance via
+  `queue_prompt(workflow, extra_pnginfo={...})` (verified payload shape:
+  `extra_data.extra_pnginfo`).
+- **Image profile extensions** — `qwen_txt2img` template (Qwen-Image-2512:
+  UNETLoader path, 16-channel `EmptySD3LatentImage`, steps 20 / cfg 2.5 /
+  shift 3.1 / 1328×1328), `build_qwen_edit_workflow` +
+  `ComfyClient.edit_image()` (Qwen-Image-Edit-2511, 1-3 discrete reference
+  images into `TextEncodeQwenImageEditPlus`, no VAEEncode), and
+  `build_controlnet_workflow` (union ControlNet, one code path for Qwen and
+  SDXL, verbatim `SetUnionControlNetType` enum, optional core-Canny
+  preprocess).
+- **Video** — real Hunyuan 1.5 image-to-video: presets `hunyuan15_i2v` and
+  `hunyuan15_i2v_fast` build on core `HunyuanVideo15ImageToVideo` and require
+  an `init_image`. `VideoSettings(output="core")` swaps `VHS_VideoCombine`
+  for core `CreateVideo` → `SaveVideo` (codec emitted through the dynamic-
+  combo layer), dropping the Video Helper Suite dependency; `generate_video`
+  understands SaveVideo's history shape (`images` + `animated`).
+- **Client** — `generate_3d`, `generate_audio`, `separate_audio`,
+  `run_inference`, `edit_image`, `rerun_from_png`, `upload_audio`,
+  `get_file` (one `/view` route serves every output type), and
+  `check_workflow_types` (edge type validation against the live
+  `/object_info` using the server's own acceptance rule).
+- **In-repo knowledge base** (`kb/`) — an LLM-first index (`kb/index.json`)
+  over per-profile fact pages, runnable reference graphs
+  (`kb/workflows/*.json`) and node provenance (`kb/nodes.json`), generated
+  from the package registries by `scripts/gen_kb.py` with pinned seeds so
+  regeneration is byte-identical; `tests/test_kb.py` fails the suite if code
+  and KB drift.
+
+### Fixed
+
+- **`HUNYUAN_15_I2V` silently built a text-to-video graph** and ignored
+  `init_image`. It now builds the real i2v shape and raises without an image.
+- **`build_video_workflow` overrides dropped `variant`/`upscale`/`shift`/
+  `precision`** — e.g. `preset="hunyuan15_fast"` plus any override silently
+  lost `variant="distilled"` and built the wrong graph with the wrong cfg.
+
+### Changed
+
+- The custom-node pack registry moved to `comfy_headless.node_packs` (now
+  shared by all profiles) and gained `comfyui-florence2`,
+  `comfyui-segment-anything-2` and `audio-separation-nodes-comfyui`.
+  `comfy_headless.video` re-exports it, so pre-3.1 imports keep working.
+
 ## [3.0.1] - 2026-08-21
 
 Fixes a packaging defect in 3.0.0 that made a core-only install unimportable.

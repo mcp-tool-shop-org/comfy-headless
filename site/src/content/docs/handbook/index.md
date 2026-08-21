@@ -1,6 +1,6 @@
 ---
 title: Comfy Headless Handbook
-description: The complete guide to driving ComfyUI from Python — image and video generation, verified node graphs, and a clean API over the full ComfyUI feature set.
+description: The complete guide to driving ComfyUI from Python — image, video, 3D, audio, inference and provenance profiles, verified node graphs, and a clean API over the full ComfyUI feature set.
 sidebar:
   order: 0
 ---
@@ -48,12 +48,22 @@ so the rot is visible next time:
 
 If you take one habit from this handbook: **check dependencies before you spend a run.**
 
+## What v3.1 adds
+
+v3.1 grows the library from two workflow surfaces to **six profiles** — Image, Video,
+3D, Inference, Metadata, Audio — on a shared addressing/typing layer that speaks
+ComfyUI's own validation rules. Meshes (Hunyuan3D-2), music (ACE-Step 1.5), captions and
+detections (Florence-2), and PNG provenance round-trips all ride the same routes the
+library already used; no new endpoints, the same dict-returning call shape. See
+[The Six Profiles](../profiles/).
+
 ## Where to go next
 
 | You want to | Read |
 |-------------|------|
 | Install and generate your first image | [Getting Started](../getting-started/) |
 | Learn the day-to-day API | [Usage](../usage/) |
+| Meshes, music, captions, provenance | [The Six Profiles](../profiles/) |
 | Pick a video model for your GPU | [Video Models](../video-models/) |
 | Configure URLs, timeouts, features | [Configuration](../configuration/) |
 | Look up an exact signature | [API Reference](../api-reference/) |
@@ -62,9 +72,12 @@ If you take one habit from this handbook: **check dependencies before you spend 
 
 ## At a glance
 
+- **Six profiles** — Image, Video, 3D, Inference, Metadata, Audio
 - **8 image presets** — `draft`, `fast`, `quality`, `hd`, `portrait`, `landscape`,
-  `cinematic`, `square`
-- **24 video presets** across **9 model families**
+  `cinematic`, `square` — plus Qwen-Image txt2img, edit and ControlNet
+- **26 video presets** across **9 model families**, including true Hunyuan 1.5 i2v
+- **3D** (Hunyuan3D-2 → GLB) and **audio** (ACE-Step 1.5 → flac/mp3/opus) on all-core
+  graphs
 - **Modular installs** — core is ~2MB; AI, WebSocket, UI, health, validation and tracing
   are opt-in extras
 - **Structured errors** — every exception carries a code, a message and a hint

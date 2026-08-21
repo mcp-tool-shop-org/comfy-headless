@@ -2,7 +2,7 @@
 title: Video Models
 description: The nine video model families, all 24 presets with real resolutions and frame counts, VRAM floors, and which families need custom node packs.
 sidebar:
-  order: 3
+  order: 4
 ---
 
 Comfy Headless ships **24 curated presets across 9 model families**. You pick a preset;

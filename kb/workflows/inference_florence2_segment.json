@@ -1,0 +1,87 @@
+{
+  "class_types": [
+    "DownloadAndLoadFlorence2Model",
+    "Florence2Run",
+    "LoadImage",
+    "MaskToImage",
+    "SaveImage"
+  ],
+  "client_method": "ComfyClient.run_inference(image, task=...)",
+  "graph": {
+    "1": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "INPUT_IMAGE_REF.png"
+      }
+    },
+    "2": {
+      "class_type": "DownloadAndLoadFlorence2Model",
+      "inputs": {
+        "attention": "sdpa",
+        "model": "microsoft/Florence-2-large",
+        "precision": "fp16"
+      }
+    },
+    "3": {
+      "class_type": "Florence2Run",
+      "inputs": {
+        "do_sample": true,
+        "fill_mask": true,
+        "florence2_model": [
+          "2",
+          0
+        ],
+        "image": [
+          "1",
+          0
+        ],
+        "keep_model_loaded": false,
+        "max_new_tokens": 1024,
+        "num_beams": 3,
+        "output_mask_select": "",
+        "seed": 1,
+        "task": "referring_expression_segmentation",
+        "text_input": "QUERY_TEXT"
+      }
+    },
+    "4": {
+      "class_type": "MaskToImage",
+      "inputs": {
+        "mask": [
+          "3",
+          1
+        ]
+      }
+    },
+    "5": {
+      "class_type": "SaveImage",
+      "inputs": {
+        "filename_prefix": "inference/ComfyUI",
+        "images": [
+          "4",
+          0
+        ]
+      }
+    }
+  },
+  "history_output_keys": [
+    "images"
+  ],
+  "id": "inference_florence2_segment",
+  "notes": [
+    "Results reach /history ONLY through an OUTPUT_NODE terminator; SaveText reports inline text under 'text' plus the file under 'files'."
+  ],
+  "placeholders": {
+    "INPUT_IMAGE_REF.png": "server-side image name from ComfyClient.upload_image()['ref']"
+  },
+  "profile": "inference",
+  "python_entrypoint": "comfy_headless.build_inference_workflow(image_ref, task='segment', text_input=...)",
+  "required_packs": {
+    "comfyui-florence2": [
+      "DownloadAndLoadFlorence2Model",
+      "Florence2Run"
+    ]
+  },
+  "title": "Florence-2 segment",
+  "verified_against_catalog": "2026-08-21"
+}

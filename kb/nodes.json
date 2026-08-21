@@ -1,0 +1,98 @@
+{
+  "history_output_keys": {
+    "SaveAudioAdvanced": [
+      "audio"
+    ],
+    "SaveGLB": [
+      "3d"
+    ],
+    "SaveImage": [
+      "images"
+    ],
+    "SaveText": [
+      "text",
+      "files"
+    ],
+    "SaveVideo": [
+      "images"
+    ],
+    "VHS_VideoCombine": [
+      "gifs"
+    ]
+  },
+  "how_to_read": "pack_nodes maps every NON-core class_type comfy-headless can emit to the custom node pack that provides it; anything a builder emits that is not listed here is a verified ComfyUI core node. history_output_keys is the retrieval contract: after a run, history['outputs'][node_id][key] holds the results for that terminator class.",
+  "output_node_classes": [
+    "PreviewImage",
+    "SaveAnimatedPNG",
+    "SaveAnimatedWEBP",
+    "SaveAudio",
+    "SaveAudioAdvanced",
+    "SaveAudioMP3",
+    "SaveAudioOpus",
+    "SaveGLB",
+    "SaveImage",
+    "SaveText",
+    "SaveVideo",
+    "VHS_VideoCombine"
+  ],
+  "pack_nodes": {
+    "ADE_ApplyAnimateDiffModel": "comfyui-animatediff-evolved",
+    "ADE_EmptyLatentImageLarge": "comfyui-animatediff-evolved",
+    "ADE_LoadAnimateDiffModel": "comfyui-animatediff-evolved",
+    "AudioSeparation": "audio-separation-nodes-comfyui",
+    "CogVideoDecode": "comfyui-cogvideoxwrapper",
+    "CogVideoSampler": "comfyui-cogvideoxwrapper",
+    "CogVideoTextEncode": "comfyui-cogvideoxwrapper",
+    "DownloadAndLoadCogVideoModel": "comfyui-cogvideoxwrapper",
+    "DownloadAndLoadFlorence2Model": "comfyui-florence2",
+    "Florence2Run": "comfyui-florence2",
+    "Florence2toCoordinates": "comfyui-segment-anything-2",
+    "RIFE VFI": "comfyui-frame-interpolation",
+    "VHS_VideoCombine": "comfyui-videohelpersuite"
+  },
+  "packs": {
+    "audio-separation-nodes-comfyui": {
+      "id": "audio-separation-nodes-comfyui",
+      "install_hint": "ComfyUI Manager -> Install Custom Nodes -> 'audio-separation-nodes-comfyui'",
+      "name": "audio-separation-nodes-comfyui",
+      "url": "https://github.com/christian-byrne/audio-separation-nodes-comfyui"
+    },
+    "comfyui-animatediff-evolved": {
+      "id": "comfyui-animatediff-evolved",
+      "install_hint": "ComfyUI Manager -> Install Custom Nodes -> 'AnimateDiff Evolved'",
+      "name": "ComfyUI-AnimateDiff-Evolved",
+      "url": "https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved"
+    },
+    "comfyui-cogvideoxwrapper": {
+      "id": "comfyui-cogvideoxwrapper",
+      "install_hint": "ComfyUI Manager -> Install Custom Nodes -> 'CogVideoX Wrapper'",
+      "name": "ComfyUI-CogVideoXWrapper",
+      "url": "https://github.com/kijai/ComfyUI-CogVideoXWrapper"
+    },
+    "comfyui-florence2": {
+      "id": "comfyui-florence2",
+      "install_hint": "ComfyUI Manager -> Install Custom Nodes -> 'ComfyUI-Florence2'",
+      "name": "ComfyUI-Florence2",
+      "url": "https://github.com/kijai/ComfyUI-Florence2"
+    },
+    "comfyui-frame-interpolation": {
+      "id": "comfyui-frame-interpolation",
+      "install_hint": "ComfyUI Manager -> Install Custom Nodes -> 'Frame Interpolation'",
+      "name": "ComfyUI-Frame-Interpolation",
+      "url": "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation"
+    },
+    "comfyui-segment-anything-2": {
+      "id": "comfyui-segment-anything-2",
+      "install_hint": "ComfyUI Manager -> Install Custom Nodes -> 'ComfyUI-segment-anything-2'",
+      "name": "ComfyUI-segment-anything-2",
+      "url": "https://github.com/kijai/ComfyUI-segment-anything-2"
+    },
+    "comfyui-videohelpersuite": {
+      "id": "comfyui-videohelpersuite",
+      "install_hint": "ComfyUI Manager -> Install Custom Nodes -> 'Video Helper Suite'",
+      "name": "ComfyUI-VideoHelperSuite",
+      "url": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite"
+    }
+  },
+  "verified_against_catalog": "2026-08-21"
+}

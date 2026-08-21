@@ -2,7 +2,7 @@
 title: API Reference
 description: Verified signatures for the ComfyClient methods, module-level functions, data types, and the full error taxonomy.
 sidebar:
-  order: 5
+  order: 6
 ---
 
 Every signature on this page is taken from the installed package by introspection, not

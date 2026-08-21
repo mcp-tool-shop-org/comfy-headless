@@ -2,7 +2,7 @@
 title: Configuration
 description: Environment variables, optional feature extras, timeouts, retry and circuit-breaker behaviour, logging, and how to inspect resolved settings.
 sidebar:
-  order: 4
+  order: 5
 ---
 
 Configuration comes from three places, in increasing order of precedence:

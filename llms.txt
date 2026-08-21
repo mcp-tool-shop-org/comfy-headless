@@ -4,7 +4,9 @@
 
 ## Overview
 
-Comfy Headless provides a Python API and Gradio UI for ComfyUI without the complexity. Features include AI-powered prompt enhancement via Ollama, video generation with 24 presets across 9 model families, real-time WebSocket progress, and modular architecture with optional dependencies.
+Comfy Headless provides a Python API and Gradio UI for ComfyUI without the complexity. Six workflow profiles — Image, Video, 3D, Inference, Metadata, Audio — plus AI-powered prompt enhancement via Ollama, real-time WebSocket progress, and modular architecture with optional dependencies. Every emitted node type is verified against the live ComfyUI catalog; non-core nodes declare their custom node pack.
+
+**In-repo knowledge base:** `kb/index.json` is a machine-readable index over per-profile fact pages, runnable reference graphs (`kb/workflows/*.json`), and node provenance (`kb/nodes.json`) — designed to be the first thing an LLM reads when working with this library. See `kb/README.md`.
 
 ## Quick Start
 
@@ -89,6 +91,88 @@ bare filename.
 Get execution history, optionally for a specific prompt.
 - Returns: `dict`
 
+### client.generate_3d(image, preset="standard", ...)
+Image-to-mesh via Hunyuan3D-2 (all core nodes, no packs). `image` accepts a
+local path, raw bytes, an `upload_image()` dict, or a server-side ref —
+local sources are uploaded automatically.
+- Presets: `standard`, `draft`, `detail`; overrides: `steps`, `cfg`, `seed`,
+  `octree_resolution`, `threshold`, ...
+- Returns: `dict` with keys `success`, `prompt_id`, `meshes` (GLB file
+  entries for `get_file()`), `error`, `seed`, `preset`
+
+### client.generate_audio(tags, lyrics="", preset="music", ...)
+Text-to-music via ACE-Step 1.5 (all core, MIT weights). `tags` is the main
+prompt; `lyrics` optional.
+- Presets: `music`, `music_long`, `jingle`, `music_mp3`, `draft`;
+  overrides: `seconds`, `bpm`, `keyscale`, `format` (flac/mp3/opus), ...
+- Returns: `dict` with keys `success`, `prompt_id`, `audios`, `error`,
+  `seed`, `preset`
+
+### client.separate_audio(audio, stems=None, ...)
+Split audio into stems (bass, drums, other, vocals). Requires the
+`audio-separation-nodes-comfyui` pack. `audio` accepts path/bytes/dict/ref
+(uploads via `upload_audio` automatically).
+- Returns: `dict` with `audios` (each entry labeled with its `stem`)
+
+### client.run_inference(image, task="caption", text_input="", ...)
+Non-generative inference via Florence-2: `caption`, `detailed_caption`,
+`more_detailed_caption`, `tag`, `detect`, `segment`, `ocr`. `detect` and
+`segment` require `text_input` (what to find). Requires the
+`comfyui-florence2` pack (+ `comfyui-segment-anything-2` for detect).
+- Returns: `dict` with `text` (the inline result — caption/tags/coordinates,
+  no second round-trip), `texts`, `files`, `images` (segment masks), `error`
+
+### client.edit_image(prompt, images, ...)
+Instruction-based editing via Qwen-Image-Edit-2511. `images` is 1-3
+references (paths/bytes/dicts/refs).
+- Returns: `dict` with `success`, `prompt_id`, `images`, `error`, `seed`
+
+### client.rerun_from_png(source, ...)
+Re-run the exact API-format graph embedded in a ComfyUI output PNG
+(metadata profile). Returns every output family: `images`, `videos`,
+`audios`, `meshes`, `files`, `texts`.
+
+### client.upload_audio(path_or_bytes, ...)
+Upload audio into ComfyUI's input folder (same `POST /upload/image` route —
+no audio-specific route exists). Same return shape as `upload_image`.
+
+### client.get_file(filename, subfolder="", folder_type="output")
+Download ANY generated output (mesh, audio, text, video) via `GET /view` —
+one route serves every output type.
+
+### client.queue_prompt(workflow, extra_pnginfo=None)
+Queue a raw API-format workflow. `extra_pnginfo` embeds custom provenance
+keys as PNG text chunks in the outputs (metadata profile write path).
+
+### client.check_workflow_types(workflow)
+Client-side edge type validation against the live `/object_info`, using the
+server's own union-superset acceptance rule (a MESH into a FILE_3D_* union
+is never a false rejection). Returns `{checked, errors, warnings}`.
+
+### Module-level profile builders
+
+```python
+from comfy_headless import (
+    build_3d_workflow,            # 3D: image_ref -> Hunyuan3D-2 graph
+    build_audio_workflow,         # Audio: tags/lyrics -> ACE-Step 1.5 graph
+    build_audio_separation_workflow,
+    build_inference_workflow,     # Inference: caption/tag/detect/segment/ocr
+    build_qwen_edit_workflow,     # Image: Qwen-Edit-2511 (1-3 references)
+    build_controlnet_workflow,    # Image: union ControlNet (qwen or sdxl base)
+    compile_workflow,             # Image: templates incl. "qwen_txt2img"
+    build_video_workflow,         # Video: 26 presets
+)
+```
+
+### Metadata / provenance (module-level, no server needed)
+
+```python
+from comfy_headless import read_workflow_metadata, extract_prompt_graph
+
+record = read_workflow_metadata("output.png")   # .prompt .workflow .extra
+graph = extract_prompt_graph("output.png")      # the re-POSTable /prompt graph
+```
+
 ### enhance_prompt(prompt, style="balanced")
 AI-powered prompt enhancement via Ollama. Module-level function, **not** a client
 method. Requires the `[ai]` extra.
@@ -112,7 +196,7 @@ list_video_presets()  # Video presets
 
 ## Video Generation
 
-24 presets across 9 model families (`VIDEO_PRESETS`, `VIDEO_MODEL_INFO`):
+26 presets across 9 model families (`VIDEO_PRESETS`, `VIDEO_MODEL_INFO`):
 - AnimateDiff (v2, v3, Lightning)
 - Stable Video Diffusion (SVD, SVD-XT)
 - CogVideoX
@@ -146,7 +230,10 @@ result = client.generate_video("a cat walking", preset="wan_14b", init_image=ref
 
 Most video presets run on stock ComfyUI core nodes. AnimateDiff presets need
 AnimateDiff-Evolved, CogVideoX needs the CogVideoX Wrapper, and video output uses
-Video Helper Suite. Check before running with
+Video Helper Suite by default — or pass `output="core"` to swap the terminator to
+core `CreateVideo -> SaveVideo` and drop that pack entirely. Hunyuan 1.5
+image-to-video is real i2v via `hunyuan15_i2v` / `hunyuan15_i2v_fast` presets
+(requires `init_image`). Check dependencies before running with
 `client.check_workflow_dependencies(workflow)` (reports `missing_packs`) or
 `client.require_workflow_dependencies(workflow)` (raises `MissingNodePackError`).
 

@@ -1,0 +1,218 @@
+{
+  "class_types": [
+    "BasicScheduler",
+    "CFGGuider",
+    "CLIPTextEncode",
+    "DualCLIPLoader",
+    "HunyuanVideo15ImageToVideo",
+    "KSamplerSelect",
+    "LoadImage",
+    "ModelSamplingSD3",
+    "RandomNoise",
+    "SamplerCustomAdvanced",
+    "UNETLoader",
+    "VAEDecode",
+    "VAELoader",
+    "VHS_VideoCombine"
+  ],
+  "client_method": "ComfyClient.generate_video(prompt, preset=...)",
+  "graph": {
+    "1": {
+      "class_type": "DualCLIPLoader",
+      "inputs": {
+        "clip_name1": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+        "clip_name2": "byt5_small_glyphxl_fp16.safetensors",
+        "device": "default",
+        "type": "hunyuan_video_15"
+      }
+    },
+    "10": {
+      "class_type": "RandomNoise",
+      "inputs": {
+        "noise_seed": 0
+      }
+    },
+    "11": {
+      "class_type": "KSamplerSelect",
+      "inputs": {
+        "sampler_name": "euler"
+      }
+    },
+    "12": {
+      "class_type": "SamplerCustomAdvanced",
+      "inputs": {
+        "guider": [
+          "8",
+          0
+        ],
+        "latent_image": [
+          "4",
+          2
+        ],
+        "noise": [
+          "10",
+          0
+        ],
+        "sampler": [
+          "11",
+          0
+        ],
+        "sigmas": [
+          "9",
+          0
+        ]
+      }
+    },
+    "13": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "12",
+          0
+        ],
+        "vae": [
+          "2",
+          0
+        ]
+      }
+    },
+    "14": {
+      "class_type": "VHS_VideoCombine",
+      "inputs": {
+        "filename_prefix": "comfy_headless_hunyuan15",
+        "format": "video/h264-mp4",
+        "frame_rate": 24,
+        "images": [
+          "13",
+          0
+        ],
+        "loop_count": 0,
+        "pingpong": false,
+        "save_output": true
+      }
+    },
+    "17": {
+      "class_type": "LoadImage",
+      "inputs": {
+        "image": "INPUT_IMAGE_REF.png"
+      }
+    },
+    "2": {
+      "class_type": "VAELoader",
+      "inputs": {
+        "vae_name": "hunyuanvideo15_vae_fp16.safetensors"
+      }
+    },
+    "3": {
+      "class_type": "UNETLoader",
+      "inputs": {
+        "unet_name": "hunyuanvideo1.5_480p_i2v_fp16.safetensors",
+        "weight_dtype": "default"
+      }
+    },
+    "4": {
+      "class_type": "HunyuanVideo15ImageToVideo",
+      "inputs": {
+        "batch_size": 1,
+        "height": 480,
+        "length": 81,
+        "negative": [
+          "6",
+          0
+        ],
+        "positive": [
+          "5",
+          0
+        ],
+        "start_image": [
+          "17",
+          0
+        ],
+        "vae": [
+          "2",
+          0
+        ],
+        "width": 848
+      }
+    },
+    "5": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "1",
+          0
+        ],
+        "text": "PROMPT_TEXT"
+      }
+    },
+    "6": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "1",
+          0
+        ],
+        "text": "NEGATIVE_TEXT"
+      }
+    },
+    "7": {
+      "class_type": "ModelSamplingSD3",
+      "inputs": {
+        "model": [
+          "3",
+          0
+        ],
+        "shift": 5.0
+      }
+    },
+    "8": {
+      "class_type": "CFGGuider",
+      "inputs": {
+        "cfg": 6.0,
+        "model": [
+          "7",
+          0
+        ],
+        "negative": [
+          "4",
+          1
+        ],
+        "positive": [
+          "4",
+          0
+        ]
+      }
+    },
+    "9": {
+      "class_type": "BasicScheduler",
+      "inputs": {
+        "denoise": 1.0,
+        "model": [
+          "3",
+          0
+        ],
+        "scheduler": "simple",
+        "steps": 20
+      }
+    }
+  },
+  "history_output_keys": [
+    "gifs"
+  ],
+  "id": "video_hunyuan15_i2v",
+  "notes": [
+    "VHS_VideoCombine is the default terminator; VideoSettings(output='core') swaps in CreateVideo -> SaveVideo."
+  ],
+  "placeholders": {
+    "INPUT_IMAGE_REF.png": "server-side image name from ComfyClient.upload_image()['ref']"
+  },
+  "profile": "video",
+  "python_entrypoint": "comfy_headless.build_video_workflow(prompt, preset='hunyuan15_i2v')",
+  "required_packs": {
+    "comfyui-videohelpersuite": [
+      "VHS_VideoCombine"
+    ]
+  },
+  "title": "Video preset hunyuan15_i2v",
+  "verified_against_catalog": "2026-08-21"
+}

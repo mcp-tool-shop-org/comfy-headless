@@ -152,6 +152,25 @@ _IMAGE_MAGIC: tuple[tuple[bytes, str], ...] = (
     (b"BM", ".bmp"),
 )
 
+_AUDIO_MAGIC: tuple[tuple[bytes, str], ...] = (
+    (b"fLaC", ".flac"),
+    (b"ID3", ".mp3"),
+    (b"\xff\xfb", ".mp3"),
+    (b"\xff\xf3", ".mp3"),
+    (b"\xff\xf2", ".mp3"),
+    (b"OggS", ".ogg"),
+)
+
+
+def _sniff_audio_extension(data: bytes) -> str:
+    """Guess a file extension from audio magic bytes (defaults to .wav)."""
+    if data[:4] == b"RIFF" and data[8:12] == b"WAVE":
+        return ".wav"
+    for magic, ext in _AUDIO_MAGIC:
+        if data.startswith(magic):
+            return ext
+    return ".wav"
+
 
 def _sniff_image_extension(data: bytes) -> str:
     """Guess a file extension from image magic bytes (defaults to .png)."""
@@ -894,6 +913,58 @@ class ComfyClient:
             raise MissingNodePackError(missing=report["missing_packs"])
         return report
 
+    def check_workflow_types(self, workflow: dict) -> dict[str, Any]:
+        """
+        Client-side edge type validation against the live ``/object_info``.
+
+        Uses the server's own acceptance rule (union-superset matching,
+        transcribed in :mod:`comfy_headless.addressing`), so a MESH feeding a
+        FILE_3D_* union input is never a false rejection. Only edges the
+        server would provably reject are errors; partial type overlaps are
+        warnings; unknown nodes are skipped (drift tolerance).
+
+        Returns:
+            Dict with:
+                - checked: False when /object_info was unreachable (nothing
+                  validated -- absence of errors then means nothing)
+                - errors: edges the server would reject
+                - warnings: accepted edges with partial type overlap
+        """
+        data: dict = {}
+        try:
+            response = self._get("/object_info")
+            if response.ok:
+                data = _safe_json_parse(response, "getting object info for type checking")
+        except ComfyUIConnectionError:
+            pass
+        except Exception as e:
+            logger.debug(f"Type-check fetch failed: {e}")
+
+        if not isinstance(data, dict) or not data:
+            return {"checked": False, "errors": [], "warnings": []}
+
+        from .addressing import GraphTypeChecker, extract_object_info_types
+
+        issues = GraphTypeChecker(extract_object_info_types(data)).check(workflow)
+
+        def _as_dict(issue) -> dict[str, Any]:
+            return {
+                "node_id": issue.node_id,
+                "input_name": issue.input_name,
+                "source_id": issue.source_id,
+                "output_index": issue.output_index,
+                "received": issue.received,
+                "declared": issue.declared,
+                "match": issue.match.value,
+                "message": issue.message,
+            }
+
+        return {
+            "checked": True,
+            "errors": [_as_dict(i) for i in issues if i.severity == "error"],
+            "warnings": [_as_dict(i) for i in issues if i.severity == "warning"],
+        }
+
     # =========================================================================
     # QUEUE MANAGEMENT
     # =========================================================================
@@ -951,12 +1022,19 @@ class ComfyClient:
     # PROMPT EXECUTION
     # =========================================================================
 
-    def queue_prompt(self, workflow: dict) -> str | None:
+    def queue_prompt(self, workflow: dict, extra_pnginfo: dict | None = None) -> str | None:
         """
         Queue a workflow for execution.
 
         Args:
             workflow: ComfyUI workflow dict
+            extra_pnginfo: Optional custom provenance. Anything in this dict
+                is serialized by the save nodes as extra PNG text chunks
+                alongside the default ``prompt``/``workflow`` keys -- the
+                metadata profile's write path, no custom node needed. Read it
+                back with ``comfy_headless.metadata.read_workflow_metadata``.
+                Caveat: some hardened deployments strip unknown keys;
+                round-trip test against the real target.
 
         Returns:
             prompt_id if successful, None otherwise
@@ -970,7 +1048,11 @@ class ComfyClient:
             return None
 
         try:
-            payload = {"prompt": workflow, "client_id": self.client_id}
+            payload: dict[str, Any] = {"prompt": workflow, "client_id": self.client_id}
+            if extra_pnginfo:
+                # Verified payload shape: execution.py reads
+                # extra_data.get('extra_pnginfo') into the save nodes.
+                payload["extra_data"] = {"extra_pnginfo": extra_pnginfo}
             response = self._post("/prompt", json=payload, timeout=settings.comfyui.timeout_queue)
 
             if response.ok:
@@ -1397,6 +1479,42 @@ class ComfyClient:
             extra_fields={"original_ref": _normalize_original_ref(original_ref)},
         )
 
+    def upload_audio(
+        self,
+        path_or_bytes: "str | Path | bytes | bytearray | memoryview",
+        *,
+        filename: str | None = None,
+        subfolder: str = "",
+        overwrite: bool = False,
+        type: str = "input",
+    ) -> dict:
+        """
+        Upload an audio file into ComfyUI's input folder.
+
+        ComfyUI has no ``/upload/audio`` route -- ``POST /upload/image`` is
+        the server's general input-file uploader (it stores whatever it is
+        given without content-type validation; this is exactly how the GUI's
+        LoadAudio widget uploads). Feed the returned "ref" to a core
+        ``LoadAudio`` node, e.g. via ``separate_audio()``.
+
+        For raw bytes without a ``filename``, the extension is sniffed from
+        audio magic bytes (flac/mp3/ogg/wav) -- LoadAudio's file list filters
+        by extension, so the name matters.
+
+        Args / returns / raises: same shape as :meth:`upload_image`.
+        """
+        if isinstance(path_or_bytes, (bytes, bytearray, memoryview)) and not filename:
+            data = bytes(path_or_bytes)
+            filename = f"comfy_headless_{uuid.uuid4().hex[:8]}{_sniff_audio_extension(data)}"
+        return self._upload_asset(
+            "/upload/image",
+            path_or_bytes,
+            filename=filename,
+            subfolder=subfolder,
+            overwrite=overwrite,
+            folder_type=type,
+        )
+
     # =========================================================================
     # FILE DOWNLOADS
     # =========================================================================
@@ -1437,6 +1555,28 @@ class ComfyClient:
                 return response.content
         except Exception as e:
             logger.warning(f"Failed to download video {filename}: {e}")
+        return None
+
+    def get_file(
+        self, filename: str, subfolder: str = "", folder_type: str = "output"
+    ) -> bytes | None:
+        """
+        Download any generated output file (mesh, audio, text, ...).
+
+        ``GET /view`` serves every output type -- SaveGLB, SaveAudioAdvanced
+        and SaveText register their files in ``/history`` exactly like
+        SaveImage does for PNGs, so meshes and audio come back through the
+        same route. Pass the ``filename``/``subfolder``/``type`` entry from a
+        ``generate_3d()``/``generate_audio()``/``run_inference()`` result.
+        """
+        try:
+            params = {"filename": filename, "subfolder": subfolder, "type": folder_type}
+            response = self._get("/view", params=params, timeout=settings.comfyui.timeout_video)
+            if response.ok:
+                logger.debug(f"Downloaded file: {filename}")
+                return response.content
+        except Exception as e:
+            logger.warning(f"Failed to download file {filename}: {e}")
         return None
 
     # =========================================================================
@@ -2044,12 +2184,18 @@ class ComfyClient:
                 result["error"] = str(error_msgs[0] if error_msgs else "Unknown error")
                 return result
 
-            # Extract videos (check both 'gifs' and 'videos' keys, with type validation)
+            # Extract videos. VHS_VideoCombine reports under 'gifs'/'videos';
+            # core SaveVideo (settings output="core") reports under 'images'
+            # WITH an 'animated' flag -- the flag is what separates it from a
+            # SaveImage node's stills.
             outputs = history.get("outputs", {})
             if isinstance(outputs, dict):
                 for node_output in outputs.values():
                     if isinstance(node_output, dict):
-                        for key in ("gifs", "videos"):
+                        keys: tuple[str, ...] = ("gifs", "videos")
+                        if node_output.get("animated"):
+                            keys = ("gifs", "videos", "images")
+                        for key in keys:
                             if key in node_output:
                                 video_list = node_output[key]
                                 if isinstance(video_list, list):
@@ -2070,4 +2216,610 @@ class ComfyClient:
                     "Video generation complete", extra={"video_count": len(result["videos"])}
                 )
 
+            return result
+
+    # =========================================================================
+    # SHARED PROFILE PLUMBING (v3.1.0)
+    # =========================================================================
+
+    def _resolve_input_ref(self, source: Any, kind: str = "image") -> str:
+        """
+        Turn any reasonable input-source spelling into a server-side ref.
+
+        Accepts the dict returned by ``upload_image()``/``upload_audio()``,
+        raw bytes (uploaded now), a local file path (uploaded now), or a
+        string that is already a server-side ref (passed through).
+        """
+        if isinstance(source, dict):
+            ref = source.get("ref") or source.get("name")
+            if isinstance(ref, str) and ref:
+                return ref
+            raise ValidationError(
+                "Input dict has no usable 'ref'/'name'",
+                suggestions=["Pass the dict returned by upload_image()/upload_audio()"],
+            )
+        if isinstance(source, (bytes, bytearray, memoryview)):
+            uploaded = self.upload_audio(source) if kind == "audio" else self.upload_image(source)
+            return uploaded["ref"]
+        if isinstance(source, (str, Path)):
+            path = Path(source)
+            try:
+                is_file = path.is_file()
+            except OSError:
+                is_file = False
+            if is_file:
+                uploaded = self.upload_audio(path) if kind == "audio" else self.upload_image(path)
+                return uploaded["ref"]
+            return str(source)
+        raise InvalidParameterError(
+            parameter=kind,
+            value=type(source).__name__,
+            reason="expected an upload dict, local path, raw bytes, or server-side ref",
+        )
+
+    def _execute_and_collect(
+        self,
+        workflow: dict,
+        result: dict[str, Any],
+        wait: bool,
+        timeout: float,
+        on_progress: "Callable[[float, str], None] | None",
+    ) -> dict | None:
+        """
+        Queue a workflow and (optionally) wait; fill prompt_id/error on
+        ``result``. Returns the history entry when execution completed, else
+        None (result explains why; for wait=False, success is already set).
+        """
+        prompt_id = self.queue_prompt(workflow)
+        if not prompt_id:
+            result["error"] = "Failed to queue prompt"
+            return None
+        result["prompt_id"] = prompt_id
+
+        if not wait:
+            result["success"] = True
+            return None
+
+        history = self.wait_for_completion(prompt_id, timeout=timeout, on_progress=on_progress)
+        if not history:
+            result["error"] = f"Generation timed out after {timeout}s"
+            return None
+
+        status = history.get("status", {})
+        if status.get("status_str") == "error":
+            error_msgs = status.get("messages", [["Unknown error"]])
+            result["error"] = str(error_msgs[0] if error_msgs else "Unknown error")
+            return None
+        return history
+
+    @staticmethod
+    def _collect_output_files(history: dict, keys: "tuple[str, ...]") -> list[dict[str, Any]]:
+        """
+        Pull file entries ({filename, subfolder, type}) out of a history
+        entry's outputs for the given keys ("images", "audio", "3d", "files",
+        "gifs", "videos" -- each save-node family reports under its own key).
+        """
+        files: list[dict[str, Any]] = []
+        outputs = history.get("outputs", {})
+        if not isinstance(outputs, dict):
+            return files
+        for node_output in outputs.values():
+            if not isinstance(node_output, dict):
+                continue
+            for key in keys:
+                entries = node_output.get(key)
+                if not isinstance(entries, list):
+                    continue
+                for entry in entries:
+                    if isinstance(entry, dict) and entry.get("filename"):
+                        files.append(
+                            {
+                                "filename": entry.get("filename"),
+                                "subfolder": entry.get("subfolder", ""),
+                                "type": entry.get("type", "output"),
+                            }
+                        )
+        return files
+
+    @staticmethod
+    def _collect_output_text(history: dict) -> list[str]:
+        """
+        Pull inline text results out of a history entry.
+
+        SaveText reports the raw text under the "text" key (as a tuple)
+        alongside the saved file, so most inference results need no second
+        round-trip.
+        """
+        texts: list[str] = []
+        outputs = history.get("outputs", {})
+        if not isinstance(outputs, dict):
+            return texts
+        for node_output in outputs.values():
+            if isinstance(node_output, dict):
+                inline = node_output.get("text")
+                if isinstance(inline, (list, tuple)):
+                    texts.extend(t for t in inline if isinstance(t, str))
+        return texts
+
+    # =========================================================================
+    # 3D GENERATION (v3.1.0)
+    # =========================================================================
+
+    def generate_3d(
+        self,
+        image: Any,
+        preset: str = "standard",
+        wait: bool = True,
+        timeout: float | None = None,
+        on_progress: "Callable[[float, str], None] | None" = None,
+        **overrides: Any,
+    ) -> dict[str, Any]:
+        """
+        High-level image-to-3D generation (Hunyuan3D-2, all core nodes).
+
+        Args:
+            image: The subject image -- a local path, raw bytes, an
+                ``upload_image()`` result dict, or a server-side ref.
+            preset: 3D preset (standard, draft, detail).
+            wait: Whether to wait for completion.
+            timeout: Generation timeout (defaults to the video timeout --
+                mesh decode is slow).
+            on_progress: Optional callback(progress, status).
+            **overrides: Any ThreeDSettings field (steps, cfg, seed,
+                octree_resolution, ...).
+
+        Returns:
+            Dict with success, prompt_id, meshes (GLB file entries for
+            ``get_file()``), error, seed, preset.
+        """
+        from .three_d import build_3d_workflow
+
+        request_id = str(uuid.uuid4())[:8]
+        timeout = timeout or settings.generation.video_timeout
+
+        with LogContext(request_id):
+            result: dict[str, Any] = {
+                "success": False,
+                "prompt_id": None,
+                "meshes": [],
+                "error": None,
+                "seed": overrides.get("seed", -1),
+                "preset": preset,
+            }
+
+            logger.info("Starting 3D generation", extra={"preset": preset})
+
+            try:
+                self.ensure_online()
+            except ComfyUIOfflineError as e:
+                result["error"] = str(e)
+                return result
+
+            try:
+                image_ref = self._resolve_input_ref(image, kind="image")
+                workflow = build_3d_workflow(image_ref, preset=preset, **overrides)
+            except (ValueError, ValidationError) as e:
+                result["error"] = str(e)
+                return result
+
+            result["seed"] = _extract_workflow_seed(workflow, default=result["seed"])
+
+            history = self._execute_and_collect(workflow, result, wait, timeout, on_progress)
+            if history is None:
+                return result
+
+            # SaveGLB registers under the "3d" outputs key.
+            result["meshes"] = self._collect_output_files(history, ("3d",))
+            result["success"] = len(result["meshes"]) > 0
+
+            if result["success"]:
+                logger.info("3D generation complete", extra={"mesh_count": len(result["meshes"])})
+            else:
+                logger.warning("3D generation produced no meshes")
+
+            return result
+
+    # =========================================================================
+    # AUDIO GENERATION (v3.1.0)
+    # =========================================================================
+
+    def generate_audio(
+        self,
+        tags: str,
+        lyrics: str = "",
+        negative_tags: str = "",
+        preset: str = "music",
+        wait: bool = True,
+        timeout: float | None = None,
+        on_progress: "Callable[[float, str], None] | None" = None,
+        **overrides: Any,
+    ) -> dict[str, Any]:
+        """
+        High-level text-to-music generation (ACE-Step 1.5, all core nodes).
+
+        Args:
+            tags: Style/genre tags -- the main prompt.
+            lyrics: Optional lyrics; empty for instrumental.
+            negative_tags: Tags to steer away from.
+            preset: Audio preset (music, music_long, jingle, music_mp3, draft).
+            **overrides: Any AudioSettings field (seconds, bpm, keyscale,
+                format, quality, seed, ...).
+
+        Returns:
+            Dict with success, prompt_id, audios (file entries for
+            ``get_file()``), error, seed, preset.
+        """
+        from .audio import build_audio_workflow
+
+        request_id = str(uuid.uuid4())[:8]
+        timeout = timeout or settings.generation.video_timeout
+
+        with LogContext(request_id):
+            result: dict[str, Any] = {
+                "success": False,
+                "prompt_id": None,
+                "audios": [],
+                "error": None,
+                "seed": overrides.get("seed", -1),
+                "preset": preset,
+            }
+
+            logger.info("Starting audio generation", extra={"preset": preset})
+
+            try:
+                self.ensure_online()
+            except ComfyUIOfflineError as e:
+                result["error"] = str(e)
+                return result
+
+            try:
+                workflow = build_audio_workflow(
+                    tags, lyrics=lyrics, negative_tags=negative_tags, preset=preset, **overrides
+                )
+            except (ValueError, ValidationError) as e:
+                result["error"] = str(e)
+                return result
+
+            result["seed"] = _extract_workflow_seed(workflow, default=result["seed"])
+
+            history = self._execute_and_collect(workflow, result, wait, timeout, on_progress)
+            if history is None:
+                return result
+
+            # SaveAudioAdvanced registers under the "audio" outputs key.
+            result["audios"] = self._collect_output_files(history, ("audio",))
+            result["success"] = len(result["audios"]) > 0
+
+            if result["success"]:
+                logger.info(
+                    "Audio generation complete", extra={"audio_count": len(result["audios"])}
+                )
+            else:
+                logger.warning("Audio generation produced no files")
+
+            return result
+
+    def separate_audio(
+        self,
+        audio: Any,
+        stems: "tuple[str, ...] | list[str] | None" = None,
+        wait: bool = True,
+        timeout: float | None = None,
+        on_progress: "Callable[[float, str], None] | None" = None,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """
+        Split audio into stems (bass, drums, other, vocals).
+
+        Requires the ``audio-separation-nodes-comfyui`` pack (declared in
+        NODE_PACKS; ``check_workflow_dependencies`` names it when missing).
+
+        Args:
+            audio: Source audio -- local path, raw bytes, upload dict, or
+                server-side ref.
+            stems: Which stems to save (default: all four).
+
+        Returns:
+            Dict with success, prompt_id, audios (each entry carries a
+            "stem" label recovered from its filename), error.
+        """
+        from .audio import SEPARATION_STEMS, build_audio_separation_workflow
+
+        request_id = str(uuid.uuid4())[:8]
+        timeout = timeout or settings.generation.video_timeout
+        stems = tuple(stems) if stems else SEPARATION_STEMS
+
+        with LogContext(request_id):
+            result: dict[str, Any] = {
+                "success": False,
+                "prompt_id": None,
+                "audios": [],
+                "error": None,
+                "stems": list(stems),
+            }
+
+            logger.info("Starting audio separation", extra={"stems": list(stems)})
+
+            try:
+                self.ensure_online()
+            except ComfyUIOfflineError as e:
+                result["error"] = str(e)
+                return result
+
+            try:
+                audio_ref = self._resolve_input_ref(audio, kind="audio")
+                workflow = build_audio_separation_workflow(audio_ref, stems=stems, **kwargs)
+            except (ValueError, ValidationError) as e:
+                result["error"] = str(e)
+                return result
+
+            history = self._execute_and_collect(workflow, result, wait, timeout, on_progress)
+            if history is None:
+                return result
+
+            audios = self._collect_output_files(history, ("audio",))
+            for entry in audios:
+                name = entry.get("filename") or ""
+                entry["stem"] = next((s for s in stems if f"_{s}" in name), None)
+            result["audios"] = audios
+            result["success"] = len(audios) > 0
+
+            if result["success"]:
+                logger.info("Audio separation complete", extra={"stem_count": len(audios)})
+
+            return result
+
+    # =========================================================================
+    # INFERENCE (v3.1.0)
+    # =========================================================================
+
+    def run_inference(
+        self,
+        image: Any,
+        task: str = "caption",
+        text_input: str = "",
+        wait: bool = True,
+        timeout: float | None = None,
+        on_progress: "Callable[[float, str], None] | None" = None,
+        **overrides: Any,
+    ) -> dict[str, Any]:
+        """
+        Non-generative inference: caption, tag, detect, segment, OCR.
+
+        Requires the ``comfyui-florence2`` pack (plus
+        ``comfyui-segment-anything-2`` for detect); both are declared in
+        NODE_PACKS so ``check_workflow_dependencies`` names what's missing.
+
+        Args:
+            image: Input image -- local path, raw bytes, upload dict, or ref.
+            task: caption | detailed_caption | more_detailed_caption | tag |
+                detect | segment | ocr.
+            text_input: Required for detect/segment: what to find.
+            **overrides: Any InferenceSettings field (model, precision, ...).
+
+        Returns:
+            Dict with success, prompt_id, task, text (first inline result --
+            the caption/tags/coordinates, no second round-trip needed),
+            texts, files (saved text files), images (segment masks as PNGs),
+            error.
+        """
+        from .inference import build_inference_workflow
+
+        request_id = str(uuid.uuid4())[:8]
+        timeout = timeout or settings.generation.generation_timeout
+
+        with LogContext(request_id):
+            result: dict[str, Any] = {
+                "success": False,
+                "prompt_id": None,
+                "task": task,
+                "text": None,
+                "texts": [],
+                "files": [],
+                "images": [],
+                "error": None,
+            }
+
+            logger.info("Starting inference", extra={"task": task})
+
+            try:
+                self.ensure_online()
+            except ComfyUIOfflineError as e:
+                result["error"] = str(e)
+                return result
+
+            try:
+                image_ref = self._resolve_input_ref(image, kind="image")
+                workflow = build_inference_workflow(
+                    image_ref, task=task, text_input=text_input, **overrides
+                )
+            except (ValueError, ValidationError) as e:
+                result["error"] = str(e)
+                return result
+
+            history = self._execute_and_collect(workflow, result, wait, timeout, on_progress)
+            if history is None:
+                return result
+
+            result["texts"] = self._collect_output_text(history)
+            result["text"] = result["texts"][0] if result["texts"] else None
+            # SaveText also registers its written file under "files";
+            # segment masks land under "images".
+            result["files"] = self._collect_output_files(history, ("files",))
+            result["images"] = self._collect_output_files(history, ("images",))
+            result["success"] = bool(result["texts"] or result["files"] or result["images"])
+
+            if result["success"]:
+                logger.info("Inference complete", extra={"task": task})
+            else:
+                logger.warning("Inference produced no output", extra={"task": task})
+
+            return result
+
+    # =========================================================================
+    # IMAGE EDIT (v3.1.0)
+    # =========================================================================
+
+    def edit_image(
+        self,
+        prompt: str,
+        images: "Any | list[Any]",
+        negative: str = "",
+        wait: bool = True,
+        timeout: float | None = None,
+        on_progress: "Callable[[float, str], None] | None" = None,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """
+        Instruction-based image editing (Qwen-Image-Edit-2511).
+
+        Args:
+            prompt: The edit instruction.
+            images: 1-3 reference images (local paths, bytes, upload dicts,
+                or server-side refs; a single value is fine).
+            negative: Negative prompt.
+            **kwargs: Any build_qwen_edit_workflow parameter (unet, width,
+                height, steps, cfg, shift, seed).
+
+        Returns:
+            Dict with success, prompt_id, images (file entries), error, seed.
+        """
+        from .workflows import build_qwen_edit_workflow
+
+        request_id = str(uuid.uuid4())[:8]
+        timeout = timeout or settings.generation.generation_timeout
+
+        with LogContext(request_id):
+            result: dict[str, Any] = {
+                "success": False,
+                "prompt_id": None,
+                "images": [],
+                "error": None,
+                "seed": kwargs.get("seed", -1),
+            }
+
+            logger.info("Starting image edit")
+
+            try:
+                self.ensure_online()
+            except ComfyUIOfflineError as e:
+                result["error"] = str(e)
+                return result
+
+            sources = images if isinstance(images, (list, tuple)) else [images]
+            try:
+                refs = [self._resolve_input_ref(src, kind="image") for src in sources]
+                workflow = build_qwen_edit_workflow(prompt, refs, negative=negative, **kwargs)
+            except (ValueError, ValidationError) as e:
+                result["error"] = str(e)
+                return result
+
+            result["seed"] = _extract_workflow_seed(workflow, default=result["seed"])
+
+            history = self._execute_and_collect(workflow, result, wait, timeout, on_progress)
+            if history is None:
+                return result
+
+            result["images"] = self._collect_output_files(history, ("images",))
+            result["success"] = len(result["images"]) > 0
+
+            if result["success"]:
+                logger.info("Image edit complete", extra={"image_count": len(result["images"])})
+
+            return result
+
+    # =========================================================================
+    # PROVENANCE RE-RUN (v3.1.0, metadata profile)
+    # =========================================================================
+
+    def rerun_from_png(
+        self,
+        source: "str | Path | bytes | bytearray | memoryview",
+        wait: bool = True,
+        timeout: float | None = None,
+        on_progress: "Callable[[float, str], None] | None" = None,
+        extra_pnginfo: dict | None = None,
+    ) -> dict[str, Any]:
+        """
+        Re-run the exact graph embedded in a ComfyUI output PNG.
+
+        The API-format graph is recoverable from any (metadata-enabled)
+        output PNG independently of the GUI: this reads the ``prompt`` text
+        chunk and re-POSTs it verbatim. Referenced input files (LoadImage
+        refs etc.) must still exist on the server.
+
+        Args:
+            source: PNG path or bytes.
+            extra_pnginfo: Optional custom provenance for the re-run's own
+                outputs (see :meth:`queue_prompt`).
+
+        Returns:
+            Dict with success, prompt_id, seed, and every output family:
+            images, videos, audios, meshes, files, texts, error.
+        """
+        from .metadata import extract_prompt_graph
+
+        request_id = str(uuid.uuid4())[:8]
+        timeout = timeout or settings.generation.video_timeout
+
+        with LogContext(request_id):
+            result: dict[str, Any] = {
+                "success": False,
+                "prompt_id": None,
+                "images": [],
+                "videos": [],
+                "audios": [],
+                "meshes": [],
+                "files": [],
+                "texts": [],
+                "error": None,
+                "seed": -1,
+            }
+
+            try:
+                workflow = extract_prompt_graph(source)
+            except ValidationError as e:
+                result["error"] = str(e)
+                return result
+
+            logger.info("Re-running graph from PNG provenance", extra={"nodes": len(workflow)})
+
+            try:
+                self.ensure_online()
+            except ComfyUIOfflineError as e:
+                result["error"] = str(e)
+                return result
+
+            result["seed"] = _extract_workflow_seed(workflow, default=-1)
+
+            prompt_id = self.queue_prompt(workflow, extra_pnginfo=extra_pnginfo)
+            if not prompt_id:
+                result["error"] = "Failed to queue prompt"
+                return result
+            result["prompt_id"] = prompt_id
+
+            if not wait:
+                result["success"] = True
+                return result
+
+            history = self.wait_for_completion(prompt_id, timeout=timeout, on_progress=on_progress)
+            if not history:
+                result["error"] = f"Generation timed out after {timeout}s"
+                return result
+
+            status = history.get("status", {})
+            if status.get("status_str") == "error":
+                error_msgs = status.get("messages", [["Unknown error"]])
+                result["error"] = str(error_msgs[0] if error_msgs else "Unknown error")
+                return result
+
+            result["images"] = self._collect_output_files(history, ("images",))
+            result["videos"] = self._collect_output_files(history, ("gifs", "videos"))
+            result["audios"] = self._collect_output_files(history, ("audio",))
+            result["meshes"] = self._collect_output_files(history, ("3d",))
+            result["files"] = self._collect_output_files(history, ("files",))
+            result["texts"] = self._collect_output_text(history)
+            result["success"] = any(
+                result[key] for key in ("images", "videos", "audios", "meshes", "files", "texts")
+            )
             return result

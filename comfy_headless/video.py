@@ -137,6 +137,13 @@ class VideoSettings:
     shift: float | None = None  # ModelSamplingSD3 shift override
     precision: str = "fp16"  # Model precision (fp16, fp8, bf16)
 
+    # v3.1.0: video terminator. "vhs" = VHS_VideoCombine (pack, the long-
+    # standing default); "core" = CreateVideo -> SaveVideo (no pack needed;
+    # SaveVideo's dynamic-combo codec is emitted via the addressing layer).
+    # With "core" the output registers in /history under "images" (with an
+    # "animated" flag), not "gifs" -- ComfyClient.generate_video handles both.
+    output: str = "vhs"
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "model": self.model.value,
@@ -156,6 +163,7 @@ class VideoSettings:
             "upscale": self.upscale,
             "shift": self.shift,
             "precision": self.precision,
+            "output": self.output,
         }
 
 
@@ -323,6 +331,29 @@ VIDEO_PRESETS: dict[str, VideoSettings] = {
         cfg=6.0,
         shift=9.0,
         upscale=True,  # Uses super-resolution pipeline
+        checkpoint=None,
+    ),
+    "hunyuan15_i2v": VideoSettings(
+        model=VideoModel.HUNYUAN_15_I2V,
+        width=848,
+        height=480,
+        frames=81,
+        fps=24,
+        steps=20,
+        cfg=6.0,
+        shift=5.0,  # 480p row of Hunyuan's published shift table
+        checkpoint=None,
+    ),
+    "hunyuan15_i2v_fast": VideoSettings(
+        model=VideoModel.HUNYUAN_15_I2V,
+        width=848,
+        height=480,
+        frames=81,
+        fps=24,
+        steps=6,
+        cfg=1.0,  # cfg-distilled i2v checkpoint uses CFG=1
+        shift=5.0,
+        variant="distilled",
         checkpoint=None,
     ),
     # LTX-Video 2 presets (Lightricks - fast, high quality)
@@ -557,7 +588,14 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_frames=121,
         max_width=1920,
         max_height=1080,
-        presets=["hunyuan15_720p", "hunyuan15_quality", "hunyuan15_fast", "hunyuan15_1080p"],
+        presets=[
+            "hunyuan15_720p",
+            "hunyuan15_quality",
+            "hunyuan15_fast",
+            "hunyuan15_1080p",
+            "hunyuan15_i2v",
+            "hunyuan15_i2v_fast",
+        ],
         requires_packs=["comfyui-videohelpersuite"],
     ),
     "ltxv": VideoModelInfo(
@@ -612,117 +650,17 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
 # CUSTOM NODE PACK PROVENANCE
 # =============================================================================
 #
-# Not every class_type these builders emit ships with ComfyUI. Nodes that come
-# from a custom node pack are declared here so ComfyClient can validate a
-# workflow against /object_info and report "class X missing -- install pack Y"
-# instead of letting POST /prompt reject the graph with an opaque validation
-# error. Anything NOT listed here is expected to be a built-in (core) node.
-#
-# Every entry below was checked against the live ComfyUI node catalog.
+# The registry moved to node_packs.py in v3.1.0 when it became shared by all
+# profile modules (image, video, 3D, audio, inference). Re-exported here so
+# ``from comfy_headless.video import NODE_PACKS`` keeps working.
 
-
-@dataclass(frozen=True)
-class NodePack:
-    """A custom node pack that some video workflows depend on."""
-
-    id: str
-    name: str
-    url: str
-    install_hint: str
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "id": self.id,
-            "name": self.name,
-            "url": self.url,
-            "install_hint": self.install_hint,
-        }
-
-
-NODE_PACK_INFO: dict[str, NodePack] = {
-    "comfyui-videohelpersuite": NodePack(
-        id="comfyui-videohelpersuite",
-        name="ComfyUI-VideoHelperSuite",
-        url="https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite",
-        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'Video Helper Suite'",
-    ),
-    "comfyui-animatediff-evolved": NodePack(
-        id="comfyui-animatediff-evolved",
-        name="ComfyUI-AnimateDiff-Evolved",
-        url="https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved",
-        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'AnimateDiff Evolved'",
-    ),
-    "comfyui-cogvideoxwrapper": NodePack(
-        id="comfyui-cogvideoxwrapper",
-        name="ComfyUI-CogVideoXWrapper",
-        url="https://github.com/kijai/ComfyUI-CogVideoXWrapper",
-        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'CogVideoX Wrapper'",
-    ),
-    "comfyui-frame-interpolation": NodePack(
-        id="comfyui-frame-interpolation",
-        name="ComfyUI-Frame-Interpolation",
-        url="https://github.com/Fannovel16/ComfyUI-Frame-Interpolation",
-        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'Frame Interpolation'",
-    ),
-}
-"""Metadata for every custom node pack referenced by NODE_PACKS."""
-
-
-NODE_PACKS: dict[str, str] = {
-    # --- ComfyUI-VideoHelperSuite -------------------------------------------
-    # Used by every builder as the video muxing / output node.
-    "VHS_VideoCombine": "comfyui-videohelpersuite",
-    # --- ComfyUI-AnimateDiff-Evolved ----------------------------------------
-    "ADE_LoadAnimateDiffModel": "comfyui-animatediff-evolved",
-    "ADE_ApplyAnimateDiffModel": "comfyui-animatediff-evolved",
-    "ADE_EmptyLatentImageLarge": "comfyui-animatediff-evolved",
-    # --- ComfyUI-CogVideoXWrapper -------------------------------------------
-    # CogVideoX has no native core path; the whole family lives in this pack.
-    "DownloadAndLoadCogVideoModel": "comfyui-cogvideoxwrapper",
-    "CogVideoTextEncode": "comfyui-cogvideoxwrapper",
-    "CogVideoSampler": "comfyui-cogvideoxwrapper",
-    "CogVideoDecode": "comfyui-cogvideoxwrapper",
-    # --- ComfyUI-Frame-Interpolation ----------------------------------------
-    "RIFE VFI": "comfyui-frame-interpolation",
-}
-"""Maps a non-core class_type to the id of the pack that provides it."""
-
-
-def get_node_pack(class_type: str) -> str | None:
-    """
-    Return the custom node pack id that provides ``class_type``.
-
-    Returns ``None`` for nodes that ship with ComfyUI itself (core nodes).
-    """
-    return NODE_PACKS.get(class_type)
-
-
-def required_node_packs(workflow: dict[str, Any]) -> dict[str, list[str]]:
-    """
-    Group the custom-pack class_types used by a workflow by their pack id.
-
-    Args:
-        workflow: A ComfyUI API-format workflow (node_id -> {class_type, inputs}).
-
-    Returns:
-        ``{pack_id: [class_type, ...]}`` with only non-core nodes present.
-        An empty dict means the workflow needs no custom node packs.
-    """
-    packs: dict[str, list[str]] = {}
-    for node in workflow.values():
-        if not isinstance(node, dict):
-            continue
-        class_type = node.get("class_type")
-        if not isinstance(class_type, str):
-            continue
-        pack_id = NODE_PACKS.get(class_type)
-        if pack_id is None:
-            continue
-        bucket = packs.setdefault(pack_id, [])
-        if class_type not in bucket:
-            bucket.append(class_type)
-    return {pack_id: sorted(names) for pack_id, names in sorted(packs.items())}
-
+from .node_packs import (  # noqa: E402
+    NODE_PACK_INFO,
+    NODE_PACKS,
+    NodePack,
+    get_node_pack,
+    required_node_packs,
+)
 
 # =============================================================================
 # VIDEO WORKFLOW BUILDER
@@ -791,7 +729,55 @@ class VideoWorkflowBuilder:
         if seed == -1:
             seed = random.randint(0, 2**32 - 1)
 
-        return builder(prompt, negative, settings, seed, init_image)
+        workflow = builder(prompt, negative, settings, seed, init_image)
+        if settings.output == "core":
+            workflow = self._swap_to_core_output(workflow, settings)
+        return workflow
+
+    def _swap_to_core_output(
+        self, workflow: dict[str, Any], settings: VideoSettings
+    ) -> dict[str, Any]:
+        """
+        Replace the VHS_VideoCombine terminator with core CreateVideo ->
+        SaveVideo, dropping the comfyui-videohelpersuite dependency.
+
+        SaveVideo.codec is a COMFY_DYNAMICCOMBO_V3, so its inputs come from
+        the presence-aware addressing layer ("auto" activates no sub-fields).
+        """
+        from .addressing import SAVE_VIDEO_CODEC
+
+        vhs_id = next(
+            (
+                node_id
+                for node_id, node in workflow.items()
+                if isinstance(node, dict) and node.get("class_type") == "VHS_VideoCombine"
+            ),
+            None,
+        )
+        if vhs_id is None:
+            return workflow
+
+        vhs_inputs = workflow[vhs_id].get("inputs", {})
+        images_link = vhs_inputs.get("images")
+        frame_rate = vhs_inputs.get("frame_rate", settings.fps)
+        filename_prefix = vhs_inputs.get("filename_prefix", "comfy_headless_video")
+
+        numeric_ids = [int(i) for i in workflow if str(i).isdigit()]
+        create_id = str(max(numeric_ids, default=0) + 1)
+
+        del workflow[vhs_id]
+        workflow[create_id] = {
+            "class_type": "CreateVideo",
+            "inputs": {"images": images_link, "fps": float(frame_rate)},
+        }
+        save_inputs: dict[str, Any] = {
+            "video": [create_id, 0],
+            "filename_prefix": filename_prefix,
+            "format": "auto",
+        }
+        save_inputs.update(SAVE_VIDEO_CODEC.build("auto"))
+        workflow[vhs_id] = {"class_type": "SaveVideo", "inputs": save_inputs}
+        return workflow
 
     def _get_motion_scale(self, settings: VideoSettings) -> float:
         """Calculate motion scale from style and multiplier."""
@@ -1277,21 +1263,32 @@ class VideoWorkflowBuilder:
         negative: str,
         settings: VideoSettings,
         seed: int,
-        _init_image: str | None = None,
+        init_image: str | None = None,
     ) -> dict[str, Any]:
         """
-        Build Hunyuan Video 1.5 workflow.
+        Build Hunyuan Video 1.5 workflow (t2v and i2v).
 
         Uses new architecture:
         - DualCLIPLoader (Qwen 2.5 VL + ByT5), type="hunyuan_video_15"
         - SamplerCustomAdvanced with CFGGuider
         - Optional latent upsample for 1080p
 
-        Checkpoint naming is resolution-specific and there is no 720p
-        cfg-distilled release: distilled is published at 480p only. The
-        1080p preset renders at the 720p base and is then latent-upsampled,
-        which is why the base resolution is clamped below.
+        i2v (v3.1.0 repair -- HUNYUAN_15_I2V previously ignored init_image
+        and silently built a t2v graph): the plain-text conditioning feeds
+        core ``HunyuanVideo15ImageToVideo`` together with the VAE and the
+        start image; its CONDITIONING/CONDITIONING/LATENT outputs replace
+        the empty latent and the raw text conditionings. Its optional
+        clip_vision_output input is left unwired (no CLIP-Vision leg in the
+        minimal official shape).
+
+        Checkpoint naming is resolution-specific. t2v cfg-distilled exists
+        at 480p only; i2v cfg-distilled exists at both 480p and 720p
+        (verified in the live catalog 2026-08-21).
         """
+        i2v = settings.model == VideoModel.HUNYUAN_15_I2V or init_image is not None
+        if i2v and not init_image:
+            raise ValueError("hunyuan_15_i2v requires an init_image (upload first, pass its 'ref')")
+
         shift = settings.shift or 9.0  # Default shift for 720p T2V
 
         # 1080p is produced by upscaling a 720p render, not by sampling at 1080p.
@@ -1300,18 +1297,25 @@ class VideoWorkflowBuilder:
         else:
             base_width, base_height = settings.width, settings.height
 
+        res_tag = "720p" if base_height >= 720 else "480p"
+        mode_tag = "i2v" if i2v else "t2v"
+
         # Determine model paths based on variant
         if settings.variant == "distilled":
-            # Only the 480p t2v checkpoint has a cfg-distilled release.
-            unet_name = (
-                "hunyuanvideo1.5_480p_t2v_cfg_distilled_fp8_scaled.safetensors"
-                if settings.precision.startswith("fp8")
-                else "hunyuanvideo1.5_480p_t2v_cfg_distilled_fp16.safetensors"
-            )
+            if i2v:
+                # i2v has cfg-distilled releases at BOTH 480p and 720p.
+                suffix = "fp8_scaled" if settings.precision.startswith("fp8") else "fp16"
+                unet_name = f"hunyuanvideo1.5_{res_tag}_i2v_cfg_distilled_{suffix}.safetensors"
+            else:
+                # Only the 480p t2v checkpoint has a cfg-distilled release.
+                unet_name = (
+                    "hunyuanvideo1.5_480p_t2v_cfg_distilled_fp8_scaled.safetensors"
+                    if settings.precision.startswith("fp8")
+                    else "hunyuanvideo1.5_480p_t2v_cfg_distilled_fp16.safetensors"
+                )
             cfg_value = 1.0  # Distilled uses CFG=1
         else:
-            res_tag = "720p" if base_height >= 720 else "480p"
-            unet_name = f"hunyuanvideo1.5_{res_tag}_t2v_fp16.safetensors"
+            unet_name = f"hunyuanvideo1.5_{res_tag}_{mode_tag}_fp16.safetensors"
             cfg_value = settings.cfg
 
         workflow = {
@@ -1400,6 +1404,28 @@ class VideoWorkflowBuilder:
                 },
             },
         }
+
+        # i2v: replace the empty latent with HunyuanVideo15ImageToVideo,
+        # which encodes the start image through the VAE and hands back
+        # (positive, negative, latent) for the guider and sampler.
+        if i2v:
+            workflow["17"] = {"class_type": "LoadImage", "inputs": {"image": init_image}}
+            workflow["4"] = {
+                "class_type": "HunyuanVideo15ImageToVideo",
+                "inputs": {
+                    "positive": ["5", 0],
+                    "negative": ["6", 0],
+                    "vae": ["2", 0],
+                    "width": base_width,
+                    "height": base_height,
+                    "length": settings.frames,
+                    "batch_size": 1,
+                    "start_image": ["17", 0],
+                },
+            }
+            workflow["8"]["inputs"]["positive"] = ["4", 0]
+            workflow["8"]["inputs"]["negative"] = ["4", 1]
+            workflow["12"]["inputs"]["latent_image"] = ["4", 2]
 
         # Latent upsample to the requested output size (1080p presets).
         #
@@ -1965,6 +1991,14 @@ def build_video_workflow(
             checkpoint=settings_dict.get("checkpoint", settings.checkpoint),
             format=VideoFormat(settings_dict.get("format", settings.format.value)),
             interpolate=settings_dict.get("interpolate", settings.interpolate),
+            # v3.1.0 fix: these four were dropped by the override path, so
+            # e.g. preset="hunyuan15_fast" + any override silently lost
+            # variant="distilled" and built the wrong graph.
+            variant=settings_dict.get("variant", settings.variant),
+            upscale=settings_dict.get("upscale", settings.upscale),
+            shift=settings_dict.get("shift", settings.shift),
+            precision=settings_dict.get("precision", settings.precision),
+            output=settings_dict.get("output", settings.output),
         )
 
     builder = get_video_builder()
