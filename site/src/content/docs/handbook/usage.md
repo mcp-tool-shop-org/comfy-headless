@@ -1,127 +1,256 @@
 ---
 title: Usage
-description: Library usage patterns for Comfy Headless — image generation, AI prompt enhancement, video generation, and the Gradio web UI.
+description: Day-to-day patterns — images, batches, AI prompt enhancement, video, image input, progress tracking, and the web UI.
 sidebar:
   order: 2
 ---
 
-This page covers the main ways to use Comfy Headless: as a Python library, with AI-powered prompt enhancement, for video generation, and through the built-in web UI.
-
-## Image generation
-
-The simplest usage is generating images through the `ComfyClient`:
+Everything on this page assumes a client:
 
 ```python
 from comfy_headless import ComfyClient
-
 client = ComfyClient()
-result = client.generate_image("a beautiful sunset over mountains")
-print(f"Generated: {result['images']}")
 ```
 
-`ComfyClient` connects to your local ComfyUI instance (default: `http://localhost:8188`), compiles a workflow from your prompt, submits it to the queue, and waits for the result. The returned dictionary contains an `images` key with the file paths to the generated output.
-
-## AI prompt enhancement
-
-When you install the `[ai]` extra, Comfy Headless can analyze and enhance your prompts using a local Ollama model before sending them to ComfyUI. This produces better results without requiring prompt engineering expertise.
-
-### Analyzing a prompt
+## Images
 
 ```python
-from comfy_headless import analyze_prompt
-
-analysis = analyze_prompt("a cyberpunk city at night with neon lights")
-print(f"Intent: {analysis.intent}")           # "scene"
-print(f"Styles: {analysis.styles}")           # ["scifi", "cinematic"]
-print(f"Preset: {analysis.suggested_preset}") # "cinematic"
-```
-
-The `analyze_prompt` function returns a `PromptAnalysis` object with the detected intent (portrait, scene, object, etc.), style tags, and a suggested ComfyUI preset that matches the prompt's mood.
-
-### Enhancing a prompt
-
-```python
-from comfy_headless import enhance_prompt
-
-enhanced = enhance_prompt("a cat", style="detailed")
-print(enhanced.enhanced)   # "a cat, masterpiece, best quality, highly detailed..."
-print(enhanced.negative)   # Style-aware negative prompt
-```
-
-`enhance_prompt` takes a simple prompt and rewrites it with quality tags, style modifiers, and a matching negative prompt. The `style` parameter controls the enhancement direction — options include `"detailed"`, `"cinematic"`, `"anime"`, and more.
-
-### How it works
-
-The intelligence layer sends your prompt to a local Ollama model, which returns structured analysis and enhancement suggestions. This runs entirely on your machine — no data leaves your network.
-
-## Video generation
-
-Comfy Headless supports multiple video models through a preset system. Each preset configures resolution, frame count, and step count for a specific model.
-
-```python
-from comfy_headless import ComfyClient, list_video_presets
-
-# See all available presets
-print(list_video_presets())
-
-# Generate video with a preset
-client = ComfyClient()
-result = client.generate_video(
-    prompt="a cat walking through a garden",
-    preset="ltx_quality"  # LTX-Video 2, 1280x720, 49 frames
+result = client.generate_image(
+    "a cyberpunk street at night",
+    negative_prompt="blurry, low quality, watermark",
+    preset="hd",
+    seed=42,
 )
 ```
 
-For a full breakdown of supported models, presets, and VRAM requirements, see the [Video Models](../video-models/) page.
+Full parameter set: `prompt`, `negative_prompt`, `preset`, `checkpoint`, `width`,
+`height`, `steps`, `cfg`, `sampler`, `scheduler`, `seed`, `wait`, `timeout`,
+`on_progress`.
 
-### VRAM-aware preset selection
+Two things worth knowing:
 
-If you are not sure which preset to use, let the library choose based on your available VRAM:
+- **`preset` wins.** When set, it overrides `width`, `height`, `steps` and `cfg`. Leave it
+  empty (`""`, the default) to control those yourself.
+- **`seed=-1`** means random. The seed actually used comes back in `result["seed"]`, so a
+  run is always reproducible after the fact.
+
+### Fire and forget
 
 ```python
-from comfy_headless import get_recommended_preset
+result = client.generate_image("a fox", wait=False)
+prompt_id = result["prompt_id"]
 
-preset = get_recommended_preset(vram_gb=16)  # Returns "hunyuan15_720p"
+# ... later
+client.wait_for_completion(prompt_id)
 ```
 
-This function picks the highest-quality preset that fits within your GPU memory budget.
+### Batches
 
-## Web UI
+```python
+result = client.generate_batch(
+    ["a red fox", "a snowy owl", "a grey wolf"],
+    preset="fast",
+    seeds=[1, 2, 3],          # optional, one per prompt
+    max_concurrent=1,
+    check_vram=True,
+)
+```
 
-Comfy Headless includes a built-in Gradio 6.0 interface for users who prefer a visual workflow. The UI uses the Ocean Mist theme — soft teal accents on warm neutral backgrounds.
+`check_vram=True` estimates the job against available VRAM before queueing, which is
+cheaper than discovering the problem halfway through a batch.
 
-### Launching the UI
+## AI prompt enhancement
 
-From Python:
+Requires the `[ai]` extra and a running Ollama. These are **module-level functions**, not
+methods on the client — a common source of confusion:
+
+```python
+from comfy_headless import enhance_prompt, analyze_prompt, quick_enhance
+
+result = enhance_prompt("a cat", style="balanced")
+print(result.enhanced)      # the rewritten prompt
+print(result.negative)      # a style-aware negative prompt
+print(result.additions)     # what was added
+print(result.reasoning)     # why
+```
+
+`analyze_prompt` classifies without rewriting:
+
+```python
+analysis = analyze_prompt("a cyberpunk city at night with neon lights")
+print(analysis.intent)              # e.g. "scene"
+print(analysis.styles)              # e.g. ["scifi", "cinematic"]
+print(analysis.suggested_preset)    # feed straight into generate_image(preset=...)
+print(analysis.confidence)
+```
+
+A natural pairing:
+
+```python
+analysis = analyze_prompt(user_text)
+enhanced = enhance_prompt(user_text)
+client.generate_image(
+    enhanced.enhanced,
+    negative_prompt=enhanced.negative,
+    preset=analysis.suggested_preset,
+)
+```
+
+## Video
+
+```python
+from comfy_headless import list_video_presets, get_recommended_preset
+
+print(list_video_presets())                    # 24 presets
+print(get_recommended_preset(vram_gb=16))      # sized to your card
+
+result = client.generate_video(
+    "a slow pan across a mountain range",
+    preset="ltx_quality",
+)
+print(result["videos"])
+```
+
+Selection is by **preset**, not model — `generate_video` has no `model` parameter. Any of
+`frames`, `fps`, `steps`, `cfg`, `width`, `height`, `motion_scale` may be passed to
+override the preset's defaults.
+
+```python
+result = client.generate_video(
+    "ocean waves crashing",
+    preset="wan_14b",
+    frames=48,
+    fps=24,
+)
+```
+
+See [Video Models](../video-models/) for what each family needs.
+
+## Image input
+
+Image-to-video — and anything else taking a source image — needs that image to already
+exist inside ComfyUI. Upload it first:
+
+```python
+ref = client.upload_image("reference.png")
+# {"name": "reference.png", "subfolder": "", "type": "input", "ref": "reference.png"}
+
+result = client.generate_video(
+    "a cat walking through a garden",
+    preset="wan_14b",
+    init_image=ref["name"],
+)
+```
+
+**Always read `name` back from the response.** ComfyUI renames on filename collision, so
+the stored name is not always what you sent. `ref` is the same value already joined with
+any subfolder, which is exactly the string the graph needs.
+
+```python
+ref = client.upload_image(image_bytes, filename="frame.png", subfolder="refs")
+print(ref["ref"])        # "refs/frame.png"
+```
+
+Masks work the same way, taking the image they apply to:
+
+```python
+base = client.upload_image("photo.png")
+client.upload_mask("mask.png", original_ref=base)
+```
+
+:::caution[Changed in 3.0]
+`init_image` is a **server-side filename**, not image data. Earlier versions accepted
+base64 and smuggled it through a third-party node that does not exist on a stock ComfyUI
+install. If you are upgrading, replace base64 payloads with an `upload_image` call.
+:::
+
+## Progress
+
+Any blocking call takes a callback:
+
+```python
+def show(pct, msg):
+    print(f"{pct:.0%}  {msg}")
+
+client.generate_image("a fox", on_progress=show)
+```
+
+For real-time updates over WebSocket (requires `[websocket]`):
+
+```python
+import asyncio
+from comfy_headless import ComfyWSClient
+
+async def main():
+    async with ComfyWSClient() as ws:
+        prompt_id = await ws.queue_prompt(workflow)
+        return await ws.wait_for_completion(prompt_id)
+
+asyncio.run(main())
+```
+
+## Working with the graph directly
+
+The preset API is a convenience over graph building. When you need the graph itself:
+
+```python
+workflow = client.build_txt2img_workflow("a fox", steps=30, cfg=6.5)
+
+# inspect, mutate, validate
+report = client.check_workflow_dependencies(workflow)
+
+prompt_id = client.queue_prompt(workflow)
+client.wait_for_completion(prompt_id)
+```
+
+`build_video_workflow()` does the same for video. Both return a plain dict in ComfyUI
+API format — `{"<node_id>": {"class_type": ..., "inputs": {...}}}` — which you can save,
+diff or hand to ComfyUI yourself.
+
+## Queue control
+
+```python
+client.get_queue()          # what's pending and running
+client.get_history()        # completed jobs
+client.cancel_current()     # interrupt the running job
+client.clear_queue()        # drop everything pending
+```
+
+## Discovering what the server has
+
+```python
+client.get_checkpoints()
+client.get_loras()
+client.get_samplers()
+client.get_schedulers()
+client.get_motion_models()
+client.get_all_installed_nodes()
+```
+
+These read the target server's real catalog, so they are the honest answer to "what can
+this machine actually run".
+
+## The web UI
+
+```bash
+comfy-headless                    # launching the UI is the default action
+comfy-headless --port 8080 --share
+```
+
+Six tabs: Image, Video, Queue & History, Workflows, Models, Settings.
+
+Programmatically (requires `[ui]`):
 
 ```python
 from comfy_headless import launch
-launch()  # Opens http://localhost:7870
+launch(port=7861, share=False)
 ```
 
-Or from the command line:
+## Cleaning up
 
-```bash
-python -m comfy_headless.ui
+```python
+client.close()
 ```
 
-### UI features
-
-The web interface provides six main tabs:
-
-| Tab | What it does |
-|-----|-------------|
-| **Image Generation** | Text-to-image with presets and AI prompt enhancement |
-| **Video Generation** | AnimateDiff, LTX, Hunyuan, Wan support with preset selection |
-| **Queue & History** | Real-time queue management and job history browser |
-| **Workflows** | Browse, import, and create workflow templates |
-| **Models Browser** | View installed checkpoints, LoRAs, and motion models |
-| **Settings** | Connection management, timeouts, and system information |
-
-The UI is optional — it requires the `[ui]` extra (`pip install comfy-headless[ui]`). Everything the UI does is also available through the Python API.
-
-## Next steps
-
-- Explore video model details and VRAM requirements in [Video Models](../video-models/).
-- Configure feature flags and WebSocket progress in [Configuration](../configuration/).
-- See the full public API surface in [API Reference](../api-reference/).
+Or use it as a context manager where you want deterministic teardown of the connection
+pool.

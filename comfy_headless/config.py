@@ -21,6 +21,8 @@ Features:
 from functools import lru_cache
 from pathlib import Path
 
+from ._version import __version__ as _pkg_version
+
 __all__ = [
     # Config classes (vary based on pydantic availability)
     "Settings",
@@ -224,7 +226,7 @@ if PYDANTIC_SETTINGS_AVAILABLE:
         http: HttpConfig = HttpConfig()
 
         # Package info
-        version: str = "2.5.1"
+        version: str = _pkg_version
         name: str = "comfy_headless"
 
         def to_dict(self) -> dict:
@@ -399,7 +401,7 @@ else:
         ui: UIConfig = field(default_factory=UIConfig)
         generation: GenerationConfig = field(default_factory=GenerationConfig)
         http: HttpConfig = field(default_factory=HttpConfig)
-        version: str = "2.5.1"
+        version: str = _pkg_version
         name: str = "comfy_headless"
 
         def to_dict(self) -> dict:

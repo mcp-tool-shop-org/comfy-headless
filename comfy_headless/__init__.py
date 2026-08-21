@@ -238,6 +238,7 @@ else:
 
 # Workflow system (v2.4: versioning, caching, DAG validation, snapshots)
 # Help system
+from ._version import __version__  # noqa: E402  (single source of truth)
 from .help_system import (
     HelpLevel,
     HelpRegistry,
@@ -319,8 +320,6 @@ from .workflows import (
     list_presets,
     validate_workflow_dag,
 )
-
-__version__ = "3.0.0"
 
 # Lazy loading for optional features with helpful error messages
 _LAZY_IMPORTS = {

@@ -1,35 +1,42 @@
 <p align="center">
-  <a href="README.md">English</a> | <a href="README.ja.md">日本語</a> | <a href="README.zh.md">中文</a> | <a href="README.es.md">Español</a> | <a href="README.fr.md">Français</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (BR)</a>
+  <a href="README.ja.md">日本語</a> | <a href="README.zh.md">中文</a> | <a href="README.es.md">Español</a> | <a href="README.fr.md">Français</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.it.md">Italiano</a> | <a href="README.md">English</a>
 </p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/comfy-headless/readme.png" alt="comfy-headless" width="400">
 </p>
 
-# Comfy Headless
-
-**Tornando o poder do ComfyUI acessível sem a complexidade**
+<p align="center">
+  <strong>Controle o ComfyUI com Python. Sem necessidade de diagramas complexos.</strong>
+</p>
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml"><img src="https://github.com/mcp-tool-shop-org/comfy-headless/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
-  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue?style=flat-square" alt="Landing Page"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless"><img src="https://codecov.io/gh/mcp-tool-shop-org/comfy-headless/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/v/comfy-headless?color=blue&logo=pypi&logoColor=white" alt="PyPI version"></a>
-  <a href="https://pypi.org/project/comfy-headless/"><img src="https://img.shields.io/pypi/dm/comfy-headless?color=green&logo=pypi&logoColor=white" alt="Downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+  <a href="https://mcp-tool-shop-org.github.io/comfy-headless/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
 </p>
 
 ---
 
-## Por que Comfy Headless?
+## O que é isso
 
-| Problema | Solução |
-| --------- | ---------- |
-| A interface de nós do ComfyUI é complexa. | Presets simples e API Python limpa. |
-| A criação de prompts é difícil. | Aprimoramento de prompts com inteligência artificial. |
-| A geração de vídeos é complexa. | Geração de vídeo em uma única linha, com presets de modelos. |
-| Não se sabe quais configurações usar. | As melhores configurações para sua intenção, automaticamente. |
+comfy-headless cria **gráficos no formato da API ComfyUI** e os executa. Você chama uma função Python; ela emite o gráfico de nós JSON, envia para o ComfyUI, verifica se a operação foi concluída e fornece os caminhos de saída.
 
-## Início Rápido
+Essa estrutura é importante porque indica o que pode dar errado. A tarefa principal da biblioteca é emitir nomes de nós e chaves de entrada que o ComfyUI de destino realmente possui. Quando o ComfyUI renomeia ou remove um nó, um gráfico que referencia o nome antigo é rejeitado no envio com um erro obscuro — e nada avisa você antes.
+
+**A versão 3.0 foi a primeira a levar isso a sério.** Cada tipo de nó que esta biblioteca emite foi auditado em relação ao catálogo ativo do ComfyUI. Nove não existiam mais. Eles foram removidos, os gráficos que os usavam são reconstruídos com nós verificados e a biblioteca agora pode informar o que falta em um servidor *antes* que você execute uma tarefa nele.
+
+| Problema | O que comfy-headless faz |
+|---------|--------------------------|
+| A interface do nó é extensa | Predefinições e uma API Python limpa |
+| A engenharia de prompts é difícil | Aprimoramento opcional por meio da IA local Ollama |
+| A geração de vídeo é complexa | 24 predefinições em 9 famílias de modelos |
+| "Quais configurações devo usar?" | Recomendações dimensionadas para sua VRAM |
+| Os gráficos falham com erros enigmáticos | A verificação de dependências identifica o nó *e* o pacote |
+
+## Guia rápido
 
 ```bash
 pip install comfy-headless[standard]
@@ -38,300 +45,307 @@ pip install comfy-headless[standard]
 ```python
 from comfy_headless import ComfyClient
 
-client = ComfyClient()
+client = ComfyClient()                       # defaults to http://localhost:8188
 result = client.generate_image("a beautiful sunset over mountains")
-print(f"Generated: {result['images']}")
+print(result["images"])
 ```
 
-## Filosofia
-
-- **Para Usuários**: Presets simples e aprimoramento de prompts com inteligência artificial.
-- **Para Desenvolvedores**: API limpa com compilação de fluxo de trabalho baseada em templates.
-- **Para Todos**: As melhores configurações para sua intenção, automaticamente.
+`generate_image` retorna um `dict` com `success`, `prompt_id`, `images`, `error`, `seed` e `preset`. Cada chamada de geração nesta biblioteca retorna um dicionário — não há objeto de resultado para extrair.
 
 ## Instalação
 
-### Instalação Modular (v2.5.0+)
-
-Instale apenas o que você precisa:
-
 ```bash
-# Core only (minimal - ~2MB)
-pip install comfy-headless
-
-# With AI prompt enhancement (Ollama)
-pip install comfy-headless[ai]
-
-# With WebSocket real-time progress
-pip install comfy-headless[websocket]
-
-# Recommended for most users
-pip install comfy-headless[standard]
-
-# Everything (UI, health monitoring, observability)
-pip install comfy-headless[full]
+pip install comfy-headless              # core only, ~2MB
+pip install comfy-headless[standard]    # + AI enhancement + WebSocket (recommended)
+pip install comfy-headless[full]        # everything
 ```
 
-### Recursos Adicionais Disponíveis
+| Extras | Adiciona |
+|-------|------|
+| `ai` | Análise e aprimoramento de prompts por meio da IA local Ollama |
+| `websocket` | Progresso em tempo real via WebSocket |
+| `ui` | Interface web Gradio |
+| `health` | Monitoramento do estado do sistema |
+| `validation` | Validação de configuração Pydantic |
+| `observability` | Rastreamento OpenTelemetry |
+| `standard` | `ai` + `websocket` |
+| `full` | Todos os itens acima |
 
-| Extra | Dependências | Recursos |
-| ------- | -------------- | ---------- |
-| `ai` | httpx | Inteligência de prompt Ollama |
-| `websocket` | Websockets | Atualizações de progresso em tempo real. |
-| `health` | psutil | Monitoramento da saúde do sistema. |
-| `ui` | gradio | Interface web. |
-| `validation` | pydantic | Validação de configuração. |
-| `observability` | opentelemetry | Rastreamento distribuído. |
-| `standard` | IA + Websocket | Pacote recomendado |
-| `full` | Todos os itens acima. | Tudo. |
+Requer **Python 3.10+** e uma instância do ComfyUI em execução.
 
-### Requisitos
-
-- Python 3.10+
-- ComfyUI rodando localmente (padrão: `http://localhost:8188`)
-- Opcional: Ollama para aprimoramento de prompts com IA.
-
-## Uso
-
-### Use como uma Biblioteca
-
-```python
-from comfy_headless import ComfyClient
-
-# Simple image generation
-client = ComfyClient()
-result = client.generate_image("a beautiful sunset over mountains")
-print(f"Generated: {result['images']}")
-```
-
-### Com Aprimoramento de IA
-
-```python
-from comfy_headless import analyze_prompt, enhance_prompt
-
-# Analyze a prompt
-analysis = analyze_prompt("a cyberpunk city at night with neon lights")
-print(f"Intent: {analysis.intent}")        # "scene"
-print(f"Styles: {analysis.styles}")        # ["scifi", "cinematic"]
-print(f"Preset: {analysis.suggested_preset}")  # "cinematic"
-
-# Enhance a prompt
-enhanced = enhance_prompt("a cat", style="detailed")
-print(enhanced.enhanced)   # "a cat, masterpiece, best quality, highly detailed..."
-print(enhanced.negative)   # Style-aware negative prompt
-```
-
-### Geração de Vídeos
-
-```python
-from comfy_headless import ComfyClient, list_video_presets
-
-# See available presets
-print(list_video_presets())
-
-# Generate video with preset
-client = ComfyClient()
-result = client.generate_video(
-    prompt="a cat walking through a garden",
-    preset="ltx_quality"  # LTX-Video 2, 1280x720, 49 frames
-)
-```
-
-### Inicie a Interface Web
-
-```python
-from comfy_headless import launch
-launch()  # Opens http://localhost:7870
-```
-
-Ou via linha de comando:
-```bash
-python -m comfy_headless.ui
-```
-
-**Recursos da Interface (v2.5.1):**
-- **Geração de Imagens** - txt2img com presets, aprimoramento de prompts com IA.
-- **Geração de Vídeos** - Suporte para AnimateDiff, LTX, Hunyuan, Wan.
-- **Fila e Histórico** - Gerenciamento de fila em tempo real, histórico de tarefas.
-- **Fluxos de Trabalho** - Navegue, importe e crie modelos de fluxo de trabalho.
-- **Navegador de Modelos** - Visualize checkpoints, LoRAs, modelos de movimento.
-- **Configurações** - Gerenciamento de conexão, timeouts, informações do sistema.
-
-**Tema:** Ocean Mist - toques suaves em tons de verde-água em fundos neutros.
-
-## Modelos de Vídeo (v2.5.0)
-
-### Modelos Suportados
-
-| Model | VRAM | Qualidade | Speed | Ideal para |
-| ------- | ------ | --------- | ------- | ---------- |
-| **LTX-Video 2** | 12GB+ | Excelente | Fast | Uso geral, RTX 3080+ |
-| **Hunyuan 1.5** | 14GB+ | Best | Slow | Alta qualidade, RTX 4080+ |
-| **Wan 2.1/2.2** | 6-16GB | Great | Médio | GPUs de baixo custo, eficiência. |
-| **Mochi** | 12GB+ | Excelente | Slow | Adesão ao texto |
-| AnimateDiff | 6GB+ | Good | Fast | Pré-visualizações rápidas |
-| SVD | 8GB+ | Good | Médio | Imagem para vídeo |
-| CogVideoX | 10GB+ | Good | Slow | Suporte legado |
-
-### Presets de Vídeo
-
-```python
-from comfy_headless import VIDEO_PRESETS, get_recommended_preset
-
-# Get preset recommendation based on your VRAM
-preset = get_recommended_preset(vram_gb=16)  # Returns "hunyuan15_720p"
-
-# LTX-Video 2 (Fast, great quality)
-# "ltx_quick": 768x512, 25 frames, 20 steps
-# "ltx_standard": 1280x720, 49 frames, 25 steps
-# "ltx_quality": 1280x720, 97 frames, 30 steps
-
-# Hunyuan 1.5 (Best quality)
-# "hunyuan15_720p": 1280x720, 121 frames
-# "hunyuan15_1080p": 1920x1080 with super-resolution
-
-# Wan (Efficient)
-# "wan_1.3b": 720x480, 49 frames (6GB VRAM)
-# "wan_14b": 1280x720, 81 frames (12GB VRAM)
-```
-
-## Flags de Recursos
-
-Verifique quais recursos estão disponíveis:
+Verifique o que está ativo durante a execução:
 
 ```python
 from comfy_headless import FEATURES, list_missing_features
 
-print(FEATURES)
-# {'ai': True, 'websocket': True, 'health': False, ...}
-
-print(list_missing_features())
-# {'health': 'pip install comfy-headless[health]', ...}
+print(FEATURES)                 # {'ai': True, 'websocket': True, 'health': False, ...}
+print(list_missing_features())  # {'health': 'pip install comfy-headless[health]', ...}
 ```
 
-## Progresso via Websocket
+## Imagens
+
+```python
+result = client.generate_image(
+    "a cyberpunk street at night",
+    negative_prompt="blurry, low quality",
+    preset="hd",          # overrides width/height/steps/cfg when set
+    seed=42,
+)
+```
+
+Oito predefinições de imagem: `draft`, `fast`, `quality`, `hd`, `portrait`, `landscape`, `cinematic` e `square`.
+
+Execute em lote uma lista de prompts:
+
+```python
+result = client.generate_batch(
+    ["a red fox", "a snowy owl", "a grey wolf"],
+    preset="fast",
+)
+```
+
+### Aprimoramento de prompt por IA
+
+Requer o extra `[ai]` e um Ollama local. Estas são **funções no nível do módulo**, não métodos de cliente:
+
+```python
+from comfy_headless import enhance_prompt, analyze_prompt
+
+result = enhance_prompt("a cat", style="balanced")
+print(result.enhanced)   # .original .enhanced .negative .additions .reasoning
+
+analysis = analyze_prompt("a cyberpunk city at night")
+print(analysis.intent, analysis.styles, analysis.suggested_preset)
+```
+
+## Vídeo
+
+```python
+from comfy_headless import list_video_presets, get_recommended_preset
+
+print(list_video_presets())                  # 24 presets
+print(get_recommended_preset(vram_gb=16))    # picks one that fits
+
+result = client.generate_video(
+    "a slow pan across a mountain range",
+    preset="ltx_quality",
+)
+print(result["videos"])
+```
+
+A seleção é feita **por predefinição**, não por modelo — `generate_video` não tem o argumento `model`. Qualquer um dos itens `frames`, `fps`, `steps`, `cfg`, `width` ou `height` pode ser passado para substituir a predefinição.
+
+### Entrada de imagem
+
+A conversão de imagem em vídeo e qualquer outra operação que utilize uma imagem de origem exige que essa imagem exista primeiro no ComfyUI. Carregue-a e, em seguida, passe o nome que o servidor retorna:
+
+```python
+ref = client.upload_image("reference.png")
+# {"name": "reference.png", "subfolder": "", "type": "input", "ref": "reference.png"}
+
+result = client.generate_video(
+    "a cat walking through a garden",
+    preset="wan_14b",
+    init_image=ref["name"],
+)
+```
+
+Leia `name` da resposta, em vez de reutilizar o nome do arquivo que você enviou — o ComfyUI renomeia os arquivos em caso de conflito, portanto, os dois nem sempre são iguais. `ref` é o mesmo valor já combinado com qualquer subpasta, que é exatamente o que o gráfico precisa.
+
+> **Alterado na versão 3.0:** `init_image` é um nome de arquivo do lado do servidor. Versões anteriores aceitavam dados base64 e os transmitiam por meio de um nó de terceiros que não existe em uma instalação padrão do ComfyUI. Consulte o [CHANGELOG](CHANGELOG.md).
+
+### Famílias de modelos
+
+| Família | VRAM mínima | Qualidade | Velocidade | Nós extras | Melhor para |
+|--------|----------|---------|-------|-------------|----------|
+| **Wan 2.1/2.2** | 6 GB | Ótimo | Médio | — | Baixa VRAM, eficiência |
+| AnimateDiff Lightning | 6 GB | Razoável | Mais rápido | AnimateDiff-Evolved | Rascunhos de 4 etapas |
+| AnimateDiff | 8 GB | Bom | Rápido | AnimateDiff-Evolved, Interpolação de quadros. | Visualizações rápidas |
+| **LTX-Video** | 12 GB | Excelente | Rápido | — | O padrão seguro |
+| **Mochi** | 12 GB | Excelente | Lento | — | Adesão ao texto, clipes longos |
+| **SVD** | 12 GB | Bom | Médio | — | Animando uma imagem estática |
+| **Hunyuan 1.5** | 14 GB | Melhor | Lento | — | Maior qualidade |
+| CogVideoX | 16 GB | Bom | Lento | Wrapper CogVideoX | Legado |
+| **Hunyuan 1.0** | 24 GB | Ótimo | Lento | Interpolação de quadros | Substituído pela versão 1.5 |
+
+Seis das nove famílias funcionam com **nós principais padrão do ComfyUI** — sem pacote wrapper para o próprio modelo. Apenas AnimateDiff (ambas as variantes) e CogVideoX precisam de um. A saída de vídeo usa [Video Helper Suite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite); a interpolação de quadros usa [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation).
+
+Os valores de VRAM são o mínimo para a resolução padrão da família, lidos de `VIDEO_MODEL_INFO` — não os máximos. Mais memória permite clipes mais longos e resoluções mais altas da mesma família.
+
+### Verifique antes de executar
+
+Em vez de descobrir um nó ausente no momento do envio:
+
+```python
+workflow = client.build_video_workflow("a cat walking")
+
+report = client.check_workflow_dependencies(workflow)
+print(report["missing_packs"])     # what this server is missing
+print(report["required_packs"])    # what this graph needs
+
+# or raise MissingNodePackError, naming the class and the pack that provides it
+client.require_workflow_dependencies(workflow)
+```
+
+## Configuração
+
+As variáveis de ambiente usam o prefixo `COMFY_HEADLESS_` com delimitadores de seção `__`:
+
+| Variável | Padrão |
+|----------|---------|
+| `COMFY_HEADLESS_COMFYUI__URL` | `http://localhost:8188` |
+| `COMFY_HEADLESS_OLLAMA__URL` | `http://localhost:11434` |
+| `COMFY_HEADLESS_OLLAMA__MODEL` | `qwen2.5:7b` |
+| `COMFY_HEADLESS_COMFYUI__TIMEOUT_READ` | tempo limite de leitura, segundos |
+| `COMFY_HEADLESS_LOGGING__LEVEL` | nível de registro |
+
+Ou passe a URL diretamente: `ComfyClient("http://192.168.1.50:8188")`.
+
+## Interface web
+
+```bash
+comfy-headless                 # launching the UI is the default action
+```
+
+| Sinalizador | Significado |
+|------|---------|
+| `--port` / `-p` | Porta da interface do usuário (padrão `7861`) |
+| `--share` | Link de compartilhamento público do Gradio |
+| `--url` | URL do servidor ComfyUI |
+| `--version` / `-v` | Imprimir versão |
+| `--check` | Disponibilidade de recursos |
+| `--diagnose` | Diagnósticos completos |
+
+Seis abas: Imagem, Vídeo, Fila e Histórico, Fluxos de Trabalho, Modelos, Configurações. O tema é Ocean Mist —
+tons suaves de azul-esverdeado em fundos neutros quentes.
+
+Programaticamente (requer `[ui]`):
+
+```python
+from comfy_headless import launch
+launch(port=7861, share=False)
+```
+
+## Progresso
+
+Chamadas bloqueantes usam uma função de retorno `on_progress`:
+
+```python
+client.generate_image("a fox", on_progress=lambda pct, msg: print(f"{pct:.0%} {msg}"))
+```
+
+Para atualizações em tempo real via WebSocket (requer `[websocket]`):
 
 ```python
 import asyncio
 from comfy_headless import ComfyWSClient
 
-async def generate_with_progress():
+async def main():
     async with ComfyWSClient() as ws:
         prompt_id = await ws.queue_prompt(workflow)
-        result = await ws.wait_for_completion(
-            prompt_id,
-            on_progress=lambda p: print(f"Progress: {p.progress}%")
-        )
-        return result
+        return await ws.wait_for_completion(prompt_id)
 
-asyncio.run(generate_with_progress())
+asyncio.run(main())
 ```
 
-## Referência da API
+## Erros
 
-### Classes Principais
+Cada exceção contém um código, mensagem e dica estruturados:
 
 ```python
 from comfy_headless import (
-    # Client
-    ComfyClient,           # Main HTTP client
-    ComfyWSClient,         # WebSocket client (requires [websocket])
-
-    # Video
-    VideoSettings,         # Video generation settings
-    VideoModel,            # Model enum (LTXV, HUNYUAN_15, WAN, etc.)
-    VIDEO_PRESETS,         # Preset configurations
-    get_recommended_preset, # VRAM-based recommendation
-
-    # Workflows
-    compile_workflow,      # Compile workflow from preset
-    WorkflowCompiler,      # Low-level compiler
-
-    # Intelligence (requires [ai])
-    analyze_prompt,        # Analyze prompt intent/style
-    enhance_prompt,        # AI-powered enhancement
-    PromptAnalysis,        # Analysis result type
-)
-```
-
-### Tratamento de Erros
-
-```python
-from comfy_headless import (
-    ComfyHeadlessError,      # Base exception
-    ComfyUIConnectionError,  # Can't reach ComfyUI
-    ComfyUIOfflineError,     # ComfyUI not responding
-    GenerationTimeoutError,  # Generation took too long
-    GenerationFailedError,   # Generation failed
-    ValidationError,         # Invalid parameters
+    ComfyHeadlessError,       # base
+    ComfyUIConnectionError,   # cannot reach ComfyUI
+    ComfyUIOfflineError,      # ComfyUI not responding
+    GenerationTimeoutError,
+    GenerationFailedError,
+    ValidationError,
+    UploadError,              # new in 3.0
+    MissingNodePackError,     # new in 3.0
 )
 
 try:
-    result = client.generate_image("test")
+    client.generate_image("test")
 except ComfyUIOfflineError:
-    print("Start ComfyUI first!")
-except GenerationTimeoutError:
-    print("Generation timed out")
+    print("Start ComfyUI first")
 ```
 
-## Arquitetura
+## Como funciona
 
 ```
-comfy_headless/
-├── __init__.py          # Package exports, lazy loading
-├── feature_flags.py     # Optional dependency detection
-├── client.py            # ComfyUI HTTP client
-├── websocket_client.py  # WebSocket client
-├── intelligence.py      # AI prompt analysis (requires [ai])
-├── workflows.py         # Template compiler & presets
-├── video.py             # Video models & presets
-├── ui.py                # Gradio 6.0 interface (requires [ui])
-├── theme.py             # Ocean Mist theme
-├── config.py            # Settings management
-├── exceptions.py        # Error types
-├── retry.py             # Circuit breaker, rate limiting
-├── health.py            # Health checks (requires [health])
-└── tests/               # Test suite
+your call ─→ build API-format graph ─→ POST /prompt ─→ poll /history ─→ GET /view
+                     │
+                     └─ validated against GET /object_info
 ```
 
-## Requisitos de Nós do ComfyUI
+A biblioteca se comunica com sete rotas do ComfyUI — `/system_stats`, `/object_info`, `/queue`,
+`/history`, `/prompt`, `/interrupt`, `/view` — mais `/upload/image` e `/upload/mask` para
+entrada binária.
 
-### Para Geração de Vídeo
+`/object_info` é a autoridade sobre o que um determinado servidor pode executar. É um ponto de extremidade ativo, não
+um artefato com versão: não há um registro central de nós para referenciar. Portanto, a biblioteca
+valida os gráficos gerados em relação ao catálogo real do servidor de destino, em vez de assumir um
+conjunto fixo de nós. `check_workflow_dependencies()` é essa verificação e representa uma infraestrutura essencial, e não apenas uma conveniência.
 
-Instale estes nós personalizados:
+Recursos úteis quando você precisa do próprio gráfico:
 
-**Núcleo:**
-- [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) - Codificação de vídeo
+```python
+workflow = client.build_txt2img_workflow("a fox")   # the raw API-format dict
+prompt_id = client.queue_prompt(workflow)           # submit it yourself
+client.wait_for_completion(prompt_id)
+```
 
-**Específico para cada modelo:**
-- LTX-Video 2: Suporte integrado para ComfyUI (versões recentes)
-- Hunyuan 1.5: [ComfyUI-HunyuanVideo](https://github.com/kijai/ComfyUI-HunyuanVideoWrapper)
-- Wan: [ComfyUI-WanVideoWrapper](https://github.com/kijai/ComfyUI-WanVideoWrapper)
-- AnimateDiff: [ComfyUI-AnimateDiff-Evolved](https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved)
+## Documentação
 
-## Projetos relacionados
+Manual completo:
+**[mcp-tool-shop-org.github.io/comfy-headless](https://mcp-tool-shop-org.github.io/comfy-headless/handbook/)**
+— introdução, uso, configuração, referência da API, modelos de vídeo, arquitetura.
 
-Parte de [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — conjunto de ferramentas de aprendizado de máquina de código aberto para hardware local.
+## Segurança e escopo dos dados
 
-- [brain-dev](https://github.com/mcp-tool-shop-org/brain-dev) - Kit de desenvolvimento para aprendizado de máquina
-- [MCP Tool Shop](https://mcp-tool-shop.github.io/) - Navegue por todas as ferramentas
+- **Dados acessados:** conecta-se a uma instância local ou remota do ComfyUI via HTTP/WebSocket.
+Envia o JSON do fluxo de trabalho e as imagens carregadas, recebe os arquivos de mídia gerados. Opcionalmente, conecta-se
+a um Ollama local para inteligência de prompts. Grava a saída em diretórios temporários com
+limpeza automática.
+- **Dados NÃO acessados:** sem telemetria, sem análise, sem APIs externas além dos pontos de extremidade do ComfyUI
+e do Ollama que você configurar. Os segredos são mascarados em toda a saída do log por meio de
+`SecretValue`.
+- **Permissões necessárias:** acesso à rede para o seu servidor ComfyUI e servidor Ollama opcional; permissão de gravação de arquivos para saída e diretórios temporários.
+- **Uploads:** `upload_image` rejeita tentativas de atravessar subpastas. Os arquivos carregados são armazenados
+no diretório de entrada do ComfyUI no servidor especificado — trate esse servidor como confiável.
 
-## Licença
+Consulte [SECURITY.md](SECURITY.md) para relatar vulnerabilidades.
 
-Licença MIT - veja [LICENSE](LICENSE)
+## Avaliação
+
+| Categoria | Pontuação |
+|----------|-------|
+| A. Segurança | 10/10 |
+| B. Tratamento de erros | 10/10 |
+| C. Documentação para o usuário | 10/10 |
+| D. Boas práticas de desenvolvimento | 10/10 |
+| E. Identidade (suave) | 10/10 |
+| **Overall** | **50/50** |
+
+> Avaliado com [`@mcptoolshop/shipcheck`](https://github.com/mcp-tool-shop-org/shipcheck)
+
+## Relacionado
+
+Parte do [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — ferramentas de ML de código aberto para
+hardware local.
 
 ## Contribuições
 
-Contribuições são bem-vindas! Por favor, abra um problema ou solicitação de alteração.
+Problemas e solicitações de pull são bem-vindos — consulte [CONTRIBUTING.md](CONTRIBUTING.md). Áreas úteis:
+famílias adicionais de modelos, modelos de fluxo de trabalho, documentação, correções de bugs.
 
-Áreas de interesse:
-- Suporte adicional para modelos de vídeo
-- Modelos de fluxo de trabalho
-- Documentação
-- Correção de bugs
+Se você adicionar um tipo de nó, verifique primeiro se ele existe no catálogo ativo do ComfyUI e declare seu
+pacote, caso não seja um nó central. Essa regra é o motivo pelo qual esta versão existe.
+
+## Licença
+
+MIT — consulte [LICENSE](LICENSE).
 
 ---
 
-<p align="center">
-  <a href="https://github.com/mcp-tool-shop-org/comfy-headless/issues">Issues</a> • <a href="https://github.com/mcp-tool-shop-org/comfy-headless/discussions">Discussions</a>
-</p>
+Criado por [MCP Tool Shop](https://mcp-tool-shop.github.io/)

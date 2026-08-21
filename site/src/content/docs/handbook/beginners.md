@@ -1,107 +1,222 @@
 ---
 title: For Beginners
-description: New to Comfy Headless? Start here for a gentle introduction.
+description: New to ComfyUI or to generating images from code? Start here — what this tool is, what you need, and your first picture.
 sidebar:
   order: 99
 ---
 
-## What is this tool?
+This page assumes nothing. If you already know what ComfyUI is, go to
+[Getting Started](../getting-started/) instead.
 
-Comfy Headless is a Python library that lets you generate images and videos using ComfyUI without touching ComfyUI's complex node-based interface. You write a few lines of Python, and the library handles all the workflow compilation, model selection, and prompt optimization behind the scenes.
+## What is ComfyUI?
 
-Think of it as a remote control for ComfyUI — you tell it what you want to create, and it figures out the technical details.
+ComfyUI is a program that runs image and video AI models on your own computer. You build a
+**workflow** by dragging boxes onto a canvas and connecting them with wires — one box
+loads a model, another holds your prompt, another does the actual generating, another
+saves the picture.
 
-## Who is this for?
+It is enormously capable and completely in your control. It is also a lot of boxes.
 
-- **Artists and creators** who want AI-generated images without learning node graphs — just launch the web UI and type a prompt
-- **Python developers** who need programmatic image/video generation in their apps or scripts
-- **Pipeline builders** who want headless, scriptable image generation for automation, batch processing, or CI workflows
-- **Anyone with a GPU** who wants to experiment with AI image generation without the complexity
+## What is Comfy Headless, then?
 
-## Prerequisites
+The same power, from Python, with no canvas.
 
-Before you start, you need:
-
-- **Python 3.10 or later** — check with `python --version`
-- **ComfyUI running locally** — Comfy Headless connects to ComfyUI as a backend. You need ComfyUI installed and running on `http://localhost:8188` (the default)
-- **A GPU with at least 6 GB VRAM** — for basic image generation. Video generation needs 12+ GB depending on the model
-- **pip** — Python's package manager, comes with Python
-- **Optional: Ollama** — only needed if you want AI-powered prompt enhancement
-
-## Your first 5 minutes
-
-### 1. Install Comfy Headless
-
-```bash
-pip install comfy-headless[standard]
-```
-
-This installs the core library plus AI prompt enhancement and WebSocket progress tracking.
-
-### 2. Make sure ComfyUI is running
-
-Start your ComfyUI instance if it is not already running. By default, Comfy Headless looks for it at `http://localhost:8188`.
-
-### 3. Generate your first image
-
-Open a Python shell or create a script:
+"Headless" means "without a graphical interface". You write a line of code; Comfy Headless
+builds the box-and-wire workflow for you behind the scenes, sends it to ComfyUI, waits for
+the picture, and hands you the file path.
 
 ```python
 from comfy_headless import ComfyClient
 
 client = ComfyClient()
-result = client.generate_image("a cat sitting on a windowsill, sunlight")
-print(f"Generated: {result['images']}")
+result = client.generate_image("a lighthouse in a storm")
+print(result["images"])
 ```
 
-You should see the path to your generated image.
+Those four lines replace roughly seven boxes and a dozen wires.
 
-### 4. Check what features are available
+### It is a remote control, not an engine
 
-```python
-from comfy_headless import FEATURES
-print(FEATURES)
-```
+This trips people up, so it is worth being blunt: **Comfy Headless does not generate
+anything itself.** It tells ComfyUI what to do. ComfyUI must already be installed and
+running, on your machine or one you can reach over the network.
 
-This shows which optional extras are installed (AI, WebSocket, health monitoring, etc.).
+If ComfyUI is not running, nothing here works — and the error you will see is
+`ComfyUIOfflineError`.
 
-### 5. Try the web UI (optional)
+## What you need
 
-If you want a visual interface instead of code:
+1. **ComfyUI, installed and running.** Follow the
+   [official install guide](https://docs.comfy.org/). Start it and leave it running. By
+   default it listens on `http://localhost:8188`.
+2. **At least one model** (a "checkpoint") downloaded into ComfyUI's `models/checkpoints`
+   folder. ComfyUI cannot generate without one.
+3. **Python 3.10 or newer.**
+4. *(Optional)* **[Ollama](https://ollama.com/)**, only if you want the AI prompt
+   enhancement feature.
+
+## Install
 
 ```bash
-pip install comfy-headless[ui]
-python -m comfy_headless --ui
+pip install comfy-headless[standard]
 ```
 
-This launches a Gradio web interface in your browser.
+Check it worked:
 
-## Common mistakes
+```bash
+comfy-headless --diagnose
+```
 
-1. **Forgetting to start ComfyUI first.** Comfy Headless is a client that talks to ComfyUI — it does not include ComfyUI itself. If ComfyUI is not running, you will get connection errors. Make sure ComfyUI is running on port 8188 before using the library.
+That prints the version, which optional features are active, and — importantly — which
+ComfyUI address it is going to talk to.
 
-2. **Installing the wrong extra.** The bare `pip install comfy-headless` gives you the minimal core only. Most users want `pip install comfy-headless[standard]` which includes AI enhancement and WebSocket progress. Check with `FEATURES` to see what is active.
+## Your first picture
 
-3. **Running out of VRAM on video generation.** Video models need significantly more VRAM than image models. Check the [Video Models](/comfy-headless/handbook/video-models/) page for VRAM requirements before trying video generation. Start with AnimateDiff (6 GB) if you have a smaller GPU.
+Create a file called `first.py`:
 
-4. **Expecting the AI enhancement to work without Ollama.** The `[ai]` extra requires a local Ollama instance running a language model. Install Ollama separately and pull a model before using prompt enhancement.
+```python
+from comfy_headless import ComfyClient
 
-5. **Using synchronous code for long-running video generation.** Image generation completes in seconds, but video can take minutes. Use the WebSocket client (`ComfyWSClient`) with progress callbacks instead of the basic HTTP client for video generation, so you can see progress and avoid timeouts.
+client = ComfyClient()
 
-## Next steps
+if not client.is_online():
+    raise SystemExit("ComfyUI isn't running — start it first")
 
-- [Getting Started](/comfy-headless/handbook/getting-started/) — detailed installation options and modular extras
-- [Usage](/comfy-headless/handbook/usage/) — image generation, AI enhancement, video, and the web UI
-- [Video Models](/comfy-headless/handbook/video-models/) — model presets and VRAM requirements
+result = client.generate_image("a lighthouse in a storm, dramatic lighting")
 
-## Glossary
+if result["success"]:
+    print("Saved:", result["images"])
+    print("Seed was:", result["seed"])
+else:
+    print("Failed:", result["error"])
+```
 
-- **ComfyUI** — An open-source node-based interface for Stable Diffusion and other generative AI models. Comfy Headless uses it as a backend.
-- **Workflow** — A ComfyUI node graph that defines how an image or video is generated. Comfy Headless compiles these from templates so you do not have to build them manually.
-- **Preset** — A curated set of generation parameters (resolution, steps, model) optimized for specific hardware and use cases.
-- **Prompt enhancement** — Using a local Ollama language model to rewrite your prompt for better generation results (e.g., adding style cues, quality tokens).
-- **VRAM** — Video RAM on your GPU. Different models need different amounts. Running out of VRAM causes generation failures.
-- **Ollama** — A local LLM runtime. Comfy Headless uses it (optionally) to analyze and improve your prompts before sending them to ComfyUI.
-- **WebSocket** — A persistent network connection that lets Comfy Headless receive real-time progress updates from ComfyUI during generation.
-- **Circuit breaker** — A retry pattern that stops sending requests to ComfyUI when it is unresponsive, then automatically resumes when it recovers.
-- **Extras** — Python optional dependency groups (e.g., `[ai]`, `[websocket]`, `[full]`) that let you install only the features you need.
+Run it:
+
+```bash
+python first.py
+```
+
+The first run may take a while — ComfyUI has to load the model into your graphics card's
+memory. Later runs are much faster.
+
+## Understanding what came back
+
+Every generation returns a **dictionary** — a labelled bag of values:
+
+| Key | What it is |
+|-----|------------|
+| `success` | Did it work? |
+| `images` | List of file paths to your pictures |
+| `seed` | The random number used. Reuse it to get the same picture again |
+| `error` | What went wrong, if anything |
+| `prompt_id` | ComfyUI's job id |
+| `preset` | Which preset was applied |
+
+Saving the seed is how you reproduce a result you liked:
+
+```python
+again = client.generate_image("a lighthouse in a storm", seed=result["seed"])
+```
+
+## Presets
+
+Rather than learning what "steps" and "CFG" mean before you can make anything, use a
+preset:
+
+```python
+client.generate_image("a fox in snow", preset="quality")
+```
+
+| Preset | Use it for |
+|--------|-----------|
+| `draft` | Fastest, roughest — checking an idea |
+| `fast` | Quick results |
+| `quality` | A good balance |
+| `hd` | Higher resolution, slower |
+| `portrait` | Tall — people, characters |
+| `landscape` | Wide — scenery |
+| `cinematic` | Widescreen, film-like |
+| `square` | Equal sides — avatars, icons |
+
+## Writing better prompts
+
+Two habits carry most of the improvement:
+
+**Describe, don't command.** "A red fox sitting in deep snow at sunset, soft golden light"
+works better than "make me a nice fox picture".
+
+**Say what you don't want**, using the negative prompt:
+
+```python
+client.generate_image(
+    "a red fox in deep snow at sunset",
+    negative_prompt="blurry, low quality, extra limbs, watermark",
+)
+```
+
+If you installed the `[ai]` extra and have Ollama running, the library can do this for
+you:
+
+```python
+from comfy_headless import enhance_prompt
+
+better = enhance_prompt("a fox")
+print(better.enhanced)     # a much richer prompt
+print(better.negative)     # a matching negative prompt
+```
+
+## Making video
+
+Video works the same way, but you choose a **preset** rather than a model name:
+
+```python
+result = client.generate_video("clouds moving over a mountain", preset="ltx_quality")
+print(result["videos"])
+```
+
+Video is far heavier than images. If you are unsure what your graphics card can manage:
+
+```python
+from comfy_headless import get_recommended_preset
+print(get_recommended_preset(vram_gb=8))
+```
+
+Some video families also need extra ComfyUI add-ons. Check before committing to a long
+run:
+
+```python
+workflow = client.build_video_workflow("clouds moving")
+report = client.check_workflow_dependencies(workflow)
+print(report["missing_packs"])     # empty list means you're ready
+```
+
+See [Video Models](../video-models/) for what each family needs.
+
+## A web interface, if you prefer clicking
+
+```bash
+comfy-headless
+```
+
+That opens a browser page at `http://localhost:7861` with tabs for images, video, the
+queue, workflows, models and settings.
+
+## When things go wrong
+
+| Message | What to do |
+|---------|-----------|
+| `ComfyUIOfflineError` | Start ComfyUI. Check the address with `--diagnose` |
+| `MissingNodePackError` | Install the add-on it names, or pick a different preset |
+| `GenerationTimeoutError` | Usually a slow first load — try again, or raise `timeout` |
+| `FeatureNotAvailable` | Run the `pip install` line in the error message |
+| Empty `images` list | Check `result["error"]`, and look at ComfyUI's own console |
+
+ComfyUI's terminal window is worth watching. When a generation fails, the real reason is
+usually printed there.
+
+## Where next
+
+- [Getting Started](../getting-started/) — the same ground, faster
+- [Usage](../usage/) — batches, progress callbacks, working with graphs directly
+- [Video Models](../video-models/) — every preset with real numbers
