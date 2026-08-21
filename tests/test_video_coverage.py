@@ -991,6 +991,7 @@ VERIFIED_CORE_NODES = frozenset(
         "LTXVImgToVideo",
         "LTXVScheduler",
         "LatentUpscaleModelLoader",
+        "LoadImage",
         "LoraLoaderModelOnly",
         "ModelSamplingSD3",
         "RandomNoise",
@@ -1005,7 +1006,10 @@ VERIFIED_CORE_NODES = frozenset(
     }
 )
 
-_SAMPLE_IMAGE = "data:image/png;base64,iVBORw0KGgo="
+# Server-side image name as returned by ComfyClient.upload_image()["name"].
+# NOT base64 data: since the switch to the core LoadImage node, init_image is
+# a filename already present in ComfyUI's input folder.
+_SAMPLE_IMAGE = "uploaded_ref_00001.png"
 
 
 def _class_types(workflow):

@@ -507,7 +507,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1024,
         max_height=576,
         presets=["svd_short", "svd_long"],
-        requires_packs=["comfyui-videohelpersuite", "unknown"],
+        requires_packs=["comfyui-videohelpersuite"],
     ),
     "cogvideo": VideoModelInfo(
         id="cogvideo",
@@ -573,7 +573,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1920,
         max_height=1080,
         presets=["ltx_quick", "ltx_standard", "ltx_quality"],
-        requires_packs=["comfyui-videohelpersuite", "unknown"],
+        requires_packs=["comfyui-videohelpersuite"],
     ),
     "wan": VideoModelInfo(
         id="wan",
@@ -588,7 +588,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1280,
         max_height=720,
         presets=["wan_1.3b", "wan_14b", "wan_fast", "wan_quality"],
-        requires_packs=["comfyui-videohelpersuite", "unknown"],
+        requires_packs=["comfyui-videohelpersuite"],
     ),
     "mochi": VideoModelInfo(
         id="mochi",
@@ -639,8 +639,6 @@ class NodePack:
         }
 
 
-_UNKNOWN_PACK_ID = "unknown"
-
 NODE_PACK_INFO: dict[str, NodePack] = {
     "comfyui-videohelpersuite": NodePack(
         id="comfyui-videohelpersuite",
@@ -666,15 +664,6 @@ NODE_PACK_INFO: dict[str, NodePack] = {
         url="https://github.com/Fannovel16/ComfyUI-Frame-Interpolation",
         install_hint="ComfyUI Manager -> Install Custom Nodes -> 'Frame Interpolation'",
     ),
-    _UNKNOWN_PACK_ID: NodePack(
-        id=_UNKNOWN_PACK_ID,
-        name="third-party extension (pack not identified)",
-        url="https://registry.comfy.org/",
-        install_hint=(
-            "This class_type is not published in the ComfyUI node registry index. "
-            "Search your ComfyUI Manager for a node with this exact name."
-        ),
-    ),
 }
 """Metadata for every custom node pack referenced by NODE_PACKS."""
 
@@ -695,11 +684,6 @@ NODE_PACKS: dict[str, str] = {
     "CogVideoDecode": "comfyui-cogvideoxwrapper",
     # --- ComfyUI-Frame-Interpolation ----------------------------------------
     "RIFE VFI": "comfyui-frame-interpolation",
-    # --- unidentified -------------------------------------------------------
-    # Base64 image input for img2vid. Not published in the ComfyUI node
-    # registry index under this name, so we cannot name a pack honestly --
-    # it is declared as unknown rather than guessed at.
-    "LoadImageFromBase64": _UNKNOWN_PACK_ID,
 }
 """Maps a non-core class_type to the id of the pack that provides it."""
 
@@ -792,7 +776,9 @@ class VideoWorkflowBuilder:
             prompt: Positive prompt
             negative: Negative prompt
             settings: Video settings
-            init_image: Base64 image for img2vid (SVD)
+            init_image: Name of an image already present in ComfyUI's input
+                folder, as returned by ``ComfyClient.upload_image()["ref"]``.
+                Wired straight into a core ``LoadImage`` node.
 
         Returns:
             ComfyUI workflow JSON
@@ -974,7 +960,12 @@ class VideoWorkflowBuilder:
         seed: int,
         init_image: str | None = None,
     ) -> dict[str, Any]:
-        """Build Stable Video Diffusion workflow (img2vid)."""
+        """
+        Build Stable Video Diffusion workflow (img2vid).
+
+        ``init_image`` is a ComfyUI-side image name (see the class docstring),
+        not image data.
+        """
         if not init_image:
             raise ValueError("SVD requires an init_image")
 
@@ -984,7 +975,7 @@ class VideoWorkflowBuilder:
         num_frames = 25 if settings.model == VideoModel.SVD_XT else 14
 
         return {
-            "1": {"class_type": "LoadImageFromBase64", "inputs": {"base64_data": init_image}},
+            "1": {"class_type": "LoadImage", "inputs": {"image": init_image}},
             "2": {"class_type": "ImageOnlyCheckpointLoader", "inputs": {"ckpt_name": model_name}},
             "3": {
                 "class_type": "SVD_img2vid_Conditioning",
@@ -1539,8 +1530,8 @@ class VideoWorkflowBuilder:
         # Image-to-video variant
         if init_image:
             workflow["2.5"] = {
-                "class_type": "LoadImageFromBase64",
-                "inputs": {"base64_data": init_image},
+                "class_type": "LoadImage",
+                "inputs": {"image": init_image},
             }
             workflow["3"] = {
                 "class_type": "LTXVImgToVideo",
@@ -1654,8 +1645,8 @@ class VideoWorkflowBuilder:
         # Image-to-video extension
         if init_image:
             workflow["11"] = {
-                "class_type": "LoadImageFromBase64",
-                "inputs": {"base64_data": init_image},
+                "class_type": "LoadImage",
+                "inputs": {"image": init_image},
             }
             workflow["12"] = {
                 "class_type": "CLIPVisionLoader",
