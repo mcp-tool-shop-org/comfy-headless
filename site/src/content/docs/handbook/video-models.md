@@ -1,11 +1,11 @@
 ---
 title: Video Models
-description: The nine video model families, all 24 presets with real resolutions and frame counts, VRAM floors, and which families need custom node packs.
+description: The nine video model families, all 26 presets with real resolutions and frame counts, VRAM floors, and which families need custom node packs.
 sidebar:
   order: 4
 ---
 
-Comfy Headless ships **24 curated presets across 9 model families**. You pick a preset;
+Comfy Headless ships **26 curated presets across 9 model families**. You pick a preset;
 the preset picks the model, resolution, frame count, step count and CFG.
 
 There is no `model` argument on `generate_video` — selection is by preset name.
@@ -36,10 +36,17 @@ family — they are not ceilings.
 | CogVideoX | 16 GB | CogVideoX Wrapper |
 | Hunyuan 1.0 | 24 GB | Frame Interpolation |
 
-Every family also uses **Video Helper Suite** for encoding the final file.
+Every family uses **Video Helper Suite** for encoding the final file by default — or
+none at all: pass `output="core"` to swap the terminator for core
+`CreateVideo → SaveVideo` and drop that pack entirely (new in 3.1):
+
+```python
+result = client.generate_video("a cat walking", preset="ltx_standard", output="core")
+```
 
 Six of the nine families run entirely on **stock ComfyUI core nodes**. Only AnimateDiff
-(both variants) and CogVideoX depend on a wrapper pack for the model itself.
+(both variants) and CogVideoX depend on a wrapper pack for the model itself — so with
+`output="core"`, six families need zero custom packs end to end.
 
 ## The presets
 
@@ -74,10 +81,30 @@ default recommendation if your card clears 12 GB.
 | `hunyuan15_quality` | 1280×720 | 121 | 24 | 50 | 6.0 |
 | `hunyuan15_1080p` | 1920×1080 | 121 | 24 | 20 | 6.0 |
 | `hunyuan15_fast` | 848×480 | 81 | 24 | 6 | 1.0 |
+| `hunyuan15_i2v` | 848×480 | 81 | 24 | 20 | 6.0 |
+| `hunyuan15_i2v_fast` | 848×480 | 81 | 24 | 6 | 1.0 |
 
 `hunyuan15_fast` is the step-distilled variant — 6 steps at CFG 1.0. Note the distilled
 text-to-video weights are published at 480p only, which is why this preset is not offered
-at 720p.
+at 720p. (The **image-to-video** distillation exists at both 480p and 720p.)
+
+The two `_i2v` presets (new in 3.1) are **true image-to-video** on the core
+`HunyuanVideo15ImageToVideo` node, and require an `init_image`:
+
+```python
+ref = client.upload_image("first_frame.png")
+result = client.generate_video(
+    "the camera slowly pushes in",
+    preset="hunyuan15_i2v",
+    init_image=ref["name"],
+)
+```
+
+:::caution[Upgrading from 3.0]
+In 3.0, requesting Hunyuan 1.5 i2v silently built a **text-to-video** graph and ignored
+the image. 3.1 builds the real i2v shape — and raises a clear error if `init_image` is
+missing rather than quietly generating from text alone.
+:::
 
 ### Mochi — strongest text adherence
 
@@ -184,5 +211,5 @@ if not client.check_vram_available(gb):
 | Fastest possible draft | `wan_fast` or `quick` |
 | Best-looking output | `hunyuan15_quality` |
 | The longest clip | `mochi` |
-| To animate a photo | `svd_long` |
-| Zero custom node packs | Wan, LTX, Mochi, SVD, or Hunyuan 1.5 |
+| To animate a photo | `svd_long` or `hunyuan15_i2v` |
+| Zero custom node packs | Wan, LTX, Mochi, SVD, or Hunyuan 1.5 — with `output="core"` |

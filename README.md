@@ -378,7 +378,7 @@ Write custom provenance without any custom node — anything in `extra_pnginfo` 
 PNG text chunk in the outputs:
 
 ```python
-client.queue_prompt(workflow, extra_pnginfo={"myapp:run_id": "r-2024-077"})
+client.queue_prompt(workflow, extra_pnginfo={"myapp:run_id": "r-2026-077"})
 ```
 
 Known limits, documented rather than hidden: WebP/JPEG carry the same data in EXIF (a
@@ -480,7 +480,9 @@ your call ─→ build API-format graph ─→ POST /prompt ─→ poll /history
 
 The library talks to seven ComfyUI routes — `/system_stats`, `/object_info`, `/queue`,
 `/history`, `/prompt`, `/interrupt`, `/view` — plus `/upload/image` and `/upload/mask` for
-binary input.
+binary input (audio uploads ride `/upload/image` too; the server has no audio-specific
+route). All six profiles fit inside that surface: v3.1 added meshes, music, captions and
+provenance without adding a single route.
 
 `/object_info` is the authority on what a given server can run. It is a live endpoint, not
 a versioned artifact: there is no core-node registry to pin against. So the library
@@ -500,7 +502,8 @@ client.wait_for_completion(prompt_id)
 
 Full handbook:
 **[mcp-tool-shop-org.github.io/comfy-headless](https://mcp-tool-shop-org.github.io/comfy-headless/handbook/)**
-— getting started, usage, configuration, API reference, video models, architecture.
+— getting started, usage, the six profiles, video models, configuration, API reference,
+architecture.
 
 **In-repo knowledge base** for LLMs and contributors: [`kb/`](kb/README.md) — a
 machine-readable [`index.json`](kb/index.json) over per-profile fact pages, runnable

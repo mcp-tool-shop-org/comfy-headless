@@ -193,6 +193,21 @@ print(report["missing_packs"])     # empty list means you're ready
 
 See [Video Models](../video-models/) for what each family needs.
 
+## It makes more than pictures
+
+The same four-line pattern covers 3D models, music, and asking questions about images:
+
+```python
+result = client.generate_3d("character.png")          # image -> 3D model (.glb)
+result = client.generate_audio(tags="calm piano")     # text -> music (.flac)
+result = client.run_inference("photo.png", task="caption")
+print(result["text"])                                 # "a lighthouse on a rocky coast..."
+```
+
+3D and music run entirely on ComfyUI's built-in nodes (you just need the models
+downloaded); captioning needs one add-on, and the error message names it if it is
+missing. See [The Six Profiles](../profiles/) when you are ready for the full picture.
+
 ## A web interface, if you prefer clicking
 
 ```bash

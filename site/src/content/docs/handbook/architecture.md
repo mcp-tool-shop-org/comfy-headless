@@ -21,6 +21,11 @@ anything. It composes a JSON node graph and hands it to a ComfyUI server.
 Almost every design decision follows from that. The library's correctness is exactly the
 correctness of the node names and input keys it emits.
 
+Since 3.1 that one idea covers **six workflow profiles** — Image, Video, 3D, Inference,
+Metadata, Audio — and the diagram above did not change: meshes, music, captions and
+provenance ride the same five arrows. What did change is the layer that makes six
+profiles safe to emit from one client, described next.
+
 ## API format
 
 ComfyUI's `/prompt` endpoint accepts a flat map of node id to node:
@@ -46,8 +51,54 @@ That envelope has been stable for years and is what output PNGs embed, so it is 
 build on. What moves is *inside* `inputs`: individual node input keys and enum values
 change with the nodes themselves.
 
-`build_txt2img_workflow()` and `build_video_workflow()` return exactly this structure, so
-you can inspect, diff or hand-edit a graph before submitting it.
+`build_txt2img_workflow()`, `build_video_workflow()` and every 3.1 profile builder
+return exactly this structure, so you can inspect, diff or hand-edit a graph before
+submitting it.
+
+## The addressing/typing layer (3.1)
+
+`comfy_headless/addressing.py` sits under all six profiles and encodes three server
+behaviours that a naive emitter gets wrong:
+
+**1. Union type matching, transcribed — not approximated.** ComfyUI accepts an edge when
+the source type set and the declared type set intersect. `validate_node_input()` is a
+line-for-line transcription of the server's own `comfy_execution/validation.py`, because
+a client stricter than the server manufactures false rejections by construction — the
+canonical case is `VoxelToMesh`'s `MESH` output feeding `SaveGLB`'s 14-member
+`FILE_3D_*` union input, a perfectly valid edge that an equality check rejects.
+`GraphTypeChecker` applies the rule per edge (`client.check_workflow_types()` runs it
+against the live catalog), and a **zero-rejections corpus test** asserts every graph the
+builders emit passes — if the checker ever gets stricter than the server, the suite
+fails.
+
+**2. Dotted dynamic-combo fields.** Some inputs are `COMFY_DYNAMICCOMBO_V3` selectors
+whose conditional sub-fields serialize as flattened dotted keys:
+
+```json
+{ "codec": "h264", "codec.encoding": "re-encode", "codec.encoding.crf": 23 }
+```
+
+Sent flat (`{"crf": 23}`), the server rejects with `required_input_missing`. Field paths
+parse to typed segments (escape-aware) and writes never auto-create structure.
+
+**3. Presence-aware conditionals.** `format.quality` exists only when
+`SaveAudioAdvanced.format` is `mp3`/`opus` — under `flac` it must not be sent at all.
+`DynamicCombo.build()` constructs the input fragment fresh from the selected branch and
+raises `GraphAddressError` for any field the branch does not activate, so a stale value
+cannot survive a tag change.
+
+**4. The output-node guard.** A result reaches `/history` only through a node flagged
+`OUTPUT_NODE` — a bare captioner runs green and returns nothing. `require_output_node()`
+makes that unshippable, and `HISTORY_OUTPUT_KEYS` records where each terminator reports:
+
+| Terminator | `/history` outputs key |
+|------------|------------------------|
+| `SaveImage` | `images` |
+| `SaveGLB` | `3d` |
+| `SaveText` | `text` (inline) **and** `files` |
+| `SaveAudioAdvanced` | `audio` |
+| `SaveVideo` | `images` + `animated` flag |
+| `VHS_VideoCombine` | `gifs` |
 
 ## Routes used
 
@@ -60,10 +111,13 @@ you can inspect, diff or hand-edit a graph before submitting it.
 | `GET /view` | Fetch a generated file |
 | `GET /queue` | Inspect pending and running jobs |
 | `POST /interrupt` | Cancel the running job |
-| `POST /upload/image` | Put a source image into the input folder |
+| `POST /upload/image` | Put a source file into the input folder (images **and** audio — the server has no audio-specific route) |
 | `POST /upload/mask` | Composite a mask into an existing image |
 
-That is the whole surface. There is no private API and no plugin protocol.
+That is the whole surface — and 3.1 added five output types without adding a single
+route. Meshes (`SaveGLB`), audio (`SaveAudioAdvanced`) and text (`SaveText`) register in
+`/history` exactly like images and download through the same `GET /view`. There is no
+private API and no plugin protocol.
 
 ## Why `/object_info` is load-bearing
 
@@ -110,10 +164,19 @@ Declared packs:
 
 | Pack | Supplies |
 |------|----------|
-| `comfyui-videohelpersuite` | `VHS_VideoCombine` — video encoding, used by every family |
+| `comfyui-videohelpersuite` | `VHS_VideoCombine` — the default video terminator (avoidable via `output="core"`) |
 | `comfyui-animatediff-evolved` | The three `ADE_*` nodes |
 | `comfyui-cogvideoxwrapper` | The whole CogVideoX family |
 | `comfyui-frame-interpolation` | `RIFE VFI` frame interpolation |
+| `comfyui-florence2` | `Florence2Run` + its loader — the whole inference profile |
+| `comfyui-segment-anything-2` | `Florence2toCoordinates` — the detect leg's JSON→STRING bridge |
+| `audio-separation-nodes-comfyui` | `AudioSeparation` — stem separation |
+
+Since 3.1 the registry lives in `comfy_headless.node_packs`, shared by every profile;
+`comfy_headless.video` re-exports it for older imports. Two classes are deliberately
+**absent**: `Florence2ModelLoader` and any WD14 tagger — neither could be verified in
+the live catalog, and this library does not emit classes it cannot verify (the contract
+test enforces that).
 
 ## Resilience
 
@@ -134,9 +197,15 @@ Between your call and ComfyUI sit several layers, all configurable
 comfy_headless/
 ├── __init__.py           # public exports, lazy loading of optional features
 ├── _version.py           # single source of truth for the version
-├── client.py             # ComfyClient — HTTP, uploads, polling, graph builders
-├── video.py              # video graph builders, presets, node provenance
-├── workflows.py          # template compiler, DAG validation, snapshots, caching
+├── client.py             # ComfyClient — HTTP, uploads, polling, profile methods
+├── addressing.py         # union matching, dotted combos, output-node guard  (3.1)
+├── node_packs.py         # shared custom-node-pack registry                  (3.1)
+├── workflows.py          # image templates + Qwen edit/ControlNet builders
+├── video.py              # video graph builders, 26 presets
+├── three_d.py            # 3D profile — Hunyuan3D-2                          (3.1)
+├── audio.py              # audio profile — ACE-Step 1.5 + separation         (3.1)
+├── inference.py          # inference profile — Florence-2                    (3.1)
+├── metadata.py           # provenance profile — PNG chunk round-trip         (3.1)
 ├── websocket_client.py   # ComfyWSClient          [websocket]
 ├── intelligence.py       # prompt analysis + enhancement  [ai]
 ├── ui.py                 # Gradio interface       [ui]
@@ -156,8 +225,17 @@ comfy_headless/
 └── __main__.py           # CLI entry point
 
 tests/                    # test suite (repo root, not inside the package)
+kb/                       # in-repo knowledge base — LLM-first index over
+                          # profile facts, reference graphs, node provenance
+scripts/gen_kb.py         # regenerates kb/ from the package registries
 site/                     # landing page + this handbook
 ```
+
+The `kb/` tree deserves a sentence: `kb/index.json` is a machine-readable index over
+per-profile fact pages and runnable reference graphs, generated **from the package
+registries themselves** with pinned seeds — `tests/test_kb.py` fails the suite if code
+and KB drift. If you point an LLM at this repository, point it at `kb/index.json`
+first.
 
 ## Lazy loading
 
@@ -190,5 +268,16 @@ option combination and asserts that no removed node is emitted, every `class_typ
 either core or declared with a pack, no reference dangles, an output node is present, and
 the seed is recoverable.
 
-That test is the regression barrier for the class of bug v3.0 fixed. If you add a model
-family, it will fail until the new nodes are verified and declared.
+Since 3.1 the contract covers **all six profiles** (`tests/test_profile_contract.py`)
+and adds three more barriers:
+
+- the **zero-rejections corpus gate** — the type checker must accept every known-good
+  emitted graph (a checker stricter than the server is a bug in the checker);
+- a **deprecated-terminator ban** — the three deprecated audio save nodes may never be
+  emitted;
+- an **unverified-class ban** — classes absent from the live catalog on the
+  verification date (`Florence2ModelLoader`, the WD14 tagger) may never appear in a
+  graph.
+
+That battery is the regression barrier for the class of bug v3.0 fixed. If you add a
+model family, it will fail until the new nodes are verified and declared.
