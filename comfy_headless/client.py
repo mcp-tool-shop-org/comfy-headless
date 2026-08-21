@@ -31,6 +31,7 @@ from .config import settings
 from .exceptions import (
     ComfyUIConnectionError,
     ComfyUIOfflineError,
+    MissingNodePackError,
 )
 from .logging_config import LogContext, get_logger
 from .retry import RateLimiter, get_circuit_breaker
@@ -87,6 +88,44 @@ def _safe_get_nested(data: Any, *keys: str, default: Any = None) -> Any:
         if current is None:
             return default
     return current
+
+
+# Node types that carry the sampling seed, and the input each one uses.
+# Kept here (rather than a single hardcoded class name) because the video
+# builders emit several different sampler front-ends.
+_SEED_INPUTS: dict[str, str] = {
+    "KSampler": "seed",
+    "KSamplerAdvanced": "noise_seed",
+    "CogVideoSampler": "seed",
+    "RandomNoise": "noise_seed",
+    "SamplerCustom": "noise_seed",
+}
+
+
+def _extract_workflow_seed(workflow: dict, default: int = -1) -> int:
+    """
+    Pull the effective sampling seed back out of a built workflow.
+
+    The video builders resolve ``seed=-1`` into a concrete random value while
+    building, so this is how the caller learns which seed was actually used.
+
+    Args:
+        workflow: ComfyUI API-format workflow (node_id -> node_data)
+        default: Value to return when no seed-carrying node is present
+
+    Returns:
+        The seed found on the first seed-carrying node, else ``default``.
+    """
+    for node in workflow.values():
+        if not isinstance(node, dict):
+            continue
+        seed_input = _SEED_INPUTS.get(node.get("class_type"))
+        if seed_input is None:
+            continue
+        found = _safe_get_nested(node, "inputs", seed_input, default=None)
+        if isinstance(found, int):
+            return found
+    return default
 
 
 # Lazy import for video module to avoid circular imports
@@ -638,6 +677,11 @@ class ComfyClient:
                 - missing: List of missing node types
                 - all_installed: bool indicating if all dependencies are met
                 - details: Dict mapping class_type to list of node_ids using it
+                - missing_packs: Dict mapping a missing class_type to the
+                  custom node pack that provides it (or None if it should be
+                  a core node / no pack is known)
+                - required_packs: Dict mapping pack id -> class_types the
+                  workflow uses from that pack, whether installed or not
         """
         # Extract all class_types from the workflow
         workflow_nodes = {}
@@ -661,6 +705,16 @@ class ComfyClient:
             else:
                 missing.append(class_type)
 
+        # Attach custom node pack provenance so a missing class_type can be
+        # reported as "install pack Y" rather than just "not found".
+        from .video import NODE_PACK_INFO, get_node_pack, required_node_packs
+
+        missing_packs: dict[str, dict | None] = {}
+        for class_type in missing:
+            pack_id = get_node_pack(class_type)
+            pack = NODE_PACK_INFO.get(pack_id) if pack_id else None
+            missing_packs[class_type] = pack.to_dict() if pack else None
+
         return {
             "installed": sorted(installed),
             "missing": sorted(missing),
@@ -668,7 +722,32 @@ class ComfyClient:
             "details": workflow_nodes,
             "total_nodes": sum(len(ids) for ids in workflow_nodes.values()),
             "unique_types": len(workflow_nodes),
+            "missing_packs": missing_packs,
+            "required_packs": required_node_packs(workflow),
         }
+
+    def require_workflow_dependencies(self, workflow: dict) -> dict[str, Any]:
+        """
+        Assert that every node type a workflow uses is installed.
+
+        Same check as :meth:`check_workflow_dependencies`, but fails fast with
+        a structured error naming the missing classes and the custom node
+        packs that provide them, rather than letting ``POST /prompt`` reject
+        the graph with an opaque validation message.
+
+        Args:
+            workflow: The ComfyUI workflow JSON (dict of node_id -> node_data)
+
+        Returns:
+            The same report dict, when nothing is missing.
+
+        Raises:
+            MissingNodePackError: If any node type is not installed.
+        """
+        report = self.check_workflow_dependencies(workflow)
+        if not report["all_installed"]:
+            raise MissingNodePackError(missing=report["missing_packs"])
+        return report
 
     # =========================================================================
     # QUEUE MANAGEMENT
@@ -1493,15 +1572,8 @@ class ComfyClient:
                 )
 
                 # Extract actual seed from workflow (video.py generates random if -1)
-                # Find KSampler node and extract seed (safe access)
                 if isinstance(workflow, dict):
-                    for node in workflow.values():
-                        if isinstance(node, dict) and node.get("class_type") in (
-                            "KSampler",
-                            "HunyuanVideoSampler",
-                        ):
-                            result["seed"] = _safe_get_nested(node, "inputs", "seed", default=seed)
-                            break
+                    result["seed"] = _extract_workflow_seed(workflow, default=seed)
 
             except Exception as e:
                 logger.warning(f"VideoWorkflowBuilder failed, falling back to legacy: {e}")

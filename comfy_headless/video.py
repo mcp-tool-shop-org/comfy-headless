@@ -11,7 +11,7 @@ Complete video generation support for multiple models:
 - Hunyuan Video / Hunyuan Video 1.5
 - LTX-Video 2 (Lightricks) - NEW
 - Wan 2.1/2.2 (Alibaba) - NEW
-- Mochi (Genmo) - EXPERIMENTAL
+- Mochi (Genmo)
 
 Makes video generation accessible through simple presets and settings.
 """
@@ -32,6 +32,12 @@ __all__ = [
     # Presets
     "VIDEO_PRESETS",
     "VIDEO_MODEL_INFO",
+    # Custom node pack provenance
+    "NodePack",
+    "NODE_PACKS",
+    "NODE_PACK_INFO",
+    "get_node_pack",
+    "required_node_packs",
     # Builder
     "VideoWorkflowBuilder",
     "get_video_builder",
@@ -79,7 +85,7 @@ class VideoModel(str, Enum):
     WAN_FAST = "wan_fast"  # Wan 2.2 4-step with LoRA
     WAN_I2V = "wan_i2v"  # Wan image-to-video
 
-    # Mochi (Genmo) - v2.5.0 EXPERIMENTAL
+    # Mochi (Genmo) - v2.5.0
     MOCHI = "mochi"  # Mochi 1 (best text adherence)
 
 
@@ -254,6 +260,8 @@ VIDEO_PRESETS: dict[str, VideoSettings] = {
         frames=45,
         fps=15,
         steps=30,
+        cfg=6.0,  # embedded guidance (t2v checkpoint is guidance-distilled)
+        shift=7.0,
         checkpoint=None,
     ),
     "hunyuan_fast": VideoSettings(
@@ -263,6 +271,8 @@ VIDEO_PRESETS: dict[str, VideoSettings] = {
         frames=33,
         fps=15,
         steps=20,
+        cfg=6.0,  # embedded guidance (t2v checkpoint is guidance-distilled)
+        shift=7.0,
         checkpoint=None,
     ),
     # =========================================================================
@@ -299,6 +309,7 @@ VIDEO_PRESETS: dict[str, VideoSettings] = {
         fps=24,
         steps=6,
         cfg=1.0,  # Distilled model uses CFG=1
+        shift=5.0,  # 480p distilled shift, per Hunyuan's published table
         variant="distilled",
         checkpoint=None,
     ),
@@ -443,6 +454,9 @@ class VideoModelInfo:
     max_width: int = 768
     max_height: int = 768
     presets: list[str] = field(default_factory=list)
+    # Custom node packs this family's workflows depend on. Empty == core only.
+    # Every id here is a key of NODE_PACK_INFO.
+    requires_packs: list[str] = field(default_factory=list)
 
 
 VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
@@ -459,6 +473,11 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=768,
         max_height=768,
         presets=["quick", "standard", "quality", "cinematic", "portrait", "action"],
+        requires_packs=[
+            "comfyui-animatediff-evolved",
+            "comfyui-frame-interpolation",  # only when interpolate=True
+            "comfyui-videohelpersuite",
+        ],
     ),
     "animatediff_lightning": VideoModelInfo(
         id="animatediff_lightning",
@@ -473,6 +492,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=768,
         max_height=768,
         presets=["quick"],
+        requires_packs=["comfyui-animatediff-evolved", "comfyui-videohelpersuite"],
     ),
     "svd": VideoModelInfo(
         id="svd",
@@ -487,6 +507,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1024,
         max_height=576,
         presets=["svd_short", "svd_long"],
+        requires_packs=["comfyui-videohelpersuite", "unknown"],
     ),
     "cogvideo": VideoModelInfo(
         id="cogvideo",
@@ -501,6 +522,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=720,
         max_height=480,
         presets=["cogvideo"],
+        requires_packs=["comfyui-cogvideoxwrapper", "comfyui-videohelpersuite"],
     ),
     "hunyuan": VideoModelInfo(
         id="hunyuan",
@@ -515,6 +537,10 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1280,
         max_height=720,
         presets=["hunyuan", "hunyuan_fast"],
+        requires_packs=[
+            "comfyui-frame-interpolation",  # only when interpolate=True
+            "comfyui-videohelpersuite",
+        ],
     ),
     # =========================================================================
     # v2.5.0: NEW VIDEO MODEL INFO
@@ -532,6 +558,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1920,
         max_height=1080,
         presets=["hunyuan15_720p", "hunyuan15_quality", "hunyuan15_fast", "hunyuan15_1080p"],
+        requires_packs=["comfyui-videohelpersuite"],
     ),
     "ltxv": VideoModelInfo(
         id="ltxv",
@@ -546,6 +573,7 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1920,
         max_height=1080,
         presets=["ltx_quick", "ltx_standard", "ltx_quality"],
+        requires_packs=["comfyui-videohelpersuite", "unknown"],
     ),
     "wan": VideoModelInfo(
         id="wan",
@@ -560,10 +588,11 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=1280,
         max_height=720,
         presets=["wan_1.3b", "wan_14b", "wan_fast", "wan_quality"],
+        requires_packs=["comfyui-videohelpersuite", "unknown"],
     ),
     "mochi": VideoModelInfo(
         id="mochi",
-        name="Mochi 1 (Experimental)",
+        name="Mochi 1",
         description="Genmo 10B model. Best text adherence, 480p@30fps. Requires 12GB+ VRAM.",
         model=VideoModel.MOCHI,
         text_to_video=True,
@@ -574,8 +603,141 @@ VIDEO_MODEL_INFO: dict[str, VideoModelInfo] = {
         max_width=848,
         max_height=480,
         presets=["mochi", "mochi_short"],
+        requires_packs=["comfyui-videohelpersuite"],
     ),
 }
+
+
+# =============================================================================
+# CUSTOM NODE PACK PROVENANCE
+# =============================================================================
+#
+# Not every class_type these builders emit ships with ComfyUI. Nodes that come
+# from a custom node pack are declared here so ComfyClient can validate a
+# workflow against /object_info and report "class X missing -- install pack Y"
+# instead of letting POST /prompt reject the graph with an opaque validation
+# error. Anything NOT listed here is expected to be a built-in (core) node.
+#
+# Every entry below was checked against the live ComfyUI node catalog.
+
+
+@dataclass(frozen=True)
+class NodePack:
+    """A custom node pack that some video workflows depend on."""
+
+    id: str
+    name: str
+    url: str
+    install_hint: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "url": self.url,
+            "install_hint": self.install_hint,
+        }
+
+
+_UNKNOWN_PACK_ID = "unknown"
+
+NODE_PACK_INFO: dict[str, NodePack] = {
+    "comfyui-videohelpersuite": NodePack(
+        id="comfyui-videohelpersuite",
+        name="ComfyUI-VideoHelperSuite",
+        url="https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite",
+        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'Video Helper Suite'",
+    ),
+    "comfyui-animatediff-evolved": NodePack(
+        id="comfyui-animatediff-evolved",
+        name="ComfyUI-AnimateDiff-Evolved",
+        url="https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved",
+        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'AnimateDiff Evolved'",
+    ),
+    "comfyui-cogvideoxwrapper": NodePack(
+        id="comfyui-cogvideoxwrapper",
+        name="ComfyUI-CogVideoXWrapper",
+        url="https://github.com/kijai/ComfyUI-CogVideoXWrapper",
+        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'CogVideoX Wrapper'",
+    ),
+    "comfyui-frame-interpolation": NodePack(
+        id="comfyui-frame-interpolation",
+        name="ComfyUI-Frame-Interpolation",
+        url="https://github.com/Fannovel16/ComfyUI-Frame-Interpolation",
+        install_hint="ComfyUI Manager -> Install Custom Nodes -> 'Frame Interpolation'",
+    ),
+    _UNKNOWN_PACK_ID: NodePack(
+        id=_UNKNOWN_PACK_ID,
+        name="third-party extension (pack not identified)",
+        url="https://registry.comfy.org/",
+        install_hint=(
+            "This class_type is not published in the ComfyUI node registry index. "
+            "Search your ComfyUI Manager for a node with this exact name."
+        ),
+    ),
+}
+"""Metadata for every custom node pack referenced by NODE_PACKS."""
+
+
+NODE_PACKS: dict[str, str] = {
+    # --- ComfyUI-VideoHelperSuite -------------------------------------------
+    # Used by every builder as the video muxing / output node.
+    "VHS_VideoCombine": "comfyui-videohelpersuite",
+    # --- ComfyUI-AnimateDiff-Evolved ----------------------------------------
+    "ADE_LoadAnimateDiffModel": "comfyui-animatediff-evolved",
+    "ADE_ApplyAnimateDiffModel": "comfyui-animatediff-evolved",
+    "ADE_EmptyLatentImageLarge": "comfyui-animatediff-evolved",
+    # --- ComfyUI-CogVideoXWrapper -------------------------------------------
+    # CogVideoX has no native core path; the whole family lives in this pack.
+    "DownloadAndLoadCogVideoModel": "comfyui-cogvideoxwrapper",
+    "CogVideoTextEncode": "comfyui-cogvideoxwrapper",
+    "CogVideoSampler": "comfyui-cogvideoxwrapper",
+    "CogVideoDecode": "comfyui-cogvideoxwrapper",
+    # --- ComfyUI-Frame-Interpolation ----------------------------------------
+    "RIFE VFI": "comfyui-frame-interpolation",
+    # --- unidentified -------------------------------------------------------
+    # Base64 image input for img2vid. Not published in the ComfyUI node
+    # registry index under this name, so we cannot name a pack honestly --
+    # it is declared as unknown rather than guessed at.
+    "LoadImageFromBase64": _UNKNOWN_PACK_ID,
+}
+"""Maps a non-core class_type to the id of the pack that provides it."""
+
+
+def get_node_pack(class_type: str) -> str | None:
+    """
+    Return the custom node pack id that provides ``class_type``.
+
+    Returns ``None`` for nodes that ship with ComfyUI itself (core nodes).
+    """
+    return NODE_PACKS.get(class_type)
+
+
+def required_node_packs(workflow: dict[str, Any]) -> dict[str, list[str]]:
+    """
+    Group the custom-pack class_types used by a workflow by their pack id.
+
+    Args:
+        workflow: A ComfyUI API-format workflow (node_id -> {class_type, inputs}).
+
+    Returns:
+        ``{pack_id: [class_type, ...]}`` with only non-core nodes present.
+        An empty dict means the workflow needs no custom node packs.
+    """
+    packs: dict[str, list[str]] = {}
+    for node in workflow.values():
+        if not isinstance(node, dict):
+            continue
+        class_type = node.get("class_type")
+        if not isinstance(class_type, str):
+            continue
+        pack_id = NODE_PACKS.get(class_type)
+        if pack_id is None:
+            continue
+        bucket = packs.setdefault(pack_id, [])
+        if class_type not in bucket:
+            bucket.append(class_type)
+    return {pack_id: sorted(names) for pack_id, names in sorted(packs.items())}
 
 
 # =============================================================================
@@ -870,49 +1032,102 @@ class VideoWorkflowBuilder:
     def _build_cogvideo(
         self,
         prompt: str,
-        _negative: str,
+        negative: str,
         settings: VideoSettings,
         seed: int,
         _init_image: str | None = None,
     ) -> dict[str, Any]:
-        """Build CogVideoX workflow."""
+        """
+        Build a CogVideoX workflow (ComfyUI-CogVideoXWrapper).
+
+        CogVideoX has no native (core) ComfyUI path -- the loader, text
+        encoder, sampler and decoder all live in the
+        ``comfyui-cogvideoxwrapper`` custom node pack. Every non-core
+        class_type emitted here is declared in :data:`NODE_PACKS`, so
+        :meth:`ComfyClient.check_workflow_dependencies` can report
+        "install comfyui-cogvideoxwrapper" instead of letting ``POST /prompt``
+        reject the graph with an opaque validation error.
+
+        The 5B checkpoint is loaded in bf16 as the pack itself recommends
+        (2B wants fp16, 5B wants bf16).
+        """
         return {
+            # COGVIDEOMODEL + VAE from a single (down)loader node
             "1": {
-                "class_type": "CogVideoModelLoader",
+                "class_type": "DownloadAndLoadCogVideoModel",
                 "inputs": {
-                    "model_path": "CogVideoX-5b-transformer.safetensors",
-                    "vae_path": "CogVideoX-5b-vae.safetensors",
-                    "dtype": "bf16",
+                    "model": "THUDM/CogVideoX-5b",
+                    "precision": "bf16",
+                    "quantization": "disabled",
+                    "enable_sequential_cpu_offload": False,
+                    "attention_mode": "sdpa",
+                    "load_device": "main_device",
                 },
             },
+            # T5-XXL text encoder (core loader, cogvideox tokenizer padding)
             "2": {
-                "class_type": "CogVideoTextEncode",
-                "inputs": {"prompt": prompt, "pipe": ["1", 0]},
+                "class_type": "CLIPLoader",
+                "inputs": {
+                    "clip_name": "t5xxl_fp16.safetensors",
+                    "type": "cogvideox",
+                    "device": "default",
+                },
             },
+            # Positive: CogVideoTextEncode returns (CONDITIONING, CLIP)
             "3": {
+                "class_type": "CogVideoTextEncode",
+                "inputs": {
+                    "clip": ["2", 0],
+                    "prompt": prompt,
+                    "strength": 1.0,
+                    "force_offload": True,
+                },
+            },
+            # Negative: reuse the CLIP handed back by the positive encode
+            "4": {
+                "class_type": "CogVideoTextEncode",
+                "inputs": {
+                    "clip": ["3", 1],
+                    "prompt": negative,
+                    "strength": 1.0,
+                    "force_offload": True,
+                },
+            },
+            "5": {
                 "class_type": "CogVideoSampler",
                 "inputs": {
-                    "pipe": ["1", 0],
-                    "embeds": ["2", 0],
-                    "width": settings.width,
-                    "height": settings.height,
+                    "model": ["1", 0],
+                    "positive": ["3", 0],
+                    "negative": ["4", 0],
                     "num_frames": settings.frames,
                     "steps": settings.steps,
                     "cfg": settings.cfg,
                     "seed": seed,
+                    "scheduler": "CogVideoXDDIM",
                 },
             },
-            "4": {
-                "class_type": "CogVideoVAEDecode",
-                "inputs": {"pipe": ["1", 0], "samples": ["3", 0]},
+            "6": {
+                "class_type": "CogVideoDecode",
+                "inputs": {
+                    "vae": ["1", 1],
+                    "samples": ["5", 0],
+                    "enable_vae_tiling": True,
+                    "tile_sample_min_height": settings.height // 2,
+                    "tile_sample_min_width": settings.width // 2,
+                    "tile_overlap_factor_height": 0.2,
+                    "tile_overlap_factor_width": 0.2,
+                    "auto_tile_size": True,
+                },
             },
-            "5": {
+            "7": {
                 "class_type": "VHS_VideoCombine",
                 "inputs": {
-                    "images": ["4", 0],
+                    "images": ["6", 0],
                     "frame_rate": settings.fps,
+                    "loop_count": 0,
                     "filename_prefix": "comfy_headless_cogvideo",
                     "format": "video/h264-mp4",
+                    "pingpong": False,
                     "save_output": True,
                 },
             },
@@ -921,73 +1136,143 @@ class VideoWorkflowBuilder:
     def _build_hunyuan(
         self,
         prompt: str,
-        negative: str,
+        _negative: str,
         settings: VideoSettings,
         seed: int,
         _init_image: str | None = None,
     ) -> dict[str, Any]:
-        """Build Hunyuan Video workflow."""
+        """
+        Build a HunyuanVideo 1.0 text-to-video workflow (native core path).
+
+        Wiring verified against the official ``hunyuan_video_text_to_video``
+        workflow template. Notes that are easy to get wrong:
+
+        * The text encoders load through ``DualCLIPLoader`` with
+          ``type="hunyuan_video"`` (clip_l + llava_llama3). ``CLIPLoader``
+          has no ``hunyuan_video`` type -- only ``hunyuan_image``.
+        * The t2v checkpoint is guidance-distilled, so it is steered by
+          ``FluxGuidance`` -> ``BasicGuider`` (embedded guidance) and takes
+          no negative prompt. ``negative`` is accepted for API symmetry with
+          the other builders and is intentionally unused.
+        * Decoding uses the tiled VAE decoder, matching the template default,
+          because the full-frame decode does not fit on most cards.
+        """
+        shift = settings.shift or 7.0
+        guidance = settings.cfg if settings.cfg and settings.cfg > 0 else 6.0
+        weight_dtype = "fp8_e4m3fn" if settings.precision.startswith("fp8") else "default"
+
         workflow = {
+            # Diffusion model
             "1": {
-                "class_type": "HunyuanVideoModelLoader",
+                "class_type": "UNETLoader",
                 "inputs": {
-                    "model_path": "hunyuan_video_720_fp8_e4m3fn.safetensors",
-                    "vae_path": "hunyuan_video_vae_bf16.safetensors",
-                    "text_encoder_path": "llava_llama3_fp8_scaled.safetensors",
-                    "precision": "fp8_e4m3fn",
+                    "unet_name": "hunyuan_video_t2v_720p_bf16.safetensors",
+                    "weight_dtype": weight_dtype,
                 },
             },
+            # Text encoders (clip_l + llava_llama3)
             "2": {
-                "class_type": "CLIPLoader",
-                "inputs": {"clip_name": "clip-vit-large-patch14/model.safetensors"},
-            },
-            "3": {
-                "class_type": "HunyuanVideoTextEncode",
+                "class_type": "DualCLIPLoader",
                 "inputs": {
-                    "prompt": prompt,
-                    "negative_prompt": negative,
-                    "hunyuan_pipe": ["1", 0],
-                    "clip": ["2", 0],
+                    "clip_name1": "clip_l.safetensors",
+                    "clip_name2": "llava_llama3_fp8_scaled.safetensors",
+                    "type": "hunyuan_video",
+                    "device": "default",
                 },
             },
-            "4": {
-                "class_type": "HunyuanVideoSampler",
+            # VAE
+            "3": {
+                "class_type": "VAELoader",
+                "inputs": {"vae_name": "hunyuan_video_vae_bf16.safetensors"},
+            },
+            # Prompt
+            "4": {"class_type": "CLIPTextEncode", "inputs": {"text": prompt, "clip": ["2", 0]}},
+            # Embedded guidance (this checkpoint is guidance-distilled)
+            "5": {
+                "class_type": "FluxGuidance",
+                "inputs": {"conditioning": ["4", 0], "guidance": guidance},
+            },
+            # Model sampling shift
+            "6": {"class_type": "ModelSamplingSD3", "inputs": {"model": ["1", 0], "shift": shift}},
+            # Guider (no negative -- distilled model)
+            "7": {
+                "class_type": "BasicGuider",
+                "inputs": {"model": ["6", 0], "conditioning": ["5", 0]},
+            },
+            "8": {"class_type": "KSamplerSelect", "inputs": {"sampler_name": "euler"}},
+            "9": {
+                "class_type": "BasicScheduler",
                 "inputs": {
-                    "hunyuan_pipe": ["1", 0],
-                    "conditioning": ["3", 0],
+                    "model": ["1", 0],
+                    "scheduler": "simple",
+                    "steps": settings.steps,
+                    "denoise": 1.0,
+                },
+            },
+            "10": {"class_type": "RandomNoise", "inputs": {"noise_seed": seed}},
+            "11": {
+                "class_type": "EmptyHunyuanLatentVideo",
+                "inputs": {
                     "width": settings.width,
                     "height": settings.height,
-                    "num_frames": settings.frames,
-                    "steps": settings.steps,
-                    "cfg": 6.0,
-                    "seed": seed,
-                    "embedded_guidance_scale": 6.0,
+                    "length": settings.frames,
+                    "batch_size": 1,
                 },
             },
-            "5": {
-                "class_type": "HunyuanVideoVAEDecode",
-                "inputs": {"hunyuan_pipe": ["1", 0], "samples": ["4", 0]},
+            "12": {
+                "class_type": "SamplerCustomAdvanced",
+                "inputs": {
+                    "noise": ["10", 0],
+                    "guider": ["7", 0],
+                    "sampler": ["8", 0],
+                    "sigmas": ["9", 0],
+                    "latent_image": ["11", 0],
+                },
             },
-            "6": {
+            "13": {
+                "class_type": "VAEDecodeTiled",
+                "inputs": {
+                    "samples": ["12", 0],
+                    "vae": ["3", 0],
+                    "tile_size": 256,
+                    "overlap": 64,
+                    "temporal_size": 64,
+                    "temporal_overlap": 8,
+                },
+            },
+            "14": {
                 "class_type": "VHS_VideoCombine",
                 "inputs": {
-                    "images": ["5", 0],
+                    "images": ["13", 0],
                     "frame_rate": settings.fps,
+                    "loop_count": 0,
                     "filename_prefix": "comfy_headless_hunyuan",
                     "format": "video/h264-mp4",
+                    "pingpong": False,
                     "save_output": True,
                 },
             },
         }
 
-        # Add RIFE interpolation if requested
+        # Add RIFE interpolation if requested (comfyui-frame-interpolation)
         if settings.interpolate:
-            workflow["7"] = {
+            workflow["15"] = {
                 "class_type": "RIFE VFI",
-                "inputs": {"frames": ["5", 0], "multiplier": 2, "ckpt_name": "rife49.pth"},
+                "inputs": {
+                    "ckpt_name": "rife49.pth",
+                    "frames": ["13", 0],
+                    "clear_cache_after_n_frames": 10,
+                    "multiplier": 2,
+                    "fast_mode": True,
+                    "ensemble": True,
+                    "scale_factor": 1,
+                    "dtype": "float32",
+                    "torch_compile": False,
+                    "batch_size": 1,
+                },
             }
-            workflow["6"]["inputs"]["images"] = ["7", 0]
-            workflow["6"]["inputs"]["frame_rate"] = settings.fps * 2
+            workflow["14"]["inputs"]["images"] = ["15", 0]
+            workflow["14"]["inputs"]["frame_rate"] = settings.fps * 2
 
         return workflow
 
@@ -1007,18 +1292,35 @@ class VideoWorkflowBuilder:
         Build Hunyuan Video 1.5 workflow.
 
         Uses new architecture:
-        - DualCLIPLoader (Qwen 2.5 VL + ByT5)
+        - DualCLIPLoader (Qwen 2.5 VL + ByT5), type="hunyuan_video_15"
         - SamplerCustomAdvanced with CFGGuider
-        - Optional super-resolution for 1080p
+        - Optional latent upsample for 1080p
+
+        Checkpoint naming is resolution-specific and there is no 720p
+        cfg-distilled release: distilled is published at 480p only. The
+        1080p preset renders at the 720p base and is then latent-upsampled,
+        which is why the base resolution is clamped below.
         """
         shift = settings.shift or 9.0  # Default shift for 720p T2V
 
+        # 1080p is produced by upscaling a 720p render, not by sampling at 1080p.
+        if settings.upscale:
+            base_width, base_height = 1280, 720
+        else:
+            base_width, base_height = settings.width, settings.height
+
         # Determine model paths based on variant
         if settings.variant == "distilled":
-            unet_name = "hunyuanvideo1.5_720p_t2v_distilled_fp16.safetensors"
+            # Only the 480p t2v checkpoint has a cfg-distilled release.
+            unet_name = (
+                "hunyuanvideo1.5_480p_t2v_cfg_distilled_fp8_scaled.safetensors"
+                if settings.precision.startswith("fp8")
+                else "hunyuanvideo1.5_480p_t2v_cfg_distilled_fp16.safetensors"
+            )
             cfg_value = 1.0  # Distilled uses CFG=1
         else:
-            unet_name = "hunyuanvideo1.5_720p_t2v_fp16.safetensors"
+            res_tag = "720p" if base_height >= 720 else "480p"
+            unet_name = f"hunyuanvideo1.5_{res_tag}_t2v_fp16.safetensors"
             cfg_value = settings.cfg
 
         workflow = {
@@ -1046,8 +1348,8 @@ class VideoWorkflowBuilder:
             "4": {
                 "class_type": "EmptyHunyuanVideo15Latent",
                 "inputs": {
-                    "width": settings.width,
-                    "height": settings.height,
+                    "width": base_width,
+                    "height": base_height,
                     "length": settings.frames,
                     "batch_size": 1,
                 },
@@ -1099,28 +1401,41 @@ class VideoWorkflowBuilder:
                 "inputs": {
                     "images": ["13", 0],
                     "frame_rate": settings.fps,
+                    "loop_count": 0,
                     "filename_prefix": "comfy_headless_hunyuan15",
                     "format": "video/h264-mp4",
+                    "pingpong": False,
                     "save_output": True,
                 },
             },
         }
 
-        # Add super-resolution if upscale=True
+        # Latent upsample to the requested output size (1080p presets).
+        #
+        # NOTE: this is the upsample only. The official template follows it
+        # with a HunyuanVideo15SuperResolution conditioning pass and a second
+        # sampler using the dedicated SR checkpoint; that refinement pass is
+        # not emitted here, so the 1080p output is a clean upscale rather than
+        # a re-detailed render.
         if settings.upscale:
+            upsampler = (
+                "hunyuanvideo15_latent_upsampler_1080p.safetensors"
+                if settings.height >= 1080
+                else "hunyuanvideo15_latent_upsampler_720p.safetensors"
+            )
             workflow["15"] = {
                 "class_type": "LatentUpscaleModelLoader",
-                "inputs": {"model_name": "hunyuanvideo15_latent_upsampler_1080p.safetensors"},
+                "inputs": {"model_name": upsampler},
             }
             workflow["16"] = {
                 "class_type": "HunyuanVideo15LatentUpscaleWithModel",
                 "inputs": {
                     "model": ["15", 0],
                     "samples": ["12", 0],
-                    "interpolation": "bilinear",
-                    "width": 1920,
-                    "height": 1080,
-                    "extend_length": "disabled",
+                    "upscale_method": "bilinear",
+                    "width": settings.width,
+                    "height": settings.height,
+                    "crop": "disabled",
                 },
             }
             # Update decode to use upscaled latent
@@ -1460,7 +1775,7 @@ class VideoWorkflowBuilder:
                     "positive": ["8", 0],
                     "negative": ["9", 0],
                     "latent_image": ["7", 0],
-                    "seed": seed,
+                    "noise_seed": seed,
                     "steps": 4,
                     "cfg": 1.0,
                     "sampler_name": "euler",
@@ -1479,7 +1794,7 @@ class VideoWorkflowBuilder:
                     "positive": ["8", 0],
                     "negative": ["9", 0],
                     "latent_image": ["12", 0],
-                    "seed": seed,
+                    "noise_seed": seed,
                     "steps": 4,
                     "cfg": 1.0,
                     "sampler_name": "euler",
@@ -1510,30 +1825,40 @@ class VideoWorkflowBuilder:
     def _build_mochi(
         self,
         prompt: str,
-        _negative: str,
+        negative: str,
         settings: VideoSettings,
         seed: int,
         _init_image: str | None = None,
     ) -> dict[str, Any]:
         """
-        Build Mochi 1 workflow (EXPERIMENTAL).
+        Build a Mochi 1 workflow (native core path).
 
-        Note: This is a preliminary implementation based on expected
-        ComfyUI node structure. Actual nodes may differ.
+        Mochi ships as a split repackage, so the pieces load separately:
+
+        * The DiT lives in ``models/diffusion_models`` -> ``UNETLoader``.
+          (The model catalog's ``recommended.loader`` field says
+          ``CheckpointLoaderSimple``, which contradicts the directory. The
+          directory wins: no mochi file appears in ``CheckpointLoaderSimple``'s
+          option list, and both appear in ``UNETLoader``'s.)
+        * The VAE lives in ``models/vae`` -> ``VAELoader``.
+        * The text encoder is t5xxl through ``CLIPLoader`` with ``type="mochi"``.
+
+        From there it is the generic core sampler: ``EmptyMochiLatentVideo``
+        -> ``KSampler`` -> ``VAEDecode``.
         """
-        # Determine precision
-        dtype = "bf16" if settings.precision == "bf16" else "fp8"
+        unet_name = (
+            "mochi_preview_bf16.safetensors"
+            if settings.precision == "bf16"
+            else "mochi_preview_fp8_scaled.safetensors"
+        )
 
-        workflow = {
-            # Model loader
+        return {
+            # Diffusion model (DiT)
             "1": {
-                "class_type": "MochiModelLoader",
-                "inputs": {
-                    "model_path": f"mochi_preview_dit_{dtype}.safetensors",
-                    "precision": dtype,
-                },
+                "class_type": "UNETLoader",
+                "inputs": {"unet_name": unet_name, "weight_dtype": "default"},
             },
-            # T5 text encoder
+            # T5-XXL text encoder
             "2": {
                 "class_type": "CLIPLoader",
                 "inputs": {
@@ -1542,46 +1867,53 @@ class VideoWorkflowBuilder:
                     "device": "default",
                 },
             },
-            # Text encode
-            "3": {"class_type": "CLIPTextEncode", "inputs": {"text": prompt, "clip": ["2", 0]}},
+            # VAE
+            "3": {"class_type": "VAELoader", "inputs": {"vae_name": "mochi_vae.safetensors"}},
+            # Prompts
+            "4": {"class_type": "CLIPTextEncode", "inputs": {"text": prompt, "clip": ["2", 0]}},
+            "5": {"class_type": "CLIPTextEncode", "inputs": {"text": negative, "clip": ["2", 0]}},
             # Latent
-            "4": {
+            "6": {
                 "class_type": "EmptyMochiLatentVideo",
                 "inputs": {
                     "width": settings.width,
                     "height": settings.height,
-                    "frames": settings.frames,
+                    "length": settings.frames,
                     "batch_size": 1,
                 },
             },
             # Sampler
-            "5": {
-                "class_type": "MochiSampler",
+            "7": {
+                "class_type": "KSampler",
                 "inputs": {
                     "model": ["1", 0],
-                    "conditioning": ["3", 0],
-                    "latent": ["4", 0],
+                    "seed": seed,
                     "steps": settings.steps,
                     "cfg": settings.cfg,
-                    "seed": seed,
+                    "sampler_name": "euler",
+                    "scheduler": "simple",
+                    "positive": ["4", 0],
+                    "negative": ["5", 0],
+                    "latent_image": ["6", 0],
+                    "denoise": 1.0,
                 },
             },
             # Decode
-            "6": {"class_type": "MochiVAEDecode", "inputs": {"samples": ["5", 0], "vae": ["1", 1]}},
+            "8": {"class_type": "VAEDecode", "inputs": {"samples": ["7", 0], "vae": ["3", 0]}},
             # Output
-            "7": {
+            "9": {
                 "class_type": "VHS_VideoCombine",
                 "inputs": {
-                    "images": ["6", 0],
-                    "frame_rate": 30,  # Mochi is 30fps
+                    "images": ["8", 0],
+                    "frame_rate": settings.fps,
+                    "loop_count": 0,
                     "filename_prefix": "comfy_headless_mochi",
                     "format": "video/h264-mp4",
+                    "pingpong": False,
                     "save_output": True,
                 },
             },
         }
-
-        return workflow
 
 
 # =============================================================================

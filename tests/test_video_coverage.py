@@ -289,6 +289,52 @@ class TestCogVideoXBuilder:
         )
 
         assert isinstance(workflow, dict)
+        assert _class_types(workflow) == {
+            "DownloadAndLoadCogVideoModel",
+            "CLIPLoader",
+            "CogVideoTextEncode",
+            "CogVideoSampler",
+            "CogVideoDecode",
+            "VHS_VideoCombine",
+        }
+
+    def test_cogvideox_wires_positive_and_negative(self):
+        """CogVideoSampler gets separate positive and negative conditioning."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="fireworks",
+            negative="low quality",
+            settings=VideoSettings(model=VideoModel.COGVIDEOX),
+        )
+
+        sampler = _node_of_type(workflow, "CogVideoSampler")
+        assert sampler["inputs"]["positive"] != sampler["inputs"]["negative"]
+        # The negative encode reuses the CLIP handed back by the positive one.
+        encodes = [n for n in workflow.values() if n["class_type"] == "CogVideoTextEncode"]
+        assert len(encodes) == 2
+        assert {e["inputs"]["prompt"] for e in encodes} == {"fireworks", "low quality"}
+
+    def test_cogvideox_declares_its_pack(self):
+        """CogVideoX is pack-only and says so."""
+        from comfy_headless.video import (
+            VideoModel,
+            VideoSettings,
+            VideoWorkflowBuilder,
+            required_node_packs,
+        )
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="x", negative="y", settings=VideoSettings(model=VideoModel.COGVIDEOX)
+        )
+
+        packs = required_node_packs(workflow)
+        assert packs["comfyui-cogvideoxwrapper"] == [
+            "CogVideoDecode",
+            "CogVideoSampler",
+            "CogVideoTextEncode",
+            "DownloadAndLoadCogVideoModel",
+        ]
 
 
 # ============================================================================
@@ -313,6 +359,54 @@ class TestHunyuanBuilder:
         )
 
         assert isinstance(workflow, dict)
+        assert _class_types(workflow) == {
+            "UNETLoader",
+            "DualCLIPLoader",
+            "VAELoader",
+            "CLIPTextEncode",
+            "FluxGuidance",
+            "ModelSamplingSD3",
+            "BasicGuider",
+            "KSamplerSelect",
+            "BasicScheduler",
+            "RandomNoise",
+            "EmptyHunyuanLatentVideo",
+            "SamplerCustomAdvanced",
+            "VAEDecodeTiled",
+            "VHS_VideoCombine",
+        }
+
+    def test_hunyuan_text_encoder_path(self):
+        """Hunyuan 1.0 t2v encodes through DualCLIPLoader type=hunyuan_video."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="a lake", negative="", settings=VideoSettings(model=VideoModel.HUNYUAN)
+        )
+
+        loader = _node_of_type(workflow, "DualCLIPLoader")
+        # CLIPLoader has no hunyuan_video type -- only DualCLIPLoader does.
+        assert loader["inputs"]["type"] == "hunyuan_video"
+        assert loader["inputs"]["clip_name1"] == "clip_l.safetensors"
+        assert loader["inputs"]["clip_name2"] == "llava_llama3_fp8_scaled.safetensors"
+
+    def test_hunyuan_uses_embedded_guidance_not_cfg(self):
+        """The t2v checkpoint is guidance-distilled: BasicGuider, no negative."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="a lake",
+            negative="ignored",
+            settings=VideoSettings(model=VideoModel.HUNYUAN, cfg=6.0),
+        )
+
+        assert _node_of_type(workflow, "FluxGuidance")["inputs"]["guidance"] == 6.0
+        assert "CFGGuider" not in _class_types(workflow)
+        # The negative prompt must not leak into any encode.
+        texts = [
+            n["inputs"]["text"] for n in workflow.values() if n["class_type"] == "CLIPTextEncode"
+        ]
+        assert texts == ["a lake"]
 
     def test_build_hunyuan_with_interpolation(self):
         """Build Hunyuan workflow with interpolation."""
@@ -341,6 +435,54 @@ class TestHunyuanBuilder:
         )
 
         assert isinstance(workflow, dict)
+        loader = _node_of_type(workflow, "DualCLIPLoader")
+        assert loader["inputs"]["type"] == "hunyuan_video_15"
+        assert (
+            _node_of_type(workflow, "UNETLoader")["inputs"]["unet_name"]
+            == "hunyuanvideo1.5_720p_t2v_fp16.safetensors"
+        )
+
+    def test_hunyuan_15_distilled_uses_a_real_checkpoint(self):
+        """There is no 720p cfg-distilled release; distilled is 480p only."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="x",
+            negative="y",
+            settings=VideoSettings(
+                model=VideoModel.HUNYUAN_15_FAST, width=848, height=480, variant="distilled"
+            ),
+        )
+
+        unet = _node_of_type(workflow, "UNETLoader")["inputs"]["unet_name"]
+        assert unet == "hunyuanvideo1.5_480p_t2v_cfg_distilled_fp16.safetensors"
+
+    def test_hunyuan_15_upscale_uses_real_input_names(self):
+        """HunyuanVideo15LatentUpscaleWithModel takes upscale_method/crop."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="x",
+            negative="y",
+            settings=VideoSettings(
+                model=VideoModel.HUNYUAN_15, width=1920, height=1080, upscale=True
+            ),
+        )
+
+        upscale = _node_of_type(workflow, "HunyuanVideo15LatentUpscaleWithModel")
+        assert set(upscale["inputs"]) == {
+            "model",
+            "samples",
+            "upscale_method",
+            "width",
+            "height",
+            "crop",
+        }
+        assert upscale["inputs"]["crop"] == "disabled"
+        assert (upscale["inputs"]["width"], upscale["inputs"]["height"]) == (1920, 1080)
+        # 1080p is rendered at the 720p base and then upsampled.
+        latent = _node_of_type(workflow, "EmptyHunyuanVideo15Latent")
+        assert (latent["inputs"]["width"], latent["inputs"]["height"]) == (1280, 720)
 
     def test_build_hunyuan_15_fast(self):
         """Build Hunyuan 1.5 fast (distilled) workflow."""
@@ -489,6 +631,78 @@ class TestMochiBuilder:
         )
 
         assert isinstance(workflow, dict)
+        assert _class_types(workflow) == {
+            "UNETLoader",
+            "CLIPLoader",
+            "VAELoader",
+            "CLIPTextEncode",
+            "EmptyMochiLatentVideo",
+            "KSampler",
+            "VAEDecode",
+            "VHS_VideoCombine",
+        }
+
+    def test_mochi_loads_the_dit_through_unetloader(self):
+        """Mochi's DiT lives in diffusion_models, so UNETLoader -- not a checkpoint."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="x",
+            negative="y",
+            settings=VideoSettings(model=VideoModel.MOCHI, precision="bf16"),
+        )
+
+        assert "CheckpointLoaderSimple" not in _class_types(workflow)
+        assert (
+            _node_of_type(workflow, "UNETLoader")["inputs"]["unet_name"]
+            == "mochi_preview_bf16.safetensors"
+        )
+        assert _node_of_type(workflow, "VAELoader")["inputs"]["vae_name"] == "mochi_vae.safetensors"
+        clip = _node_of_type(workflow, "CLIPLoader")["inputs"]
+        assert clip["type"] == "mochi"
+        assert clip["clip_name"] == "t5xxl_fp16.safetensors"
+
+    def test_mochi_fp8_variant(self):
+        """Non-bf16 precision selects the fp8 scaled repackage."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="x",
+            negative="y",
+            settings=VideoSettings(model=VideoModel.MOCHI, precision="fp8"),
+        )
+
+        assert (
+            _node_of_type(workflow, "UNETLoader")["inputs"]["unet_name"]
+            == "mochi_preview_fp8_scaled.safetensors"
+        )
+
+    def test_mochi_latent_uses_length_not_frames(self):
+        """EmptyMochiLatentVideo's frame count input is named `length`."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="x", negative="y", settings=VideoSettings(model=VideoModel.MOCHI, frames=81)
+        )
+
+        latent = _node_of_type(workflow, "EmptyMochiLatentVideo")
+        assert set(latent["inputs"]) == {"width", "height", "length", "batch_size"}
+        assert latent["inputs"]["length"] == 81
+
+    def test_mochi_wires_a_negative_prompt(self):
+        """KSampler needs real negative conditioning, not a reused positive."""
+        from comfy_headless.video import VideoModel, VideoSettings, VideoWorkflowBuilder
+
+        workflow = VideoWorkflowBuilder().build(
+            prompt="astronaut", negative="blurry", settings=VideoSettings(model=VideoModel.MOCHI)
+        )
+
+        sampler = _node_of_type(workflow, "KSampler")
+        assert sampler["inputs"]["positive"] != sampler["inputs"]["negative"]
+        texts = {
+            n["inputs"]["text"] for n in workflow.values() if n["class_type"] == "CLIPTextEncode"
+        }
+        assert texts == {"astronaut", "blurry"}
 
 
 # ============================================================================
@@ -720,3 +934,374 @@ class TestEdgeCases:
 
         workflow = build_video_workflow(prompt="test", preset="quick", seed=2**31 - 1)
         assert isinstance(workflow, dict)
+
+
+# ============================================================================
+# NODE CATALOG CONTRACT
+# ============================================================================
+#
+# comfy-headless is a graph emitter: every class_type it writes must exist on
+# the target ComfyUI server, and anything that is not a built-in must name the
+# custom node pack that provides it. These tests are the regression guard for
+# the v2.5.7 defect where video builders emitted node names that had been
+# removed from ComfyUI, producing an opaque validation error at submit time.
+
+
+# Node names that comfy-headless used to emit and that no longer exist
+# anywhere in the ComfyUI node catalog (core or published packs).
+REMOVED_NODES = frozenset(
+    {
+        "MochiSampler",
+        "MochiModelLoader",
+        "MochiVAEDecode",
+        "HunyuanVideoSampler",
+        "HunyuanVideoModelLoader",
+        "HunyuanVideoTextEncode",
+        "HunyuanVideoVAEDecode",
+        "CogVideoModelLoader",
+        "CogVideoVAEDecode",
+    }
+)
+
+# Built-in ComfyUI nodes the video builders are allowed to emit. Every name
+# here was checked against the live node catalog and reported pack "core".
+# Adding a name to this set means asserting you verified it the same way.
+VERIFIED_CORE_NODES = frozenset(
+    {
+        "BasicGuider",
+        "BasicScheduler",
+        "CFGGuider",
+        "CLIPLoader",
+        "CLIPTextEncode",
+        "CLIPVisionEncode",
+        "CLIPVisionLoader",
+        "CheckpointLoaderSimple",
+        "DualCLIPLoader",
+        "EmptyHunyuanLatentVideo",
+        "EmptyHunyuanVideo15Latent",
+        "EmptyLTXVLatentVideo",
+        "EmptyMochiLatentVideo",
+        "FluxGuidance",
+        "HunyuanVideo15LatentUpscaleWithModel",
+        "ImageOnlyCheckpointLoader",
+        "KSampler",
+        "KSamplerAdvanced",
+        "KSamplerSelect",
+        "LTXVConditioning",
+        "LTXVImgToVideo",
+        "LTXVScheduler",
+        "LatentUpscaleModelLoader",
+        "LoraLoaderModelOnly",
+        "ModelSamplingSD3",
+        "RandomNoise",
+        "SVD_img2vid_Conditioning",
+        "SamplerCustom",
+        "SamplerCustomAdvanced",
+        "UNETLoader",
+        "VAEDecode",
+        "VAEDecodeTiled",
+        "VAELoader",
+        "WanImageToVideo",
+    }
+)
+
+_SAMPLE_IMAGE = "data:image/png;base64,iVBORw0KGgo="
+
+
+def _class_types(workflow):
+    """Set of class_types used by a workflow."""
+    return {node["class_type"] for node in workflow.values()}
+
+
+def _node_of_type(workflow, class_type):
+    """Return the single node of the given class_type."""
+    matches = [n for n in workflow.values() if n["class_type"] == class_type]
+    assert len(matches) == 1, f"expected exactly one {class_type}, got {len(matches)}"
+    return matches[0]
+
+
+def _every_workflow():
+    """
+    Build every preset across every branch-selecting flag.
+
+    Covers the t2v/i2v split, RIFE interpolation, the 1080p upscale leg and
+    each precision branch, so no builder path escapes the contract checks.
+    """
+    import copy
+
+    from comfy_headless.video import VIDEO_PRESETS, VideoWorkflowBuilder
+
+    builder = VideoWorkflowBuilder()
+    for name, preset in VIDEO_PRESETS.items():
+        for init_image in (None, _SAMPLE_IMAGE):
+            for interpolate in (False, True):
+                for upscale in (False, True):
+                    for precision in ("fp16", "fp8", "bf16"):
+                        settings = copy.deepcopy(preset)
+                        settings.interpolate = interpolate
+                        settings.upscale = upscale
+                        settings.precision = precision
+                        try:
+                            workflow = builder.build(
+                                prompt="a cat walking",
+                                negative="blurry",
+                                settings=settings,
+                                init_image=init_image,
+                            )
+                        except ValueError:
+                            # e.g. SVD refuses to build without an init image
+                            continue
+                        yield name, workflow
+
+
+class TestNodeCatalogContract:
+    """Every emitted class_type must exist and, if not core, name its pack."""
+
+    def test_no_preset_emits_a_removed_node(self):
+        """The v2.5.7 defect: builders referencing deleted ComfyUI nodes."""
+        offenders = {}
+        for preset, workflow in _every_workflow():
+            dead = _class_types(workflow) & REMOVED_NODES
+            if dead:
+                offenders.setdefault(preset, set()).update(dead)
+        assert not offenders, f"presets emitting removed nodes: {offenders}"
+
+    def test_every_emitted_node_is_core_or_declared(self):
+        """A non-core node with no NODE_PACKS entry is an undeclared dependency."""
+        from comfy_headless.video import NODE_PACKS
+
+        undeclared = {}
+        for preset, workflow in _every_workflow():
+            for class_type in _class_types(workflow):
+                if class_type in VERIFIED_CORE_NODES or class_type in NODE_PACKS:
+                    continue
+                undeclared.setdefault(class_type, set()).add(preset)
+        assert not undeclared, f"undeclared node types: {undeclared}"
+
+    def test_declared_packs_all_have_metadata(self):
+        """Every pack id in NODE_PACKS resolves to a NodePack record."""
+        from comfy_headless.video import NODE_PACK_INFO, NODE_PACKS
+
+        for class_type, pack_id in NODE_PACKS.items():
+            assert pack_id in NODE_PACK_INFO, f"{class_type} -> unknown pack {pack_id!r}"
+            pack = NODE_PACK_INFO[pack_id]
+            assert pack.id == pack_id
+            assert pack.name and pack.url and pack.install_hint
+
+    def test_core_and_pack_registries_do_not_overlap(self):
+        """A node cannot be both a built-in and pack-provided."""
+        from comfy_headless.video import NODE_PACKS
+
+        assert not (VERIFIED_CORE_NODES & set(NODE_PACKS))
+
+    def test_no_dangling_node_references(self):
+        """Every ["id", slot] link points at a node that exists."""
+        broken = {}
+        for preset, workflow in _every_workflow():
+            ids = set(workflow)
+            for node_id, node in workflow.items():
+                for key, value in node.get("inputs", {}).items():
+                    if isinstance(value, list) and len(value) == 2:
+                        target = value[0]
+                        if isinstance(target, str) and target not in ids:
+                            broken.setdefault(preset, []).append((node_id, key, target))
+        assert not broken, f"dangling references: {broken}"
+
+    def test_every_workflow_has_an_output_node(self):
+        """A graph with no output node produces nothing."""
+        for preset, workflow in _every_workflow():
+            assert "VHS_VideoCombine" in _class_types(workflow), f"{preset} has no output node"
+
+    def test_get_node_pack_returns_none_for_core(self):
+        from comfy_headless.video import get_node_pack
+
+        assert get_node_pack("KSampler") is None
+        assert get_node_pack("VAEDecode") is None
+        assert get_node_pack("VHS_VideoCombine") == "comfyui-videohelpersuite"
+        assert get_node_pack("CogVideoSampler") == "comfyui-cogvideoxwrapper"
+
+    def test_required_node_packs_groups_by_pack(self):
+        from comfy_headless.video import required_node_packs
+
+        workflow = {
+            "1": {"class_type": "KSampler", "inputs": {}},
+            "2": {"class_type": "VHS_VideoCombine", "inputs": {}},
+            "3": {"class_type": "ADE_LoadAnimateDiffModel", "inputs": {}},
+            "4": {"class_type": "ADE_ApplyAnimateDiffModel", "inputs": {}},
+        }
+
+        assert required_node_packs(workflow) == {
+            "comfyui-animatediff-evolved": [
+                "ADE_ApplyAnimateDiffModel",
+                "ADE_LoadAnimateDiffModel",
+            ],
+            "comfyui-videohelpersuite": ["VHS_VideoCombine"],
+        }
+
+    def test_required_node_packs_empty_for_core_only(self):
+        from comfy_headless.video import required_node_packs
+
+        assert required_node_packs({"1": {"class_type": "KSampler", "inputs": {}}}) == {}
+
+    def test_required_node_packs_tolerates_junk(self):
+        from comfy_headless.video import required_node_packs
+
+        assert required_node_packs({"1": "not a node", "2": {"no_class_type": True}}) == {}
+
+    def test_model_info_declares_packs(self):
+        """Every family declares the packs its workflows actually need."""
+        from comfy_headless.video import (
+            NODE_PACK_INFO,
+            VIDEO_MODEL_INFO,
+            VIDEO_PRESETS,
+            VideoWorkflowBuilder,
+            required_node_packs,
+        )
+
+        builder = VideoWorkflowBuilder()
+        for family, info in VIDEO_MODEL_INFO.items():
+            for pack_id in info.requires_packs:
+                assert pack_id in NODE_PACK_INFO, f"{family} declares unknown pack {pack_id!r}"
+
+            declared = set(info.requires_packs)
+            for preset_name in info.presets:
+                settings = VIDEO_PRESETS[preset_name]
+                try:
+                    workflow = builder.build(
+                        prompt="x", negative="y", settings=settings, init_image=_SAMPLE_IMAGE
+                    )
+                except ValueError:
+                    continue
+                actual = set(required_node_packs(workflow))
+                missing = actual - declared
+                assert not missing, f"{family}/{preset_name} uses undeclared packs {missing}"
+
+
+class TestMissingNodePackError:
+    """The structured error raised when a server lacks required nodes."""
+
+    def test_names_class_and_pack(self):
+        from comfy_headless.exceptions import MissingNodePackError
+        from comfy_headless.video import NODE_PACK_INFO
+
+        err = MissingNodePackError(
+            missing={"VHS_VideoCombine": NODE_PACK_INFO["comfyui-videohelpersuite"].to_dict()}
+        )
+
+        assert err.code == "MISSING_NODE_PACK"
+        assert "VHS_VideoCombine" in err.developer_message
+        assert "comfyui-videohelpersuite" in err.developer_message
+        assert err.details["missing_nodes"] == ["VHS_VideoCombine"]
+        assert err.details["packs"] == ["comfyui-videohelpersuite"]
+        assert any("VideoHelperSuite" in s for s in err.suggestions)
+
+    def test_unknown_provider_is_not_invented(self):
+        from comfy_headless.exceptions import MissingNodePackError
+
+        err = MissingNodePackError(missing={"SomeCustomNode": None})
+
+        assert "provider unknown" in err.developer_message
+        assert err.details["packs"] == []
+        assert any("No known pack provides" in s for s in err.suggestions)
+
+    def test_accepts_bare_pack_id(self):
+        from comfy_headless.exceptions import MissingNodePackError
+
+        err = MissingNodePackError(missing={"CogVideoSampler": "comfyui-cogvideoxwrapper"})
+
+        assert "comfyui-cogvideoxwrapper" in err.developer_message
+        assert err.details["packs"] == ["comfyui-cogvideoxwrapper"]
+
+    def test_empty_missing_is_safe(self):
+        from comfy_headless.exceptions import MissingNodePackError
+
+        err = MissingNodePackError()
+
+        assert err.details["missing_nodes"] == []
+        assert "not installed" in err.developer_message
+
+
+class TestClientDependencyReporting:
+    """check_workflow_dependencies / require_workflow_dependencies."""
+
+    @staticmethod
+    def _client(installed):
+        from unittest.mock import patch
+
+        from comfy_headless.client import ComfyClient
+
+        client = ComfyClient()
+        return client, patch.object(client, "get_all_installed_nodes", return_value=installed)
+
+    def test_reports_the_pack_for_a_missing_node(self):
+        workflow = {
+            "1": {"class_type": "KSampler", "inputs": {}},
+            "2": {"class_type": "VHS_VideoCombine", "inputs": {}},
+        }
+        client, patched = self._client(["KSampler"])
+
+        with patched:
+            report = client.check_workflow_dependencies(workflow)
+
+        assert report["all_installed"] is False
+        assert report["missing"] == ["VHS_VideoCombine"]
+        assert report["missing_packs"]["VHS_VideoCombine"]["id"] == "comfyui-videohelpersuite"
+        assert report["required_packs"] == {"comfyui-videohelpersuite": ["VHS_VideoCombine"]}
+
+    def test_missing_core_node_has_no_pack(self):
+        workflow = {"1": {"class_type": "KSampler", "inputs": {}}}
+        client, patched = self._client([])
+
+        with patched:
+            report = client.check_workflow_dependencies(workflow)
+
+        assert report["missing_packs"] == {"KSampler": None}
+
+    def test_require_raises_with_named_pack(self):
+        from comfy_headless.exceptions import MissingNodePackError
+
+        workflow = {"1": {"class_type": "CogVideoSampler", "inputs": {}}}
+        client, patched = self._client(["KSampler"])
+
+        with patched, pytest.raises(MissingNodePackError) as excinfo:
+            client.require_workflow_dependencies(workflow)
+
+        assert "comfyui-cogvideoxwrapper" in str(excinfo.value)
+
+    def test_require_passes_when_all_installed(self):
+        workflow = {"1": {"class_type": "KSampler", "inputs": {}}}
+        client, patched = self._client(["KSampler"])
+
+        with patched:
+            report = client.require_workflow_dependencies(workflow)
+
+        assert report["all_installed"] is True
+
+
+class TestWorkflowSeedExtraction:
+    """The built seed must be recoverable from any sampler front-end."""
+
+    def test_reads_ksampler_seed(self):
+        from comfy_headless.client import _extract_workflow_seed
+
+        workflow = {"1": {"class_type": "KSampler", "inputs": {"seed": 4242}}}
+        assert _extract_workflow_seed(workflow) == 4242
+
+    def test_reads_random_noise_seed(self):
+        from comfy_headless.client import _extract_workflow_seed
+
+        workflow = {"10": {"class_type": "RandomNoise", "inputs": {"noise_seed": 99}}}
+        assert _extract_workflow_seed(workflow) == 99
+
+    def test_falls_back_to_default(self):
+        from comfy_headless.client import _extract_workflow_seed
+
+        assert _extract_workflow_seed({"1": {"class_type": "VAEDecode", "inputs": {}}}, -1) == -1
+
+    def test_every_preset_exposes_its_seed(self):
+        """Presets resolve seed=-1 while building; the caller must see it back."""
+        from comfy_headless.client import _extract_workflow_seed
+
+        for preset, workflow in _every_workflow():
+            seed = _extract_workflow_seed(workflow, default=-1)
+            assert seed >= 0, f"{preset} does not expose its resolved seed"
