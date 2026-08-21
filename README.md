@@ -135,6 +135,32 @@ result = client.generate_video(
 )
 ```
 
+### Image Input (v3.0)
+
+Image-to-video and any other workflow that takes a source image needs the image
+to exist inside ComfyUI first. Upload it, then pass the name the server gives back:
+
+```python
+client = ComfyClient()
+
+ref = client.upload_image("reference.png")
+# {"name": "reference.png", "subfolder": "", "type": "input", "ref": "reference.png"}
+
+result = client.generate_video(
+    prompt="a cat walking through a garden",
+    preset="wan_14b",
+    init_image=ref["name"],
+)
+```
+
+Read `name` back from the response rather than reusing the filename you sent —
+ComfyUI renames on collision, so the two are not always the same. `ref` is the
+same value pre-joined with any subfolder, which is the exact string the graph needs.
+
+> **Changed in 3.0:** `init_image` is a server-side filename. Earlier versions
+> accepted base64 data and smuggled it through a third-party node that does not
+> exist on a stock ComfyUI install. See [CHANGELOG](CHANGELOG.md#300---2026-08-21).
+
 ### Launch the Web UI
 
 ```python
@@ -157,19 +183,31 @@ python -m comfy_headless.ui
 
 **Theme:** Ocean Mist - soft teal accents on warm neutral backgrounds
 
-## Video Models (v2.5.0)
+## Video Models
 
 ### Supported Models
 
-| Model | VRAM | Quality | Speed | Best For |
-|-------|------|---------|-------|----------|
-| **LTX-Video 2** | 12GB+ | Excellent | Fast | General use, RTX 3080+ |
-| **Hunyuan 1.5** | 14GB+ | Best | Slow | High quality, RTX 4080+ |
-| **Wan 2.1/2.2** | 6-16GB | Great | Medium | Budget GPUs, efficiency |
-| **Mochi** | 12GB+ | Excellent | Slow | Text adherence |
-| AnimateDiff | 6GB+ | Good | Fast | Quick previews |
-| SVD | 8GB+ | Good | Medium | Image-to-video |
-| CogVideoX | 10GB+ | Good | Slow | Legacy support |
+| Model | VRAM | Quality | Speed | Extra nodes needed | Best For |
+|-------|------|---------|-------|--------------------|----------|
+| **LTX-Video 2** | 12GB+ | Excellent | Fast | — | General use, RTX 3080+ |
+| **Hunyuan 1.5** | 14GB+ | Best | Slow | — | High quality, RTX 4080+ |
+| **Wan 2.1/2.2** | 6-16GB | Great | Medium | — | Budget GPUs, efficiency |
+| **Mochi** | 12GB+ | Excellent | Slow | — | Text adherence |
+| AnimateDiff | 6GB+ | Good | Fast | AnimateDiff-Evolved | Quick previews |
+| SVD | 8GB+ | Good | Medium | — | Image-to-video |
+| CogVideoX | 10GB+ | Good | Slow | CogVideoX Wrapper | Legacy support |
+
+Everything except AnimateDiff and CogVideoX runs on stock ComfyUI core nodes.
+Video output uses Video Helper Suite. Frame interpolation uses Frame Interpolation.
+Ask before you run, rather than finding out at submit time:
+
+```python
+report = client.check_workflow_dependencies(workflow)
+print(report["missing_packs"])   # packs the target server is missing
+
+# or raise MissingNodePackError naming the class and the pack that provides it
+client.require_workflow_dependencies(workflow)
+```
 
 ### Video Presets
 

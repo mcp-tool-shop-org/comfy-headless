@@ -4,7 +4,7 @@
 
 ## Overview
 
-Comfy Headless provides a Python API and Gradio UI for ComfyUI without the complexity. Features include AI-powered prompt enhancement via Ollama, video generation with 11 preset models, real-time WebSocket progress, and modular architecture with optional dependencies.
+Comfy Headless provides a Python API and Gradio UI for ComfyUI without the complexity. Features include AI-powered prompt enhancement via Ollama, video generation with 24 presets across 9 model families, real-time WebSocket progress, and modular architecture with optional dependencies.
 
 ## Quick Start
 
@@ -19,11 +19,8 @@ pip install comfy-headless
 from comfy_headless import ComfyClient
 
 client = ComfyClient("http://localhost:8188")
-result = client.generate(
-    prompt="cyberpunk cityscape at sunset",
-    workflow="txt2img"
-)
-print(result.images)  # List of generated image paths
+result = client.generate_image("cyberpunk cityscape at sunset")
+print(result["images"])  # List of generated image paths
 ```
 
 ## Installation Options
@@ -41,73 +38,145 @@ print(result.images)  # List of generated image paths
 
 ## Core API
 
-### ComfyClient(url, timeout=300)
-Main client for ComfyUI interaction.
+### ComfyClient(base_url=None, rate_limit=None, rate_limit_per_seconds=1.0)
+Main client for ComfyUI interaction. `base_url` defaults to config settings.
 
 ```python
 client = ComfyClient("http://localhost:8188")
 ```
 
-### client.generate(prompt, workflow, **kwargs)
-Generate images or video.
+### client.generate_image(prompt, ...)
+Generate an image.
 - `prompt`: Text description
-- `workflow`: Workflow name or path
-- `negative_prompt`: What to avoid
-- `width`, `height`: Dimensions
-- `steps`: Sampling steps
-- `cfg_scale`: Guidance strength
-- Returns: GenerationResult with images/video paths
+- `negative_prompt`: What to avoid (default `""`)
+- `preset`: Preset name — overrides width/height/steps/cfg when set
+  (`draft`, `fast`, `quality`, `hd`, `portrait`, `landscape`, `cinematic`, `square`)
+- `checkpoint`: Model checkpoint name
+- `width`, `height`: Dimensions (default 1024)
+- `steps`: Sampling steps (default 20)
+- `cfg`: Guidance strength (default 7.0)
+- `sampler`, `scheduler`: Defaults `"euler"`, `"normal"`
+- `seed`: `-1` for random
+- `wait`, `timeout`, `on_progress`: Completion control
+- Returns: `dict` with keys `success`, `prompt_id`, `images`, `error`, `seed`, `preset`
 
-### client.enhance_prompt(prompt)
-AI-powered prompt enhancement via Ollama.
-- Returns: Enhanced prompt string
+### client.generate_video(prompt, preset="standard", ...)
+Generate a video. See Video Generation below.
+- Returns: `dict` with keys `success`, `prompt_id`, `videos`, `error`, `seed`, `preset`
 
-### client.list_workflows()
-List available workflow presets.
+### client.generate_batch(prompts, preset="fast", ...)
+Generate multiple images from a list of prompts.
+- `prompts`: List of prompt strings
+- `seeds`: Optional list of seeds
+- `max_concurrent`, `check_vram`, `on_progress`
+- Returns: `dict`
 
-### client.get_history(prompt_id)
-Get generation history and status.
+### client.upload_image(path_or_bytes, *, filename=None, subfolder="", overwrite=False, type="input")
+Upload an image into ComfyUI's input folder via `POST /upload/image`. Required
+before any workflow that takes a source image.
+- `path_or_bytes`: local file path or raw bytes
+- Returns: `dict` with keys `name`, `subfolder`, `type`, `ref`
+- `name` is the server's stored filename and is authoritative — ComfyUI renames
+  on collision, so it may differ from what was sent. `ref` is `name` pre-joined
+  with `subfolder`, ready to pass as a `LoadImage` node's `image` input.
+
+### client.upload_mask(path_or_bytes, original_ref, ...)
+Upload a mask via `POST /upload/mask`, compositing it into an existing image's
+alpha channel. `original_ref` accepts the dict returned by `upload_image` or a
+bare filename.
+
+### client.get_history(prompt_id=None)
+Get execution history, optionally for a specific prompt.
+- Returns: `dict`
+
+### enhance_prompt(prompt, style="balanced")
+AI-powered prompt enhancement via Ollama. Module-level function, **not** a client
+method. Requires the `[ai]` extra.
+
+```python
+from comfy_headless import enhance_prompt
+
+result = enhance_prompt("a cat", style="balanced")
+print(result.enhanced)  # EnhancedPrompt: .original .enhanced .negative .additions .reasoning
+```
+
+### Listing presets
+Module-level functions, **not** client methods.
+
+```python
+from comfy_headless import list_presets, list_video_presets
+
+list_presets()        # Image presets
+list_video_presets()  # Video presets
+```
 
 ## Video Generation
 
-11 preset video models:
-- Wan 2.1 (14B, 1.3B)
+24 presets across 9 model families (`VIDEO_PRESETS`, `VIDEO_MODEL_INFO`):
+- AnimateDiff (v2, v3, Lightning)
+- Stable Video Diffusion (SVD, SVD-XT)
+- CogVideoX
 - Hunyuan Video
+- Hunyuan Video 1.5
 - LTX Video
+- Wan
 - Mochi
-- CogVideoX (5B, 2B)
-- AnimateDiff
-- Stable Video Diffusion
-- Custom workflows
+
+Selection is by `preset`, not by model name:
 
 ```python
 result = client.generate_video(
     prompt="ocean waves crashing",
-    model="wan21_14b",
-    frames=48,
-    fps=24
+    preset="wan_14b",   # e.g. quick, standard, quality, cinematic,
+                        # svd_short, cogvideo, hunyuan, ltx_quality,
+                        # wan_14b, mochi, ...
+    frames=48,          # optional override
+    fps=24,             # optional override
 )
+print(result["videos"])
 ```
+
+For image-to-video, `init_image` is a **server-side filename**, not image data —
+upload first and pass the returned `name`:
+
+```python
+ref = client.upload_image("reference.png")
+result = client.generate_video("a cat walking", preset="wan_14b", init_image=ref["name"])
+```
+
+Most video presets run on stock ComfyUI core nodes. AnimateDiff presets need
+AnimateDiff-Evolved, CogVideoX needs the CogVideoX Wrapper, and video output uses
+Video Helper Suite. Check before running with
+`client.check_workflow_dependencies(workflow)` (reports `missing_packs`) or
+`client.require_workflow_dependencies(workflow)` (raises `MissingNodePackError`).
 
 ## Gradio UI
 
 ```bash
-# Launch web interface
-comfy-headless --ui
+# Launch web interface (the default action)
+comfy-headless
 
-# Or programmatically
-from comfy_headless.ui import launch_ui
-launch_ui(share=False, port=7860)
+# Flags: --port/-p (default 7861), --share, --url,
+#        --version/-v, --check, --diagnose
 ```
 
-7 tabs: Generate, Video, Workflows, History, Settings, Health, Help
+```python
+# Or programmatically (requires the [ui] extra)
+from comfy_headless import launch
+launch(port=7861, share=False)
+```
+
+6 top-level tabs: Image, Video, Queue & History, Workflows, Models, Settings
+(Workflows nests Browse, Presets, Import, Create)
 
 ## Configuration
 
-Environment variables:
-- `COMFY_URL`: ComfyUI server URL (default: http://localhost:8188)
-- `OLLAMA_URL`: Ollama server URL for AI features
-- `COMFY_TIMEOUT`: Request timeout in seconds
+Environment variables use the `COMFY_HEADLESS_` prefix with `__` section delimiters:
+- `COMFY_HEADLESS_COMFYUI__URL`: ComfyUI server URL (default: http://localhost:8188)
+- `COMFY_HEADLESS_OLLAMA__URL`: Ollama server URL (default: http://localhost:11434)
+- `COMFY_HEADLESS_OLLAMA__MODEL`: Ollama model (default: qwen2.5:7b)
+- `COMFY_HEADLESS_COMFYUI__TIMEOUT_READ`: Read timeout in seconds
+- `COMFY_HEADLESS_LOGGING__LEVEL`: Log level
 
 ## Key Features
 
@@ -121,10 +190,10 @@ Environment variables:
 
 ## Links
 
-- Repository: https://github.com/mcp-tool-shop/comfy-headless
+- Repository: https://github.com/mcp-tool-shop-org/comfy-headless
 - PyPI: https://pypi.org/project/comfy-headless/
-- Documentation: https://github.com/mcp-tool-shop/comfy-headless#readme
-- Issues: https://github.com/mcp-tool-shop/comfy-headless/issues
+- Documentation: https://github.com/mcp-tool-shop-org/comfy-headless#readme
+- Issues: https://github.com/mcp-tool-shop-org/comfy-headless/issues
 
 ## License
 

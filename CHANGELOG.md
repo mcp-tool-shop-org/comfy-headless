@@ -7,6 +7,89 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-08-21
+
+Correctness release. comfy-headless emits ComfyUI API-format graphs, so a node
+name that no longer exists is a shipped bug — the graph is rejected at submit
+with an opaque error. An audit against the live ComfyUI node catalog found nine
+such names in the video builders, plus an image-input path that depended on an
+unpublished third-party node. Both are fixed here.
+
+### BREAKING
+
+- **`init_image` is now a server-side filename, not base64 data.** Image input
+  previously went through `LoadImageFromBase64`, a custom-pack node that is not
+  published in the ComfyUI registry and does not resolve on a stock install.
+  Video builders now emit the core `LoadImage` node, which takes the name of a
+  file already in ComfyUI's input folder.
+
+  Migration — upload first, then pass the returned name:
+
+  ```python
+  ref = client.upload_image("cat.png")
+  result = client.generate_video("a cat walking", preset="wan_14b",
+                                 init_image=ref["name"])
+  ```
+
+- Presets whose graphs were rebuilt now emit different node chains. If you
+  depended on the exact JSON of `build_video_workflow()` output for
+  `mochi`, `mochi_short`, `hunyuan`, `hunyuan_fast`, `cogvideo`,
+  `hunyuan15_720p`, `hunyuan15_quality`, `hunyuan15_fast` or `hunyuan15_1080p`,
+  re-capture it.
+
+### Added
+
+- `ComfyClient.upload_image()` and `ComfyClient.upload_mask()` — `POST /upload/image`
+  and `POST /upload/mask`. The server's returned `name` is authoritative and is read
+  back rather than assumed, because ComfyUI renames on filename collision. Returns
+  `{"name", "subfolder", "type", "ref"}`, where `ref` is the exact string a
+  `LoadImage` node expects.
+- Node pack provenance: `NODE_PACKS`, `NODE_PACK_INFO` and
+  `VideoModelInfo.requires_packs` record which custom node pack provides each
+  non-core node, with name, URL and install hint.
+- `check_workflow_dependencies()` now reports `missing_packs` and `required_packs`;
+  new `require_workflow_dependencies()` raises `MissingNodePackError` naming the
+  class and the pack that provides it, instead of letting `/prompt` reject cryptically.
+- `UploadError` and `MissingNodePackError` exceptions, following the existing
+  structured code/message/hint shape.
+- A node-catalog contract test that builds every preset across every option
+  combination and asserts no removed node, no undeclared node, no dangling
+  reference, and a recoverable seed.
+
+### Fixed
+
+- **Nine node types that no longer exist in ComfyUI** were being emitted:
+  `MochiSampler`, `MochiModelLoader`, `MochiVAEDecode`, `HunyuanVideoSampler`,
+  `HunyuanVideoModelLoader`, `HunyuanVideoTextEncode`, `HunyuanVideoVAEDecode`,
+  `CogVideoModelLoader`, `CogVideoVAEDecode`. These were wrapper-pack nodes
+  mislabelled as core; ComfyUI kept the generic sampler path and the per-family
+  latent nodes, and dropped the family pipelines.
+- Mochi and Hunyuan Video 1.0 rebuilt on the native core path
+  (`UNETLoader` / `CLIPLoader` / `DualCLIPLoader` → sampler → `VAEDecode`).
+  Hunyuan Video is guidance-distilled, so it now uses `FluxGuidance` +
+  `BasicGuider` rather than CFG with a negative prompt.
+- CogVideoX rewired to the real wrapper-pack node names
+  (`DownloadAndLoadCogVideoModel`, `CogVideoDecode`) and declared as
+  pack-dependent — it has no native core path.
+- Hunyuan 1.5 pointed at `hunyuanvideo1.5_720p_t2v_distilled_fp16.safetensors`,
+  which does not exist; the distilled text-to-video weights are published at 480p
+  only. The 1080p preset also sampled at 1920x1080 before "upscaling" to the same
+  size, and passed `interpolation`/`extend_length` to a node whose inputs are
+  `upscale_method`/`crop`.
+- `EmptyMochiLatentVideo` was passed `frames`; the node's input is `length`.
+- Mochi's `KSampler` negative conditioning was built but never wired.
+- `_build_wan_fast` passed `seed` to `KSamplerAdvanced`, whose input is
+  `noise_seed` — both sampler nodes in that graph would have been rejected.
+- Seed recovery scanned for a hardcoded `HunyuanVideoSampler`, so every preset
+  not built on plain `KSampler` returned `-1` instead of the resolved seed.
+
+### Notes
+
+- `HUNYUAN_15_I2V` still builds a text-to-video graph and ignores `init_image`;
+  the core nodes to fix it exist and are verified, but that is a feature rather
+  than part of this correctness pass.
+
+
 ## [2.5.7] - 2026-03-25
 
 ### Added
