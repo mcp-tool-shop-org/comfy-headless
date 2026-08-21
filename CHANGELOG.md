@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2026-08-21
+
+Fixes a packaging defect in 3.0.0 that made a core-only install unimportable.
+**3.0.0 was tagged on GitHub but never reached PyPI** — its publish run failed at
+the build stage on exactly this bug, so no released artifact carries it.
+
+### Fixed
+
+- **A core-only `pip install comfy-headless` could not be imported on Python
+  3.10-3.13.** `http_client.py` annotated a method as `-> httpx.Response` at class
+  level. On a core install `httpx` is absent, so the module sets `httpx = None`, and
+  evaluating that annotation at import time raised
+  `AttributeError: 'NoneType' object has no attribute 'Response'`.
+
+  `from __future__ import annotations` is now declared in every module that holds an
+  optional dependency in a possibly-`None` name: `http_client`, `intelligence`,
+  `retry`, `ui`, `websocket_client`.
+
+  Two things hid this defect, and both are worth recording:
+
+  1. The test suite runs in a dev environment where every extra **is** installed, so
+     the annotation resolved fine and nothing failed.
+  2. The maintainer's interpreter is Python 3.14, where [PEP 649][pep649] defers
+     annotation evaluation. A manual core-only venv check therefore passed locally
+     while CI on Python 3.11 failed. The package supports 3.10+, so most of the
+     supported range was affected.
+
+### Added
+
+- `tests/test_optional_dep_annotations.py` — a static AST guard asserting that any
+  module keeping an optional dependency in a possibly-`None` name declares
+  `from __future__ import annotations`. It is deliberately static rather than an
+  import test, so it cannot be masked by the interpreter version or by which extras
+  happen to be installed. It includes a self-check that the scan is non-empty and a
+  reconstruction of the original defect, so the guard cannot pass vacuously.
+
+### Changed
+
+- `publish.yml`: `test-install` now runs on `ubuntu-latest` only, and `publish-pypi`
+  and `docker` declare `needs: [build, test-install]`. Previously they depended on
+  `build` alone and were skipped only as a side effect of run cancellation — an
+  accidental gate, now an explicit one.
+
+[pep649]: https://peps.python.org/pep-0649/
+
+
 ## [3.0.0] - 2026-08-21
 
 Correctness release. comfy-headless emits ComfyUI API-format graphs, so a node
