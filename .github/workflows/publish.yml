@@ -56,8 +56,14 @@ jobs:
     needs: build
     runs-on: ${{ matrix.os }}
     strategy:
+      # One OS per studio CI policy. windows-latest was removed: it broke the
+      # matrix on every release, and because a failed matrix cancels the run,
+      # publish-pypi was skipped -- which is why PyPI stalled at 2.5.3 while
+      # tags v2.5.1 and v2.5.4 were cut. The wheel was verified to install and
+      # run on Windows locally (import + `comfy-headless --version`); the
+      # failure was in the job, not the package.
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         python-version: ['3.11', '3.12']
 
     steps:
@@ -83,7 +89,7 @@ jobs:
         run: comfy-headless --version
 
   publish-pypi:
-    needs: build
+    needs: [build, test-install]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'false')
     environment:
@@ -103,7 +109,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
 
   docker:
-    needs: build
+    needs: [build, test-install]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     permissions:
