@@ -8,13 +8,14 @@ on:
       - 'comfy_headless/**'
       - 'tests/**'
       - '.github/workflows/**'
+  # Deliberately NOT paths-gated. main requires lint / test (3.11) / test (3.12) /
+  # Pip Audit / Secret Scanning, and a required check that never runs never
+  # reports -- so a docs-only PR (README, translations, handbook) sat at
+  # MERGEABLE / BLOCKED forever with zero checks. Push stays gated below, which
+  # is where the repeated minute cost actually lives; PR time is exactly when
+  # the gate is wanted.
   pull_request:
     branches: [main]
-    paths:
-      - 'pyproject.toml'
-      - 'comfy_headless/**'
-      - 'tests/**'
-      - '.github/workflows/**'
   workflow_dispatch:
 
 concurrency:
