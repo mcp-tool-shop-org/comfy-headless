@@ -1,61 +1,77 @@
 ---
 title: Comfy Headless Handbook
-description: The complete guide to using Comfy Headless — a production-ready headless client for ComfyUI with AI-powered prompt intelligence, video generation, and a modern Gradio UI.
+description: The complete guide to driving ComfyUI from Python — image and video generation, verified node graphs, and a clean API over the full ComfyUI feature set.
 sidebar:
   order: 0
 ---
 
-Welcome to the **Comfy Headless Handbook**. This guide covers everything you need to go from zero to generating images and videos programmatically through ComfyUI — without ever touching a node graph.
+Welcome to the **Comfy Headless Handbook**. This guide takes you from zero to generating
+images and video through ComfyUI programmatically, without ever opening a node graph.
 
-## What is Comfy Headless?
+## What Comfy Headless actually is
 
-Comfy Headless is a Python library that wraps ComfyUI's full power behind a clean, developer-friendly API. Instead of wiring nodes together in a visual editor, you write a few lines of Python and let the library handle workflow compilation, model selection, and prompt optimization.
+It is a **graph emitter and poller**. You call a Python function; it builds a ComfyUI
+API-format JSON graph, POSTs it to `/prompt`, polls `/history` until the job finishes, and
+returns the output paths.
 
-| Problem | How Comfy Headless Solves It |
-|---------|------------------------------|
-| ComfyUI's node interface is overwhelming | Simple presets and a clean Python API abstract the complexity away |
-| Prompt engineering is hard | AI-powered prompt enhancement via Ollama rewrites prompts for better results |
-| Video generation is complex | One-line video generation with curated model presets |
-| No idea what settings to use | VRAM-aware recommendations pick the best settings automatically |
-
-## Who is this for?
-
-- **Users** who want great results without prompt engineering expertise. Launch the Gradio UI and start generating immediately.
-- **Developers** who need a clean Python API with proper error handling, WebSocket progress hooks, and circuit-breaker retry logic for production integration.
-- **Pipeline builders** who want headless operation, modular installs, and configurable settings for automation workflows, CI image testing, or batch generation.
-
-## Handbook contents
-
-| Page | What you will learn |
-|------|---------------------|
-| [Getting Started](./getting-started/) | Installation options, modular extras, and prerequisites |
-| [Usage](./usage/) | Library usage, AI enhancement, video generation, and the web UI |
-| [Video Models](./video-models/) | Supported video models, presets, and VRAM requirements |
-| [Configuration](./configuration/) | Feature flags, WebSocket progress, and runtime settings |
-| [API Reference](./api-reference/) | Core classes, error handling, and the full public API surface |
-| [Architecture](./architecture/) | Project structure, module responsibilities, and ComfyUI node requirements |
-| [For Beginners](./beginners/) | New to Comfy Headless? Start here |
-
-## Philosophy
-
-Comfy Headless follows three design principles:
-
-1. **Output-first** — the library exists to produce images and videos. Every abstraction serves that goal.
-2. **Modular by design** — the core is approximately 2 MB with zero heavy dependencies. Add extras only when you need them.
-3. **Honest defaults** — preset recommendations are VRAM-aware and transparent. The library never hides trade-offs.
-
-## Quick taste
-
-```bash
-pip install comfy-headless[standard]
+```
+your call ─→ build API-format graph ─→ POST /prompt ─→ poll /history ─→ GET /view
+                     │
+                     └─ validated against GET /object_info
 ```
 
-```python
-from comfy_headless import ComfyClient
+Holding that model in your head explains most of the library's behaviour. It does not wrap
+ComfyUI's Python internals and does not run models itself — it composes node graphs and
+hands them to a ComfyUI server you point it at. Everything it can do is something ComfyUI
+can do; the value is that you express it in a function call instead of a canvas.
 
-client = ComfyClient()
-result = client.generate_image("a beautiful sunset over mountains")
-print(f"Generated: {result['images']}")
-```
+## Why v3.0 exists
 
-That is all it takes. Read on to learn about modular installation, AI prompt enhancement, video model presets, and more.
+Because the library emits node names, a node that ComfyUI has renamed or removed becomes a
+shipped bug. The graph is rejected at submit time with an opaque error, and nothing warns
+you beforehand.
+
+In August 2026 every node type this library emits was audited against the live ComfyUI
+catalog. **Nine no longer existed.** They had been wrapper-pack nodes mislabelled as core;
+ComfyUI kept the generic sampler path and the per-family latent nodes, and dropped the
+family-specific pipelines.
+
+v3.0 removes them, rebuilds the affected graphs on verified nodes, and adds the machinery
+so the rot is visible next time:
+
+- Every emitted node type is recorded with its provenance — core, or which pack supplies it
+- `check_workflow_dependencies()` reports what a target server is missing
+- `require_workflow_dependencies()` raises a named error instead of letting `/prompt` fail
+  cryptically
+- A contract test builds every preset and asserts no removed node, no undeclared node, no
+  dangling reference
+
+If you take one habit from this handbook: **check dependencies before you spend a run.**
+
+## Where to go next
+
+| You want to | Read |
+|-------------|------|
+| Install and generate your first image | [Getting Started](../getting-started/) |
+| Learn the day-to-day API | [Usage](../usage/) |
+| Pick a video model for your GPU | [Video Models](../video-models/) |
+| Configure URLs, timeouts, features | [Configuration](../configuration/) |
+| Look up an exact signature | [API Reference](../api-reference/) |
+| Understand the internals | [Architecture](../architecture/) |
+| You are new to all of this | [For Beginners](../beginners/) |
+
+## At a glance
+
+- **8 image presets** — `draft`, `fast`, `quality`, `hd`, `portrait`, `landscape`,
+  `cinematic`, `square`
+- **24 video presets** across **9 model families**
+- **Modular installs** — core is ~2MB; AI, WebSocket, UI, health, validation and tracing
+  are opt-in extras
+- **Structured errors** — every exception carries a code, a message and a hint
+- **Python 3.10+**, MIT licensed
+
+## Requirements
+
+A running ComfyUI instance is required — Comfy Headless is a client, not a renderer. It
+defaults to `http://localhost:8188`. Optional AI prompt enhancement needs a local
+[Ollama](https://ollama.com/).

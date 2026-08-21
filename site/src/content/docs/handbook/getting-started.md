@@ -1,94 +1,160 @@
 ---
 title: Getting Started
-description: Install Comfy Headless, configure prerequisites, and generate your first image in under a minute.
+description: Install Comfy Headless, point it at a ComfyUI server, and generate your first image.
 sidebar:
   order: 1
 ---
 
-This page walks you through installing Comfy Headless, setting up prerequisites, and running your first generation.
-
 ## Prerequisites
 
-Before installing Comfy Headless, make sure you have:
+| Requirement | Notes |
+|-------------|-------|
+| Python 3.10+ | Checked at install time |
+| A running ComfyUI | Comfy Headless is a client — it does not render anything itself |
+| Ollama *(optional)* | Only for AI prompt enhancement |
 
-- **Python 3.10 or later** — check with `python --version`
-- **ComfyUI running locally** — by default Comfy Headless connects to `http://localhost:8188`
-- **Optional: Ollama** — required only if you want AI-powered prompt enhancement (the `[ai]` extra)
+Start ComfyUI first and note its address. The default assumption is
+`http://localhost:8188`.
 
-## Modular installation
-
-Comfy Headless uses Python extras so you install only the dependencies you actually need. The core package is approximately 2 MB with zero heavy dependencies.
-
-### Install options
+## Install
 
 ```bash
-# Core only (minimal, ~2MB)
-pip install comfy-headless
-
-# With AI prompt enhancement (Ollama)
-pip install comfy-headless[ai]
-
-# With WebSocket real-time progress
-pip install comfy-headless[websocket]
-
-# Recommended for most users
 pip install comfy-headless[standard]
+```
 
-# Everything (UI, health monitoring, observability)
+`[standard]` is the right default for most people: it adds AI prompt enhancement and
+WebSocket progress on top of the core client.
+
+If you want the smallest possible footprint:
+
+```bash
+pip install comfy-headless          # core only, ~2MB
+```
+
+Or everything, including the web UI:
+
+```bash
 pip install comfy-headless[full]
 ```
 
-### Available extras
+See [Configuration](../configuration/) for the full extras table.
 
-| Extra | Dependencies | What it adds |
-|-------|-------------|--------------|
-| `ai` | httpx | Ollama-powered prompt analysis and enhancement |
-| `websocket` | websockets | Real-time generation progress updates over WebSocket |
-| `health` | psutil | System health monitoring and circuit-breaker retry logic |
-| `ui` | gradio | Gradio 6.0 web interface with the Ocean Mist theme |
-| `validation` | pydantic | Configuration validation with Pydantic models |
-| `observability` | opentelemetry | Distributed tracing for production deployments |
-| `standard` | ai + websocket | The recommended bundle for most users |
-| `full` | All of the above | Everything in one install |
+## Verify the install
 
-### Choosing the right extra
+```bash
+comfy-headless --version
+comfy-headless --check       # which optional features are active
+comfy-headless --diagnose    # version, Python, features, resolved config
+```
 
-- **Experimenting locally?** Start with `comfy-headless[standard]`. It gives you AI enhancement and WebSocket progress without pulling in heavy UI or tracing deps.
-- **Building a production pipeline?** Use `comfy-headless[health]` or `comfy-headless[full]` for circuit-breaker retry logic and observability.
-- **Just need the API?** Plain `comfy-headless` (no extras) is enough for basic image generation.
+`--diagnose` is the fastest way to answer "why isn't this working" — it prints the
+resolved ComfyUI URL alongside feature availability.
 
-## First generation
-
-Once installed, generating an image is three lines:
+## Your first image
 
 ```python
 from comfy_headless import ComfyClient
 
-client = ComfyClient()  # connects to localhost:8188 by default
+client = ComfyClient()                  # http://localhost:8188
 result = client.generate_image("a beautiful sunset over mountains")
-print(f"Generated: {result['images']}")
+
+print(result["success"])                # True
+print(result["images"])                 # list of output paths
+print(result["seed"])                   # the seed actually used
 ```
 
-The `ComfyClient` handles workflow compilation, prompt submission, and result retrieval. You get back a dictionary with an `images` key containing the paths to your generated files.
+Every generation call returns a **dict**, not a result object. The keys are `success`,
+`prompt_id`, `images` (or `videos`), `error`, `seed` and `preset`.
 
-## Verifying the installation
-
-You can check which extras are active in your environment:
+### Pointing at a different server
 
 ```python
-from comfy_headless import FEATURES, list_missing_features
-
-print(FEATURES)
-# {'ai': True, 'websocket': True, 'health': False, ...}
-
-print(list_missing_features())
-# {'health': 'pip install comfy-headless[health]', ...}
+client = ComfyClient("http://192.168.1.50:8188")
 ```
 
-`FEATURES` is a dictionary mapping extra names to booleans. `list_missing_features()` returns install commands for any extras that are not currently available.
+Or set it in the environment, which is usually better for anything scripted:
 
-## Next steps
+```bash
+export COMFY_HEADLESS_COMFYUI__URL=http://192.168.1.50:8188
+```
 
-- Learn how to use the library API, AI enhancement, and video generation in [Usage](../usage/).
-- Explore video model presets and VRAM requirements in [Video Models](../video-models/).
-- Configure feature flags and WebSocket progress in [Configuration](../configuration/).
+Note the `__` double underscore — it separates the config section from the key. See
+[Configuration](../configuration/).
+
+## Check the server is reachable
+
+```python
+if not client.is_online():
+    raise SystemExit("ComfyUI is not responding")
+
+print(client.get_vram_gb(), "GB total VRAM")
+print(client.get_free_vram_gb(), "GB free")
+```
+
+`client.ensure_online()` does the same thing but raises `ComfyUIOfflineError` instead of
+returning a boolean.
+
+## Use a preset
+
+Presets set resolution, steps and CFG together, and override any individual values you
+also pass:
+
+```python
+result = client.generate_image("a mountain lake at dawn", preset="hd")
+```
+
+Available: `draft`, `fast`, `quality`, `hd`, `portrait`, `landscape`, `cinematic`,
+`square`.
+
+```python
+from comfy_headless import list_presets
+print(list_presets())
+```
+
+## Your first video
+
+```python
+result = client.generate_video(
+    "a slow pan across a mountain range",
+    preset="ltx_quality",
+)
+print(result["videos"])
+```
+
+Video is selected **by preset**, not by model name — there is no `model` argument. If you
+are unsure which preset your GPU can handle:
+
+```python
+from comfy_headless import get_recommended_preset
+print(get_recommended_preset(vram_gb=16))
+```
+
+See [Video Models](../video-models/) for the full list and what each family needs.
+
+## Before you spend a long run
+
+Video graphs can require custom node packs. Ask first rather than discovering it at submit
+time:
+
+```python
+workflow = client.build_video_workflow("a cat walking")
+
+report = client.check_workflow_dependencies(workflow)
+if report["missing_packs"]:
+    print("Install these first:", report["missing_packs"])
+```
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---------|--------------|
+| `ComfyUIOfflineError` | ComfyUI isn't running, or the URL is wrong — check `--diagnose` |
+| `MissingNodePackError` | The graph needs a custom node pack this server doesn't have |
+| `GenerationTimeoutError` | Model still loading, or the job is genuinely slow — raise `timeout` |
+| AI functions missing | Install `[ai]` and start Ollama |
+| Import error on `launch` | Install `[ui]` |
+
+## Next
+
+- [Usage](../usage/) — the day-to-day API
+- [For Beginners](../beginners/) — a gentler introduction if the above moved too fast

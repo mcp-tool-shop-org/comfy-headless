@@ -21,7 +21,12 @@ class TestSettings:
         from comfy_headless.config import Settings
 
         settings = Settings()
-        assert settings.version == "2.5.1"
+        # Assert against the package version, never a literal -- a hardcoded
+        # version here silently ENFORCED drift: config.py sat at 2.5.1 while
+        # the package moved to 2.5.7 and then 3.0.0, and this test passed.
+        from comfy_headless import __version__
+
+        assert settings.version == __version__
 
     def test_to_dict(self):
         """Test settings serialization."""
