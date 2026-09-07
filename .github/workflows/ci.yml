@@ -1,3 +1,14 @@
+# --- Measured CI cost (dogfood-swarm SKILL item 8) --------------------------
+# 13 billable min per push across 5 jobs (10.3 min actual wall time),
+# measured 2026-09-07 from run 34124782600. Most expensive jobs:
+#     5 min  test (3.11)  (4.4 min wall)
+#     5 min  test (3.12)  (4.7 min wall)
+#     1 min  Pip Audit  (0.7 min wall)
+# GitHub bills per JOB, rounded UP to the minute, x2 Windows / x10 macOS, so
+# billable minutes exceed wall time - many short jobs cost more than one long
+# one. This number is measured, never estimated; re-measure after any change:
+#   gh api repos/mcp-tool-shop-org/comfy-headless/actions/runs/<id>/jobs
+# ---------------------------------------------------------------------------
 name: CI
 
 on:
