@@ -17,3 +17,25 @@ updates:
     groups:
       all-github-actions:
         patterns: ["*"]
+
+  # npm / site: SECURITY updates only. `open-pull-requests-limit: 0` switches OFF
+  # version updates for this ecosystem, so this adds no routine PR volume -- it
+  # exists purely to GROUP the security PRs GitHub opens regardless of config.
+  #
+  # Security updates fire even with no matching `updates:` entry, and a `groups:`
+  # block only applies to VERSION updates unless it sets `applies-to:
+  # security-updates`. Ungrouped, every advisory against the shared
+  # site/package-lock.json opens its own PR; those PRs all rewrite that one
+  # lockfile, so they conflict with each other and every merge forces the rest to
+  # rebase. Coupled peers (vite + esbuild) have to move together or the
+  # `npm ci` in pages.yml resolves an inconsistent tree. Grouping clears them in
+  # a single PR.
+  - package-ecosystem: "npm"
+    directory: "/site"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 0
+    groups:
+      site-security:
+        applies-to: security-updates
+        patterns: ["*"]
