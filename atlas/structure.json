@@ -1,0 +1,2517 @@
+{
+  "boundaries": [
+    {
+      "dynamicReads": 0,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "aa84e95b4ba4d9315d220594c5ac5d780798bbb443ca0459a26b87cfa10fe34c",
+          "path": ".github/ISSUE_TEMPLATE/bug_report.yml"
+        },
+        {
+          "hash": "d3776254e02532d85c0c34b9546d75c161a97038bc91b3c50fd8bf6632ea2231",
+          "path": ".github/ISSUE_TEMPLATE/feature_request.yml"
+        },
+        {
+          "hash": "db081001b14aa632a4cc4904b2b38e8269d89203ff57530474b60fabd1c510ad",
+          "path": ".github/dependabot.yml"
+        },
+        {
+          "hash": "525090eff97d315f03d43a30641e727815d1efc91edc0ed56c4e1f65b131f899",
+          "path": ".github/workflows/ci.yml"
+        },
+        {
+          "hash": "366369cfe5b2c95aeb6ea8ae1478c088162a20ebde59982cc5f7e645e559401c",
+          "path": ".github/workflows/pages.yml"
+        },
+        {
+          "hash": "7eb8edcd609f83a7015d9d3979b60c4635b7936092fe9d6c2a978fc9f472290b",
+          "path": ".github/workflows/publish.yml"
+        }
+      ],
+      "globs": [
+        ".github/**"
+      ],
+      "importConfidence": "full",
+      "name": ".github",
+      "origin": "authored",
+      "role": "config",
+      "testedBy": 0,
+      "unresolvedSites": 0
+    },
+    {
+      "dynamicReads": 0,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "17c48ddafe75359e0bb4c20f7c9a7313851ab9fb80e8cb15a88c9367abc41ad4",
+          "path": "assets/logo.png"
+        }
+      ],
+      "globs": [
+        "assets/**"
+      ],
+      "importConfidence": "full",
+      "name": "assets",
+      "origin": "authored",
+      "role": "data",
+      "testedBy": 0,
+      "unresolvedSites": 0
+    },
+    {
+      "dynamicReads": 3,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 2,
+      "entryPoints": [
+        "comfy_headless/__main__.py"
+      ],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "6c2700b9b536cbf113019740d2b4b6f59c2480b14501ac3e8f41112f11678ff2",
+          "importOrder": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/http_client.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/cleanup.py",
+            "comfy_headless/client.py",
+            "comfy_headless/health.py",
+            "comfy_headless/websocket_client.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/_version.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/help_system.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/metadata.py",
+            "comfy_headless/node_packs.py",
+            "comfy_headless/secrets_manager.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/ui.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/_version.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/cleanup.py",
+            "comfy_headless/client.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/health.py",
+            "comfy_headless/help_system.py",
+            "comfy_headless/http_client.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/metadata.py",
+            "comfy_headless/node_packs.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/secrets_manager.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/ui.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/video.py",
+            "comfy_headless/websocket_client.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "comfy_headless/__init__.py",
+          "sequences": [
+            {
+              "calls": [
+                {
+                  "line": 434,
+                  "name": "get",
+                  "target": {
+                    "file": "comfy_headless/feature_flags.py"
+                  }
+                },
+                {
+                  "branch": "not FEATURES.get(feature, False)",
+                  "line": 435,
+                  "name": "get_install_hint",
+                  "target": {
+                    "file": "comfy_headless/feature_flags.py"
+                  }
+                }
+              ],
+              "exported": false,
+              "invokedAtTopLevel": false,
+              "isDefaultExport": false,
+              "name": "__getattr__"
+            }
+          ]
+        },
+        {
+          "entry": "main",
+          "entryRule": 0,
+          "exports": [
+            "main"
+          ],
+          "hash": "7f3dacd328dd6bdd11691af7dfbe20bb46da3882d38166d109f44c2b2a3445cd",
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/config.py",
+            "comfy_headless/feature_flags.py"
+          ],
+          "path": "comfy_headless/__main__.py",
+          "sequences": [
+            {
+              "calls": [
+                {
+                  "line": 38,
+                  "name": "items",
+                  "target": {
+                    "file": "comfy_headless/feature_flags.py"
+                  }
+                },
+                {
+                  "line": 64,
+                  "name": "list_available_features",
+                  "target": {
+                    "file": "comfy_headless/feature_flags.py"
+                  }
+                },
+                {
+                  "line": 66,
+                  "name": "list_missing_features",
+                  "target": {
+                    "file": "comfy_headless/feature_flags.py"
+                  }
+                },
+                {
+                  "line": 76,
+                  "name": "get",
+                  "target": {
+                    "file": "comfy_headless/feature_flags.py"
+                  }
+                },
+                {
+                  "line": 78,
+                  "name": "get_install_hint",
+                  "target": {
+                    "file": "comfy_headless/feature_flags.py"
+                  }
+                },
+                {
+                  "line": 97,
+                  "name": "launch",
+                  "target": {
+                    "file": "comfy_headless/__init__.py"
+                  }
+                }
+              ],
+              "exported": true,
+              "invokedAtTopLevel": true,
+              "isDefaultExport": false,
+              "name": "main"
+            }
+          ]
+        },
+        {
+          "hash": "8dbdc168006f92b19f132685032395699a9c7fd3839c1fa22034a17eee891514",
+          "path": "comfy_headless/_version.py"
+        },
+        {
+          "exports": [
+            "extract_object_info_types",
+            "get_node_input",
+            "has_output_node",
+            "join_field_path",
+            "match_types",
+            "parse_field_path",
+            "require_output_node",
+            "set_node_input",
+            "validate_node_input"
+          ],
+          "hash": "1f31b7a7d32b97cea92ef092670dd1d5126629fa2c71ca703d6842daecb4db2c",
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/addressing.py"
+        },
+        {
+          "exports": [
+            "build_audio_separation_workflow",
+            "build_audio_workflow",
+            "get_audio_builder",
+            "list_audio_presets"
+          ],
+          "hash": "dfeebf1f70b97ed06debeaf36dc95cb0dc8b323709278d5e877404c77279a9cc",
+          "importsFiles": [
+            "comfy_headless/addressing.py"
+          ],
+          "path": "comfy_headless/audio.py"
+        },
+        {
+          "exports": [
+            "cleanup_all",
+            "cleanup_temp_files",
+            "get_temp_manager",
+            "register_cleanup_callback",
+            "register_shutdown_handlers",
+            "save_temp_image",
+            "save_temp_video"
+          ],
+          "hash": "716ad6def31318fbeab26e31588c2d9c83d5f549536e3a52fc0721732177f816",
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/cleanup.py"
+        },
+        {
+          "hash": "bf692d96fbf428d8a51afbebbf58b6924da52a1d0f55df70e8f47aa756ff7287",
+          "importOrder": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/video.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/metadata.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/addressing.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/metadata.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "comfy_headless/client.py"
+        },
+        {
+          "exports": [
+            "get_cache_dir",
+            "get_settings",
+            "get_temp_dir",
+            "reload_settings"
+          ],
+          "hash": "07d423f6c3d9d1e5652577fd3b0ebe6bec947b1918fbb9b734df8803133a2672",
+          "importsFiles": [
+            "comfy_headless/_version.py"
+          ],
+          "path": "comfy_headless/config.py"
+        },
+        {
+          "exports": [
+            "collect_suggestions",
+            "format_error_for_user",
+            "get_verbosity",
+            "set_verbosity"
+          ],
+          "hash": "d09d6473842ad108428608327d83ddace955fac4d5995a896fd63aeee3bc67cf",
+          "path": "comfy_headless/exceptions.py"
+        },
+        {
+          "entry": "_detect_features",
+          "entryRule": 1,
+          "exports": [
+            "check_feature",
+            "ensure_feature",
+            "get_install_hint",
+            "list_available_features",
+            "list_missing_features",
+            "require_feature"
+          ],
+          "hash": "e9e5cee59fd543f96fb4a8e898bbe8616b6757e89f4439ab1ebd79c7ca856a6b",
+          "path": "comfy_headless/feature_flags.py",
+          "sequences": []
+        },
+        {
+          "exports": [
+            "check_circuit_breakers",
+            "check_comfyui_health",
+            "check_disk_space",
+            "check_health",
+            "check_memory",
+            "check_ollama_health",
+            "check_temp_files",
+            "full_health_check",
+            "get_health_checker",
+            "is_healthy"
+          ],
+          "hash": "993f558895df091e6a5d194942744e2e00432952dba5f0891b941591f107899e",
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/retry.py"
+          ],
+          "path": "comfy_headless/health.py"
+        },
+        {
+          "exports": [
+            "format_help_list",
+            "format_quick_help",
+            "get_api_reference",
+            "get_command_help",
+            "get_help",
+            "get_help_for_error",
+            "get_help_level",
+            "list_topics",
+            "search_help",
+            "set_help_level"
+          ],
+          "hash": "0144f9d86ab4ff1023b6b01d713fa56920029f84763517c755e0692c4d07738f",
+          "importsFiles": [
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/help_system.py"
+        },
+        {
+          "exports": [
+            "close_all_clients",
+            "get_async_http_client",
+            "get_http_client"
+          ],
+          "hash": "8aa448479c09637e71a2a1f7767c174b9c3f73eaf4e9ee7ae8968fedb0159dd2",
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/retry.py"
+          ],
+          "path": "comfy_headless/http_client.py"
+        },
+        {
+          "exports": [
+            "build_inference_workflow",
+            "get_inference_builder"
+          ],
+          "hash": "4d7c65000b75adfcef25f7e4f34787c1c2134f14062b7a76440db2b5c0bc4d41",
+          "importsFiles": [
+            "comfy_headless/addressing.py"
+          ],
+          "path": "comfy_headless/inference.py"
+        },
+        {
+          "exports": [
+            "analyze_prompt",
+            "enhance_prompt",
+            "get_few_shot_examples",
+            "get_few_shot_prompt",
+            "get_intelligence",
+            "get_prompt_cache",
+            "quick_enhance",
+            "sanitize_prompt"
+          ],
+          "hash": "99b9a4eac544f0049b97875b3614342192c4a1ba4ea0458da28e9243c5a33cd7",
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/retry.py"
+          ],
+          "path": "comfy_headless/intelligence.py"
+        },
+        {
+          "exports": [
+            "clear_request_id",
+            "get_logger",
+            "get_tracer",
+            "log_exception",
+            "log_operation",
+            "log_timing",
+            "set_log_level",
+            "set_request_id",
+            "traced_operation"
+          ],
+          "hash": "ea56ad108a50b31f00c61dba0eaa9d183ee4b144319c78f7000dcd2664693496",
+          "importsFiles": [
+            "comfy_headless/config.py"
+          ],
+          "path": "comfy_headless/logging_config.py"
+        },
+        {
+          "exports": [
+            "extract_prompt_graph",
+            "read_png_text_chunks",
+            "read_workflow_metadata"
+          ],
+          "hash": "e6be30cf889d7babbe52d93a5d0c425b05c878202acebf03949d05320cb3095e",
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/metadata.py"
+        },
+        {
+          "exports": [
+            "get_node_pack",
+            "required_node_packs"
+          ],
+          "hash": "928c06da1215682fdb17bb54d6286eff5445c9f75ea6c1992a6a0c014ad7e052",
+          "path": "comfy_headless/node_packs.py"
+        },
+        {
+          "exports": [
+            "async_timeout",
+            "get_circuit_breaker",
+            "retry_async",
+            "retry_on_exception",
+            "retry_with_backoff",
+            "with_timeout"
+          ],
+          "hash": "910c3610273444f23371fe4eb029c9c62da321a90bbb21bcaebe187c0345512b",
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/retry.py"
+        },
+        {
+          "hash": "8e7d028ae8cbcc6d0af7a0e356392f02789cebfccc6fa83d1f109c690e30ebdb",
+          "importsFiles": [
+            "comfy_headless/secrets_manager.py"
+          ],
+          "path": "comfy_headless/secrets.py"
+        },
+        {
+          "exports": [
+            "generate_api_key",
+            "generate_token",
+            "get_secret",
+            "get_secret_str",
+            "get_secrets_manager",
+            "hash_secret",
+            "mask_url_credentials",
+            "redact_dict",
+            "verify_hashed_secret"
+          ],
+          "hash": "d584c7675cda33dab3a8242edecd1a2d5849d297ba4973d54c4070c93fca50e9",
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/secrets_manager.py"
+        },
+        {
+          "exports": [
+            "check_test_quality",
+            "create_interface",
+            "get_coverage_html_link",
+            "get_test_files",
+            "main",
+            "parse_coverage_output",
+            "parse_pytest_output",
+            "run_all_tests",
+            "run_command",
+            "run_failed_only",
+            "run_specific_test",
+            "run_tests_with_coverage"
+          ],
+          "hash": "a8526e78a2d74749f5d7fba66d2d837646fc88855debdec54ab5f399cc9226be",
+          "path": "comfy_headless/test_runner_ui.py"
+        },
+        {
+          "exports": [
+            "create_comfy_theme",
+            "get_css",
+            "get_theme_info"
+          ],
+          "hash": "ddb7a0036ca791a2b48a0b3a1508aeea1a912392c958c4ddd21203076c9bcbf1",
+          "path": "comfy_headless/theme.py"
+        },
+        {
+          "exports": [
+            "build_3d_workflow",
+            "get_three_d_builder",
+            "list_3d_presets"
+          ],
+          "hash": "e653f4b95a19675c893395d43560a50106304fc551782a094e671faf31c3f965",
+          "path": "comfy_headless/three_d.py"
+        },
+        {
+          "exports": [
+            "apply_preset",
+            "apply_video_preset",
+            "cancel_generation",
+            "create_ui",
+            "enhance_prompt_with_ollama",
+            "format_error_with_suggestions",
+            "generate_image",
+            "generate_video",
+            "get_history_list",
+            "get_models_update",
+            "get_motion_models_update",
+            "get_queue_status",
+            "get_status",
+            "random_prompt",
+            "refresh_models",
+            "refresh_motion_models",
+            "refresh_samplers",
+            "refresh_schedulers"
+          ],
+          "hash": "42435367cd3d25e0c4873dcf6a5a033fbf975ba505ff5cf36e27671c39201c02",
+          "importsFiles": [
+            "comfy_headless/client.py",
+            "comfy_headless/config.py",
+            "comfy_headless/help_system.py",
+            "comfy_headless/theme.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "comfy_headless/ui.py"
+        },
+        {
+          "exports": [
+            "clamp_dimensions",
+            "sanitize_prompt",
+            "validate_choice",
+            "validate_dimensions",
+            "validate_generation_params",
+            "validate_in_range",
+            "validate_path",
+            "validate_prompt",
+            "validated_dimensions",
+            "validated_prompt"
+          ],
+          "hash": "66b48622588dd16f4cbdfa342db57c803e5a3f05aa0c23c71e9348a6b5eba07b",
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/validation.py"
+        },
+        {
+          "exports": [
+            "build_video_workflow",
+            "get_recommended_preset",
+            "get_video_builder",
+            "get_video_preset",
+            "list_video_models",
+            "list_video_presets"
+          ],
+          "hash": "a8a92008e0f9cdb01713b233de6a04fd3016c0022b4a1309ee26c158b16bdc00",
+          "importOrder": [
+            "comfy_headless/node_packs.py",
+            "comfy_headless/addressing.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/addressing.py",
+            "comfy_headless/node_packs.py"
+          ],
+          "path": "comfy_headless/video.py"
+        },
+        {
+          "hash": "a69ce2756b1a88d02f0cea7ac690cfb238a967f441176e3bcb7644b385980117",
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/websocket_client.py"
+        },
+        {
+          "exports": [
+            "build_controlnet_workflow",
+            "build_qwen_edit_workflow",
+            "compile_workflow",
+            "compute_workflow_hash",
+            "create_inpaint_template",
+            "create_qwen_txt2img_template",
+            "create_txt2img_hires_template",
+            "create_txt2img_template",
+            "create_upscale_template",
+            "get_compiler",
+            "get_library",
+            "get_optimizer",
+            "get_preset_info",
+            "get_snapshot_manager",
+            "get_workflow_cache",
+            "list_presets",
+            "validate_workflow_dag"
+          ],
+          "hash": "3806804489b808a04e91af08f75b0a4af7f45cab5fd002c9d131e851ddd012f6",
+          "importOrder": [
+            "comfy_headless/logging_config.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "comfy_headless/workflows.py"
+        }
+      ],
+      "globs": [
+        "comfy_headless/**"
+      ],
+      "importConfidence": "full",
+      "name": "comfy_headless",
+      "origin": "authored",
+      "outsidePlaces": [
+        {
+          "reads": 3,
+          "where": [
+            "temp"
+          ],
+          "writes": 0
+        }
+      ],
+      "outsideReads": 3,
+      "role": "code",
+      "testedBy": 49,
+      "unresolvedNamed": [
+        {
+          "path": "comfy_headless/__init__.py",
+          "specifier": null,
+          "why": "dynamic"
+        }
+      ],
+      "unresolvedSites": 1
+    },
+    {
+      "dynamicReads": 0,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [
+        "docs/index.md"
+      ],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "8c918ec1f39f2dfacf6f8615a96150fdd702d315cf04a310d42a4e12e2896c8b",
+          "path": "docs/_config.yml"
+        },
+        {
+          "hash": "52a5e8055375e94182d813e3dd9ee3f0892d4ee2c31df5ed631d9811f96c2c38",
+          "path": "docs/assets/social-preview.png"
+        },
+        {
+          "hash": "11f4ea2a616410063941d53270931b101156856603716cdf2d44f20ec47f3901",
+          "path": "docs/assets/social-preview.svg"
+        },
+        {
+          "hash": "c789f3f0480a983416e29440da3cd63860039596b0e7bc1f6b8bed23f9ddeb56",
+          "path": "docs/index.md"
+        }
+      ],
+      "globs": [
+        "docs/**"
+      ],
+      "importConfidence": "full",
+      "name": "docs",
+      "origin": "authored",
+      "role": "data",
+      "testedBy": 0,
+      "unresolvedSites": 0
+    },
+    {
+      "dynamicReads": 0,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [
+        "kb/index.json"
+      ],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "6dc6883c1d8a523ee1d11eecc5041e1747358053473524cf32d5b305966110d4",
+          "path": "kb/README.md"
+        },
+        {
+          "hash": "33ca396f5ef64e968cd4e6a1c3e152123360b4362dfeebbf17e90ecc5e916c5e",
+          "path": "kb/addressing.md"
+        },
+        {
+          "hash": "255ee421c70b3f1625ece94ba06df12d7b159166227ab4dfb45658a683f19ef0",
+          "path": "kb/index.json"
+        },
+        {
+          "hash": "96b2848c217d071769ac69d34fce214f0f290683a6b1c85bdc0e1ea05f786fc7",
+          "path": "kb/nodes.json"
+        },
+        {
+          "hash": "d413d8c8e8fc9d965a5f0118785e240dd9b79284e0226ee3b3ad1f686b31914d",
+          "path": "kb/profiles/audio.md"
+        },
+        {
+          "hash": "b5446ac04dd74ae7a32b151220e166bf3944fbf5c9e483789828c4e796ac291c",
+          "path": "kb/profiles/image.md"
+        },
+        {
+          "hash": "9cfb417e8e428f5c2c248634d715e54f95cec2325a5a715336d08f586fb2b40a",
+          "path": "kb/profiles/inference.md"
+        },
+        {
+          "hash": "d576d67418bcc8b86bb43f0cd72f70cba7614932be7d58c4732a0691e9d17635",
+          "path": "kb/profiles/metadata.md"
+        },
+        {
+          "hash": "9a0004c4162a18b9a5bd4f740fc97d633bf0e1833c6fcb5f8be783914a84efd2",
+          "path": "kb/profiles/three_d.md"
+        },
+        {
+          "hash": "6eff8d28c258120d387d8c0717d5d884e177bf18934e648625c8d17d1efcac98",
+          "path": "kb/profiles/video.md"
+        },
+        {
+          "hash": "95ef652d3de59b569775ef7b7675644754397ea6fb5f52462b75b10d1a917993",
+          "path": "kb/retrieval.md"
+        },
+        {
+          "hash": "cad7ecda38b99813f831cfd3c3af6062a98ab6f4f00fd38be37288a8d442d0bb",
+          "path": "kb/traps.md"
+        },
+        {
+          "hash": "5550e560f68e12176fa82d76d050829f5efb91e21e52c5fff03052e0b7d58830",
+          "path": "kb/workflows/3d_hunyuan3d_v2_detail.json"
+        },
+        {
+          "hash": "a60d4f8d267233c2a31dd4b49aed83e826a1751c6b67d76ddc9c20592b63c4d6",
+          "path": "kb/workflows/3d_hunyuan3d_v2_draft.json"
+        },
+        {
+          "hash": "a7f8337683cfea27a51197434f9aa34a549f680964fa0325a62746b4b30b65e0",
+          "path": "kb/workflows/3d_hunyuan3d_v2_standard.json"
+        },
+        {
+          "hash": "e15b876e6af63b13718148b35c38d14ba8394fe78faca92c1843bb97ba3b32a4",
+          "path": "kb/workflows/audio_ace_step_15_draft.json"
+        },
+        {
+          "hash": "a784526df884979a4c5d295b23a3e2d71cef5465f35c0e0a719e34feea0681c1",
+          "path": "kb/workflows/audio_ace_step_15_jingle.json"
+        },
+        {
+          "hash": "e392be0e6072b9fab970a60c07e100d95eaa89080f107d1eac5c36d0f960c629",
+          "path": "kb/workflows/audio_ace_step_15_music.json"
+        },
+        {
+          "hash": "c47fb8bcb94db89afc5b8ce5a5debd00cb68509f1484ee28e795a2d22919b0cf",
+          "path": "kb/workflows/audio_ace_step_15_music_long.json"
+        },
+        {
+          "hash": "a1635e213e9c77d8d21834b3c660bfd9efa9ca8493fd64bc5386da1198086f7f",
+          "path": "kb/workflows/audio_ace_step_15_music_mp3.json"
+        },
+        {
+          "hash": "af91e2f44bd9cd9ce526392e0e5c462bbfaa5d8f21c3cb5127a2d93c90c1ae25",
+          "path": "kb/workflows/audio_separation_stems.json"
+        },
+        {
+          "hash": "813a3ebc4271c63172ecd49e9ef614cadf33019f792cf9f0a8ab4590ea807ef4",
+          "path": "kb/workflows/image_controlnet_union_qwen.json"
+        },
+        {
+          "hash": "a6d8d0de682bd28810dc1df4d560ee9f6b9e47e65db6407465fe391d1315f6eb",
+          "path": "kb/workflows/image_controlnet_union_sdxl.json"
+        },
+        {
+          "hash": "51a3333d72aca20ec190dd1a0e8ab181672cb46a60b001a3bb2230a584a06a65",
+          "path": "kb/workflows/image_qwen_edit_2511.json"
+        },
+        {
+          "hash": "a868b1bc13140888dda0c88275c37b176f9eca415445f1a35158aa2578037932",
+          "path": "kb/workflows/image_qwen_txt2img_2512.json"
+        },
+        {
+          "hash": "6fe4b49c20b5844841dc6ae51c7e42940d315e1b89a08e35a7add99e812a155d",
+          "path": "kb/workflows/inference_florence2_caption.json"
+        },
+        {
+          "hash": "d627a31ac04f7018b92bb737fc8af2fc8e1ec3f72d5974923b77fa207adacfd6",
+          "path": "kb/workflows/inference_florence2_detailed_caption.json"
+        },
+        {
+          "hash": "34036cf6f1e033df2dcb5354e40392bf656edf17fd88c9baaad1923421a2e6e1",
+          "path": "kb/workflows/inference_florence2_detect.json"
+        },
+        {
+          "hash": "d95637daa9924a86a63d6f293d73d25e906e1baf39d1dbebae4ce6d7bbafc624",
+          "path": "kb/workflows/inference_florence2_more_detailed_caption.json"
+        },
+        {
+          "hash": "0411ff9d51722a734d5621206d668565a526818d684d50ffa23218f4bcb4698a",
+          "path": "kb/workflows/inference_florence2_ocr.json"
+        },
+        {
+          "hash": "dce2c807cf73db2f31668014a7b6191f344aa26ea47f15088c8a710a95fc6f36",
+          "path": "kb/workflows/inference_florence2_segment.json"
+        },
+        {
+          "hash": "af90b44e6720e826d182a34bc42b323613189815d04b0adc4ae0992c23e5ffb9",
+          "path": "kb/workflows/inference_florence2_tag.json"
+        },
+        {
+          "hash": "fea3188e26037b5280664e7aa429e0059237ccb81895e4a6d088966fbf307869",
+          "path": "kb/workflows/video_hunyuan15_720p.json"
+        },
+        {
+          "hash": "3a9adb586bd8391630b6739396d6ddb343f912b1aec369fc201899b1b5edd630",
+          "path": "kb/workflows/video_hunyuan15_i2v.json"
+        },
+        {
+          "hash": "db56893b5790c5a173862f0657eb0f5fe5769fd3b5cb15d7a2430da8ee6825c0",
+          "path": "kb/workflows/video_ltx_standard.json"
+        },
+        {
+          "hash": "be40683d15c7899ef5303064cbdfa94ecb107d9293746f71fa368c58dfc5e19e",
+          "path": "kb/workflows/video_mochi.json"
+        },
+        {
+          "hash": "8dd827c0efa4ee98a93c8020153cb4d966d90c4ed5b1262d7a5500ddb99eaac8",
+          "path": "kb/workflows/video_standard.json"
+        },
+        {
+          "hash": "5328d80ac0105a5b3bff52a913fedacb48b340698ac6aeff7152fe94980ecaa6",
+          "path": "kb/workflows/video_standard_core_output.json"
+        },
+        {
+          "hash": "ea1879ff7e0a176daa73fd6c28e25d75dddee5dd4f15bcd4d74da53f2a0831b4",
+          "path": "kb/workflows/video_wan_14b.json"
+        }
+      ],
+      "globs": [
+        "kb/**"
+      ],
+      "importConfidence": "full",
+      "name": "kb",
+      "origin": "generated",
+      "role": "data",
+      "testedBy": 0,
+      "unresolvedSites": 0
+    },
+    {
+      "dynamicReads": 0,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "79d690d66c02e82d7fe412020c364076d3ede0895bb17200d05e7ee9c0ca9d67",
+          "path": ".gitignore"
+        },
+        {
+          "hash": "d8a490d6953dd9cb9aa3d0ec8fc8e06ed64be6e364d5741f95bb8fa50dc502c1",
+          "path": ".pre-commit-config.yaml"
+        },
+        {
+          "hash": "65289c7eabc74df0eea68ce37225e6ba84ec83aaefc35392608d5e80cf156839",
+          "path": "CHANGELOG.md"
+        },
+        {
+          "hash": "d30a6f03c8bfbd75833e588d414b6f200dfc3c64217ada7c895850685f251df0",
+          "path": "CLAUDE.md"
+        },
+        {
+          "hash": "28a1b777f6e81f26b5fe66f0482e6d014833ab45d33c7aceda6fa79b396e8c4a",
+          "path": "CODE_OF_CONDUCT.md"
+        },
+        {
+          "hash": "54c0411defba9cd809b85e6348542445e94b0c1d52fa354ec725d62600a95e40",
+          "path": "CONTRIBUTING.md"
+        },
+        {
+          "hash": "6c1bf5cf3b58ee6a07186954ec0c4c9aac76310eed2ed7eed25f9a87ece9caad",
+          "path": "Dockerfile"
+        },
+        {
+          "hash": "a06ab3d54f9aa201b1e99d19f11ed741d947f0803a9447ce9318cb1f48cadc14",
+          "path": "ERROR_HANDLING_AUDIT.md"
+        },
+        {
+          "hash": "a4faa92104684d39024fbebac3f77d9f2c2d34cb42e6a8643c3433eec10b65bd",
+          "path": "GENERATION_AUDIT.md"
+        },
+        {
+          "hash": "e72a7c9f540b9cdfaee3b8f892a5c1ab9b2cbbc32f597bd2b454653995ec45e5",
+          "path": "LICENSE"
+        },
+        {
+          "hash": "73b4346859539560a4c785443ca5bb6b3d7ffbead1c9801e779cbe26a3cda4a1",
+          "path": "Makefile"
+        },
+        {
+          "hash": "fdff115dc76b783af7f5299cd1d8b8eb849d1b31dc2ad86b329949c205040a29",
+          "path": "README.es.md"
+        },
+        {
+          "hash": "b4ebe2ceb1c3caf823dec9fe1b2610e3b735b42819ddac72ee403cafc668b01e",
+          "path": "README.fr.md"
+        },
+        {
+          "hash": "621371e474d984e92cf6347a391be375dfa713655151cbe99720d605f3d5cad9",
+          "path": "README.hi.md"
+        },
+        {
+          "hash": "a3e96b59d50e02fa7ebca99de4bdf9045e047e8f6775475d11e63ff3db94e9e7",
+          "path": "README.it.md"
+        },
+        {
+          "hash": "916f46ff3de73172a203c257eaa78075e6c311970b4e99a6df5b08fa94086876",
+          "path": "README.ja.md"
+        },
+        {
+          "hash": "8eb19353002645cfe9b7a20b39256f716b98fc0a73cb841b1244041383d6a814",
+          "path": "README.md"
+        },
+        {
+          "hash": "00587eed432b1282ca88461e346ee1d4bb449058941ff95e43580355f8c72862",
+          "path": "README.pt-BR.md"
+        },
+        {
+          "hash": "e8767f214876ff6de83996ea2c72668eb15b15562b02f01806ef713c1c12500f",
+          "path": "README.zh.md"
+        },
+        {
+          "hash": "401185c6ac65e2080fdd79aba6d2cced5ed2a3c407fb299179bcbd7eabeebfca",
+          "path": "SCORECARD.md"
+        },
+        {
+          "hash": "3fc3504a039934d21c27eb345afd577014e42afd4dd61b49d6fdbbd74510e1d2",
+          "path": "SECURITY.md"
+        },
+        {
+          "hash": "c52ff3f114e766da18fb7a1c2f4bf111f6d92d694ed2154befc3e437a10fa954",
+          "path": "SECURITY_AUDIT.md"
+        },
+        {
+          "hash": "caeb554dc576dea9c33587268859070a9c9251e77c2ebbe9ff3d5a9d1aebb54f",
+          "path": "SHIP_GATE.md"
+        },
+        {
+          "hash": "0ff6335ffc91964bf2a6f13a1869b74beea6577ed66b36782b3d00f814e11113",
+          "path": "UI_AUDIT.md"
+        },
+        {
+          "hash": "292645320d19b0fdd09c68d8c7f5ccfc03ca087c27458abffe4a34481c9a1209",
+          "path": "llms.txt"
+        },
+        {
+          "hash": "17c48ddafe75359e0bb4c20f7c9a7313851ab9fb80e8cb15a88c9367abc41ad4",
+          "path": "logo.png"
+        },
+        {
+          "hash": "ddca9f179e8401345a4a292579ef0aba7a3c1417ae06702866b9e989807eb35a",
+          "path": "pyproject.toml"
+        }
+      ],
+      "globs": [
+        "*"
+      ],
+      "importConfidence": "full",
+      "name": "root",
+      "origin": "authored",
+      "role": "config",
+      "testedBy": 0,
+      "unresolvedSites": 0
+    },
+    {
+      "dynamicReads": 1,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [],
+      "externals": 0,
+      "files": [
+        {
+          "exports": [
+            "generate",
+            "main"
+          ],
+          "hash": "39c6caeb5f2ec33a8774a7953a7b6a5edae8354956ad0c92432305f30498a6c7",
+          "importOrder": [
+            "comfy_headless/audio.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/node_packs.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/node_packs.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "scripts/gen_kb.py"
+        }
+      ],
+      "globs": [
+        "scripts/**"
+      ],
+      "importConfidence": "full",
+      "name": "scripts",
+      "origin": "authored",
+      "role": "code",
+      "testedBy": 1,
+      "unresolvedSites": 0
+    },
+    {
+      "dynamicReads": 0,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "0eb1e9add84d5f12fde1771092c4c360dc33cbc462cff79bbb9fce63d8f3efe3",
+          "path": "site/astro.config.mjs"
+        },
+        {
+          "hash": "43be06d37552deaa7bb058af94a783dea310b0e305885f085bd7568eb16f32e7",
+          "path": "site/package-lock.json"
+        },
+        {
+          "hash": "07bd21d241392acfb75506461325500f6d9ae20b3753bcd32deee3dbd48b1fd0",
+          "path": "site/package.json"
+        },
+        {
+          "constantOnly": true,
+          "hash": "ee756dfba4122d2acc94a39b2555d9f200fff56a87a8c0b10f9cd01df26a8b62",
+          "path": "site/src/content.config.ts"
+        },
+        {
+          "hash": "d2ce28bc72072d56e6140b0743f217a44e7d7c633b509c534f4f6f545a08983e",
+          "path": "site/src/content/docs/handbook/api-reference.md"
+        },
+        {
+          "hash": "ce174bffe08daf7410e8c0160b28da7bdda39c2c44020692f7591ebda2da51e9",
+          "path": "site/src/content/docs/handbook/architecture.md"
+        },
+        {
+          "hash": "6fe1658918f25a44dee2ea333a1b02ee5445243df53fcc279ae699834ae34314",
+          "path": "site/src/content/docs/handbook/beginners.md"
+        },
+        {
+          "hash": "6c9dbcd33f5eb80a78d71baba1666d52061c7ff61c5268cd96c6c3084d0011f3",
+          "path": "site/src/content/docs/handbook/configuration.md"
+        },
+        {
+          "hash": "6a487d308cdb915a7b87599f6be4072194bbe3021a56902f6bfc37bcbe9c8f49",
+          "path": "site/src/content/docs/handbook/getting-started.md"
+        },
+        {
+          "hash": "eb535783477d3e52f02dcb7cac33be6b36866c87ccd2d4949b850aeb3d0eb841",
+          "path": "site/src/content/docs/handbook/index.md"
+        },
+        {
+          "hash": "f885b10f65ca414d0430bfbeb291c05dc01b214b427e1e71f23975be196dd965",
+          "path": "site/src/content/docs/handbook/profiles.md"
+        },
+        {
+          "hash": "ac0fd65e0fa031dd10564e8d845fb3b7f8ca27af9b993a7d618fec853f82e178",
+          "path": "site/src/content/docs/handbook/usage.md"
+        },
+        {
+          "hash": "3bac04fcd84dc067951063a4505a10473497ae7f5ff229df505945188c10361e",
+          "path": "site/src/content/docs/handbook/video-models.md"
+        },
+        {
+          "hash": "391533713539035d3c92282579d43de0f137067867fdb502d7eaea3c74601d2a",
+          "path": "site/src/pages/index.astro"
+        },
+        {
+          "constantOnly": true,
+          "hash": "0e66f1f22b88af099c7c6f6d60cadfcd6f8a3204e75c71709158c2e63ecd1e35",
+          "path": "site/src/site-config.ts"
+        },
+        {
+          "hash": "29ee8df91833e694bdba973126b34a6177de4cf01dab6d9ef7d3126e8e2b67fb",
+          "path": "site/src/styles/global.css"
+        },
+        {
+          "hash": "51d012e49bcba75b105bdc8aa7a6d1a6733a00ace857b24423c75215ebcff631",
+          "path": "site/src/styles/starlight-custom.css"
+        },
+        {
+          "hash": "b5b0a5b04a14cddd7713c5e1c82e86c79c17c2f86b170e26e9b170b3d5e01cd9",
+          "path": "site/tsconfig.json"
+        }
+      ],
+      "globs": [
+        "site/**"
+      ],
+      "importConfidence": "full",
+      "name": "site",
+      "origin": "authored",
+      "role": "site",
+      "testedBy": 0,
+      "unresolvedSites": 0
+    },
+    {
+      "dynamicReads": 0,
+      "dynamicSpawns": 0,
+      "dynamicSpawnsInTests": 0,
+      "dynamicWrites": 0,
+      "entryPoints": [],
+      "externals": 0,
+      "files": [
+        {
+          "hash": "a1b5e9bbc1f90840018d5797268afbab7eb2de7f6b814469c0a5d5e90afb38b2",
+          "path": "tests/Dockerfile.atheris"
+        },
+        {
+          "hash": "968a25bb11665903188fb432ce5f7be13aea92ba1ca04ea5aa01e4b9de007952",
+          "noStatements": true,
+          "path": "tests/__init__.py"
+        },
+        {
+          "exports": [
+            "check_atheris",
+            "fuzz_dimensions",
+            "fuzz_json_workflow",
+            "fuzz_path",
+            "fuzz_prompt",
+            "fuzz_workflow",
+            "main",
+            "run_all_targets",
+            "run_atheris"
+          ],
+          "hash": "0a2e9f4e69cf8db427103a83f323c1bcb3d0ed0c6c6ce3410c8c7720ff435063",
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/atheris_runner.py"
+        },
+        {
+          "exports": [
+            "mock_comfyui_response",
+            "mock_session",
+            "mock_settings",
+            "sample_workflow"
+          ],
+          "hash": "3b9d3dda06f97e01bbcb65911f242cb14165dbb7864d108bdf1baef73fa201e7",
+          "importsFiles": [
+            "comfy_headless/config.py"
+          ],
+          "path": "tests/conftest.py"
+        },
+        {
+          "exports": [
+            "main",
+            "run_hypothesis_fuzz",
+            "run_targeted_fuzz"
+          ],
+          "hash": "824f6c619d67d1d16f32af1980651d56a745ee77a5a63c1184675fd6862759d9",
+          "path": "tests/run_fuzz.py"
+        },
+        {
+          "hash": "b3f2c0be2837c1d2f3febb725e1e3a1a9fb80b8a1aae6a7e3ab89f2f869fb391",
+          "importOrder": [
+            "comfy_headless/addressing.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/addressing.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_addressing.py"
+        },
+        {
+          "hash": "c6d7c5bb5ff931c2c9dafea7ea7a7ac22f84f889261bf10d24b8626ebb0a8eef",
+          "importOrder": [
+            "comfy_headless/audio.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/addressing.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/addressing.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "path": "tests/test_audio_profile.py"
+        },
+        {
+          "hash": "f97d92174cf30a2009f62465efec47dc7d6962709f8230ca5e4e8ac3e72d9528",
+          "importsFiles": [
+            "comfy_headless/cleanup.py"
+          ],
+          "path": "tests/test_cleanup.py"
+        },
+        {
+          "hash": "72c5e55922026cd272ade8b0488c3758426697668ff78b786220b2422896de10",
+          "importOrder": [
+            "comfy_headless/cleanup.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/cleanup.py"
+          ],
+          "path": "tests/test_cleanup_extended.py"
+        },
+        {
+          "hash": "f42291e0e0e4e6e242d9c1fa5cb726e14539960f8a69710f2691f811aa1d68b0",
+          "importsFiles": [
+            "comfy_headless/client.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "path": "tests/test_client.py"
+        },
+        {
+          "hash": "91a6d009b9d2bd4bf64aaac6fad5cba462717bf4cc716487aa3d689a4ace2190",
+          "importsFiles": [
+            "comfy_headless/client.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "path": "tests/test_client_coverage.py"
+        },
+        {
+          "hash": "093c8e69f99d473bb980af462a06733e44c68481524ba926f7dce2521bad8cdc",
+          "importsFiles": [
+            "comfy_headless/client.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/retry.py"
+          ],
+          "path": "tests/test_client_generation.py"
+        },
+        {
+          "hash": "821787226370ec1d9d4cb057dc9bf7b08f1f2a248c2eff965cb4f55c0d98bec9",
+          "importOrder": [
+            "comfy_headless/client.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/video.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/client.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/video.py"
+          ],
+          "path": "tests/test_client_upload.py"
+        },
+        {
+          "hash": "b1eaa360a16547ab4817fdbc6f41a932a93113a8b7837b68991c765615edee81",
+          "importOrder": [
+            "comfy_headless/config.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/config.py"
+          ],
+          "path": "tests/test_config.py"
+        },
+        {
+          "hash": "be782d32d618fe32b0634b77997b221f7ac89612bf7fda241dcbe68180ac4963",
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/config.py"
+          ],
+          "path": "tests/test_config_extended.py"
+        },
+        {
+          "hash": "780030611ba4825f37088d0ff407d5b73d93eb7b91443b3f4242542c488e2612",
+          "importOrder": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/secrets.py",
+            "comfy_headless/config.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/video.py",
+            "comfy_headless/client.py",
+            "comfy_headless/feature_flags.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/client.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/secrets.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_error_paths.py"
+        },
+        {
+          "hash": "14f277d818ba4615a63575dde90ec76a50439d61520577392ce9faa31ac212a9",
+          "importsFiles": [
+            "comfy_headless/exceptions.py"
+          ],
+          "path": "tests/test_exceptions.py"
+        },
+        {
+          "hash": "9cec905e67b33ce8fdfdbc9fce872bd734c45f40edeab6d9ff2528abeb298c60",
+          "importOrder": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "path": "tests/test_exceptions_extended.py"
+        },
+        {
+          "hash": "16d00b8ec6c10af726a49f0709abf58139acc4160c6400b2528cb26bd6ed3541",
+          "importOrder": [
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/feature_flags.py"
+          ],
+          "path": "tests/test_feature_flags_extended.py"
+        },
+        {
+          "exports": [
+            "fuzz_dimension_validation",
+            "fuzz_prompt_validation",
+            "fuzz_workflow_compilation"
+          ],
+          "hash": "eac317b74bc624f9e9dcf8a6406161f9806632fb5703e48b2ee0d41ebb811ed5",
+          "importOrder": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/intelligence.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_fuzz.py"
+        },
+        {
+          "hash": "582ae65f78ce4ab8b1fe6d8738e901dce35c3fc6a51ab7f6e96ec89a8d8558c1",
+          "importsFiles": [
+            "comfy_headless/health.py"
+          ],
+          "path": "tests/test_health.py"
+        },
+        {
+          "hash": "37f93e0b11508ccc0ab50e0c7e1310caf9e71b68e62d6843eae61df9118b6f4c",
+          "importOrder": [
+            "comfy_headless/health.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/health.py"
+          ],
+          "path": "tests/test_health_extended.py"
+        },
+        {
+          "hash": "ab201d58d5dd08be415ddb5167986335bba1ac09275e8ea13de2543d5d44b2c1",
+          "importsFiles": [
+            "comfy_headless/help_system.py"
+          ],
+          "path": "tests/test_help_system.py"
+        },
+        {
+          "hash": "32670b726bf83f73c6b748255d5b175d02eee42f23510067d5b28bf711cd2426",
+          "importsFiles": [
+            "comfy_headless/http_client.py"
+          ],
+          "path": "tests/test_http_client.py"
+        },
+        {
+          "hash": "bece74c73704907982e31e1b0823d0abe1de97abb49f861ddee2eeb994af6937",
+          "importOrder": [
+            "comfy_headless/http_client.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/http_client.py"
+          ],
+          "path": "tests/test_http_client_extended.py"
+        },
+        {
+          "hash": "0394cf45a53026e41fb27adfc638d0f7025df90d11400fdf6f45ae539554bb2a",
+          "importOrder": [
+            "comfy_headless/inference.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/addressing.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/inference.py"
+          ],
+          "path": "tests/test_inference.py"
+        },
+        {
+          "hash": "cafa109944d0bb31bb5be644895e7aab32928718b7c48a182abecc8138e92a1a",
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/feature_flags.py"
+          ],
+          "path": "tests/test_init_extended.py"
+        },
+        {
+          "hash": "e32aa92ee1a897571afa5c0340b7c42e5cd50206fe956e3ae256680759f98c38",
+          "importOrder": [
+            "comfy_headless/client.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/video.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/__init__.py",
+            "comfy_headless/config.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/client.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/logging_config.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_integration.py"
+        },
+        {
+          "hash": "bc483db5574583e516adda308abf0d0be6c8e8e971e92a1259592b0acfe3fc96",
+          "importsFiles": [
+            "comfy_headless/intelligence.py"
+          ],
+          "path": "tests/test_intelligence.py"
+        },
+        {
+          "hash": "c23c94cfc6d627a64d4383d899a728c0990f206ca5547466d9070821284d60a8",
+          "importsFiles": [
+            "comfy_headless/intelligence.py"
+          ],
+          "path": "tests/test_intelligence_coverage.py"
+        },
+        {
+          "exports": [
+            "artifacts",
+            "gen_kb",
+            "index"
+          ],
+          "hash": "c1921a427c11da309b6dd3184d5723ce8348192721e82f858b0b60f2d4fabbcf",
+          "importOrder": [
+            "scripts/gen_kb.py",
+            "comfy_headless/__init__.py",
+            "comfy_headless/node_packs.py",
+            "comfy_headless/addressing.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/node_packs.py",
+            "scripts/gen_kb.py"
+          ],
+          "path": "tests/test_kb.py"
+        },
+        {
+          "hash": "067feeb30092c5fe5ec60153042efa9e984bc60cf136b9fa10ba0b6eaddf287f",
+          "importOrder": [
+            "comfy_headless/logging_config.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/logging_config.py"
+          ],
+          "path": "tests/test_logging_config_extended.py"
+        },
+        {
+          "hash": "7822f9e2c9fc46747d529baf3d0e798cf87cf1576de03257549e5b8e79f66bf5",
+          "importOrder": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/__main__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/__main__.py",
+            "comfy_headless/feature_flags.py"
+          ],
+          "path": "tests/test_main.py"
+        },
+        {
+          "hash": "c62a7fe1178d9b72b8404aca1a8e51df86539ac62cda77e0bacd7c9d67cf984e",
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/__main__.py",
+            "comfy_headless/feature_flags.py"
+          ],
+          "path": "tests/test_main_extended.py"
+        },
+        {
+          "hash": "b0274d62ed174cfffd9c852ce9650435fa14be1fd4cdfe12db10a604d3e72166",
+          "importOrder": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/metadata.py",
+            "comfy_headless/client.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/client.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/metadata.py"
+          ],
+          "path": "tests/test_metadata.py"
+        },
+        {
+          "hash": "ca84f7b2dbd637361f5b05698460c0d846171015a4dbcd9eb884145847016d82",
+          "path": "tests/test_optional_dep_annotations.py"
+        },
+        {
+          "hash": "d31db8827917aa451c5281b3469bcb92a449d6e5d9012cd7b200ad8c6181ab92",
+          "importOrder": [
+            "comfy_headless/audio.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/node_packs.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/__init__.py",
+            "comfy_headless/client.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/addressing.py",
+            "comfy_headless/audio.py",
+            "comfy_headless/client.py",
+            "comfy_headless/inference.py",
+            "comfy_headless/node_packs.py",
+            "comfy_headless/three_d.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_profile_contract.py"
+        },
+        {
+          "hash": "502a962090d632be67755efa418f74b0d8a8d6f5c21b6df65bea349380831452",
+          "importOrder": [
+            "comfy_headless/intelligence.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/workflows.py",
+            "comfy_headless/video.py",
+            "comfy_headless/secrets.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/config.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/retry.py",
+            "comfy_headless/secrets.py",
+            "comfy_headless/validation.py",
+            "comfy_headless/video.py",
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_property_based.py"
+        },
+        {
+          "hash": "edca1366b2ff8baa435e2e9cb55cbdca212ee768cd3803e2493c82d8d971470c",
+          "importOrder": [
+            "comfy_headless/retry.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/retry.py"
+          ],
+          "path": "tests/test_retry.py"
+        },
+        {
+          "hash": "e0725fddb2e5c8fb3a200e909e306c066c79c343ff85ed4ef4ec44abc73cd252",
+          "importOrder": [
+            "comfy_headless/retry.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/retry.py"
+          ],
+          "path": "tests/test_retry_extended.py"
+        },
+        {
+          "hash": "83a1c889e740f7ed25591f2850d88b17e296c053dc5f9bb8a837fe30be7112cb",
+          "importOrder": [
+            "comfy_headless/secrets.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/secrets.py"
+          ],
+          "path": "tests/test_secrets_extended.py"
+        },
+        {
+          "hash": "c735f7b01b2450047dd89aaa9481cc55f70d3b473d4187a10f610ca9d35bcb17",
+          "importOrder": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/config.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/config.py",
+            "comfy_headless/feature_flags.py"
+          ],
+          "path": "tests/test_security_features.py"
+        },
+        {
+          "hash": "4f611b612527f501e8981e6f1ba0bad77a0fe8d124be3aa33064eae6e0ac39f7",
+          "importsFiles": [
+            "comfy_headless/websocket_client.py"
+          ],
+          "path": "tests/test_security_limits.py"
+        },
+        {
+          "hash": "e23c90ada3856bdf76645cc2733236fa2c4fc763cda30a76db6a729d23cc80ac",
+          "importsFiles": [
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_snapshots.py"
+        },
+        {
+          "hash": "42412a4d2e371474a3f36c1283836091b7d6c27e490b0bae9adebc24d42eab5d",
+          "importsFiles": [
+            "comfy_headless/test_runner_ui.py"
+          ],
+          "path": "tests/test_test_runner_ui.py"
+        },
+        {
+          "hash": "55e6bd93884b9f952fc71f6893c1e211cdeb1f23755251be2569fcfd970993c3",
+          "importsFiles": [
+            "comfy_headless/theme.py",
+            "comfy_headless/ui.py"
+          ],
+          "path": "tests/test_theme.py"
+        },
+        {
+          "hash": "ace8399ef4a09ab3d0ce371b992327660e6e37b7c0009f1095a2ce3ede944662",
+          "importsFiles": [
+            "comfy_headless/three_d.py"
+          ],
+          "path": "tests/test_three_d.py"
+        },
+        {
+          "hash": "02298c96e6c7d564924cc19d521068d37cbf231401a0e332ca15d0ef3f54ecdd",
+          "importsFiles": [
+            "comfy_headless/ui.py"
+          ],
+          "path": "tests/test_ui.py"
+        },
+        {
+          "hash": "2baa75903fc33e6c2b11621d50d9aa1354fe5d504d43832a0007ff45943bf231",
+          "importOrder": [
+            "comfy_headless/validation.py",
+            "comfy_headless/exceptions.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/exceptions.py",
+            "comfy_headless/validation.py"
+          ],
+          "path": "tests/test_validation.py"
+        },
+        {
+          "hash": "e37b53e16861df5d402ca1dba1331614e11a61eef028be9758a222019c8f03f1",
+          "importsFiles": [
+            "comfy_headless/video.py"
+          ],
+          "path": "tests/test_video.py"
+        },
+        {
+          "hash": "fa2a4b42ab53744715ab4b4edeedca83f030b2dbf2e654dd686818165b851ff8",
+          "importOrder": [
+            "comfy_headless/video.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/client.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/client.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/video.py"
+          ],
+          "path": "tests/test_video_coverage.py"
+        },
+        {
+          "hash": "13733d5fcd78cdb6e86ea66533bdd1d5470340aa5c45d45ab6b85119990e1f0a",
+          "importOrder": [
+            "comfy_headless/websocket_client.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/websocket_client.py"
+          ],
+          "path": "tests/test_websocket_client.py"
+        },
+        {
+          "hash": "7c35596a039a68d1a4208ec9a5f802bb839cc438a03612a07ccc20d6665adf27",
+          "importOrder": [
+            "comfy_headless/websocket_client.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/__init__.py"
+          ],
+          "importsFiles": [
+            "comfy_headless/__init__.py",
+            "comfy_headless/exceptions.py",
+            "comfy_headless/websocket_client.py"
+          ],
+          "path": "tests/test_websocket_extended.py"
+        },
+        {
+          "hash": "69d114902e1c21457db755405761424ae5bb2714590dd497ee1e4b152eedb277",
+          "importsFiles": [
+            "comfy_headless/workflows.py"
+          ],
+          "path": "tests/test_workflows.py"
+        }
+      ],
+      "globs": [
+        "tests/**"
+      ],
+      "importConfidence": "full",
+      "name": "tests",
+      "origin": "authored",
+      "role": "test",
+      "testedBy": 0,
+      "unresolvedNamed": [
+        {
+          "path": "tests/run_fuzz.py",
+          "specifier": "comfy_headless.tests.test_fuzz",
+          "why": "unplaced"
+        }
+      ],
+      "unresolvedSites": 1
+    }
+  ],
+  "doors": [
+    {
+      "checksCount": 2,
+      "commands": [
+        {
+          "job": "lint",
+          "step": "Install linters",
+          "text": "python -m pip install --upgrade pip\n# Pinned: an unpinned lint tool makes CI non-reproducible. A newer\n# ruff began formatting Python inside markdown fences, which turned\n# 16 pre-existing docs into a surprise CI failure on an unrelated PR.\npip install ruff==0.15.17 mypy\n"
+        },
+        {
+          "job": "lint",
+          "step": "Run ruff",
+          "text": "ruff check ."
+        },
+        {
+          "job": "lint",
+          "step": "Check formatting",
+          "text": "ruff format --check ."
+        },
+        {
+          "job": "lint",
+          "step": "Run type checking",
+          "text": "mypy comfy_headless"
+        },
+        {
+          "job": "test",
+          "step": "Atlas check",
+          "text": "npx --yes @dogfood-lab/atlas@1.21.0 check"
+        },
+        {
+          "job": "test",
+          "step": "Install dependencies",
+          "text": "python -m pip install --upgrade pip\npip install -e \".[dev,ai,websocket,validation,ui,health]\"\npip install httpx[http2]\n"
+        },
+        {
+          "job": "test",
+          "step": "Run tests",
+          "text": "pytest tests/ -v --cov=comfy_headless --cov-report=xml --cov-report=term-missing"
+        },
+        {
+          "job": "pip-audit",
+          "step": "Install pip-audit",
+          "text": "python -m pip install --upgrade pip\npip install pip-audit\n"
+        },
+        {
+          "job": "pip-audit",
+          "step": "Run pip-audit on core dependencies",
+          "text": "echo \"requests>=2.28.0\" > /tmp/core-deps.txt\necho \"tenacity>=8.0.0\" >> /tmp/core-deps.txt\npip-audit -r /tmp/core-deps.txt\n"
+        },
+        {
+          "job": "pip-audit",
+          "step": "Run pip-audit on full dependencies",
+          "text": "pip install -e \".[full]\"\npip-audit\n"
+        }
+      ],
+      "elsewhere": [],
+      "file": ".github/workflows/ci.yml",
+      "landings": [],
+      "mentions": [],
+      "name": "CI",
+      "permissions": [],
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "comfy_headless",
+          "depth": 0,
+          "files": 29
+        },
+        {
+          "boundary": "scripts",
+          "depth": 0,
+          "files": 1
+        },
+        {
+          "boundary": "tests",
+          "depth": 0,
+          "files": 53
+        }
+      ],
+      "readers": [],
+      "runs": [
+        {
+          "directory": true,
+          "job": "lint",
+          "path": "comfy_headless/",
+          "runKind": "checks"
+        },
+        {
+          "directory": true,
+          "job": "lint",
+          "matched": true,
+          "path": "scripts/",
+          "runKind": "checks",
+          "via": "ruff"
+        },
+        {
+          "directory": true,
+          "job": "lint",
+          "matched": true,
+          "path": "tests/",
+          "runKind": "checks",
+          "via": "ruff"
+        },
+        {
+          "directory": true,
+          "job": "test",
+          "path": "tests/",
+          "runKind": "executes"
+        }
+      ],
+      "runsCount": 3,
+      "secrets": [],
+      "sends": {
+        "deploysPages": false,
+        "dispatchesTo": [],
+        "opensIssues": false,
+        "opensIssuesOnFailure": false,
+        "opensPullRequests": false,
+        "publishes": false,
+        "publishesTo": [],
+        "releases": false
+      },
+      "stages": [],
+      "triggers": [
+        {
+          "branches": [
+            "main"
+          ],
+          "event": "pull_request"
+        },
+        {
+          "branches": [
+            "main"
+          ],
+          "event": "push",
+          "paths": [
+            ".github/workflows/**",
+            "atlas/**",
+            "comfy_headless/**",
+            "pyproject.toml",
+            "tests/**"
+          ]
+        },
+        {
+          "event": "workflow_dispatch"
+        }
+      ],
+      "uses": [
+        "actions/checkout",
+        "actions/setup-node",
+        "actions/setup-python",
+        "codecov/codecov-action",
+        "trufflesecurity/trufflehog"
+      ],
+      "usesWorkflowToken": false
+    },
+    {
+      "checksCount": 0,
+      "commands": [
+        {
+          "job": "build",
+          "step": "Install site dependencies",
+          "text": "npm ci"
+        },
+        {
+          "job": "build",
+          "step": "Build site",
+          "text": "npm run build"
+        }
+      ],
+      "elsewhere": [],
+      "file": ".github/workflows/pages.yml",
+      "landings": [],
+      "mentions": [],
+      "name": "Deploy site to GitHub Pages",
+      "permissions": [
+        "contents:read",
+        "id-token:write",
+        "pages:write"
+      ],
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "site",
+          "depth": 0,
+          "files": 3
+        }
+      ],
+      "readers": [],
+      "runs": [
+        {
+          "job": "build",
+          "matched": true,
+          "path": "site/astro.config.mjs",
+          "runKind": "executes",
+          "via": "astro build"
+        },
+        {
+          "directory": true,
+          "job": "build",
+          "matched": true,
+          "path": "site/src/",
+          "runKind": "executes",
+          "via": "astro build"
+        }
+      ],
+      "runsCount": 2,
+      "secrets": [],
+      "sends": {
+        "deploysPages": true,
+        "dispatchesTo": [],
+        "opensIssues": false,
+        "opensIssuesOnFailure": false,
+        "opensPullRequests": false,
+        "publishes": false,
+        "publishesTo": [],
+        "releases": false
+      },
+      "stages": [],
+      "triggers": [
+        {
+          "branches": [
+            "main"
+          ],
+          "event": "push",
+          "paths": [
+            ".github/workflows/pages.yml",
+            "site/**"
+          ]
+        },
+        {
+          "event": "workflow_dispatch"
+        }
+      ],
+      "uses": [
+        "actions/checkout",
+        "actions/deploy-pages",
+        "actions/setup-node",
+        "actions/upload-pages-artifact"
+      ],
+      "usesWorkflowToken": false
+    },
+    {
+      "checksCount": 4,
+      "commands": [
+        {
+          "job": "build",
+          "step": "Install build dependencies",
+          "text": "python -m pip install --upgrade pip\npip install build twine\n"
+        },
+        {
+          "job": "build",
+          "step": "Build package",
+          "text": "python -m build"
+        },
+        {
+          "job": "build",
+          "step": "Check package",
+          "text": "twine check dist/*"
+        },
+        {
+          "job": "build",
+          "step": "Test import",
+          "text": "python -m pip install dist/*.whl\npython -c \"from comfy_headless import ComfyClient; print('Import successful')\"\n"
+        },
+        {
+          "job": "test-install",
+          "step": "Install from wheel",
+          "text": "pip install dist/*.whl"
+        },
+        {
+          "job": "test-install",
+          "step": "Test import",
+          "text": "python -c \"from comfy_headless import ComfyClient; print('Import successful')\""
+        },
+        {
+          "job": "test-install",
+          "step": "Test CLI",
+          "text": "comfy-headless --version"
+        }
+      ],
+      "elsewhere": [],
+      "file": ".github/workflows/publish.yml",
+      "gated": [
+        {
+          "jobs": [
+            "docker"
+          ],
+          "pushes": false,
+          "sends": [
+            "publishesTo:container image"
+          ],
+          "stages": [],
+          "when": {
+            "event": "release"
+          }
+        },
+        {
+          "jobs": [
+            "publish-pypi"
+          ],
+          "pushes": false,
+          "sends": [
+            "publishesTo:pypi"
+          ],
+          "stages": [],
+          "when": {
+            "inputs": {
+              "dry_run": false
+            }
+          }
+        }
+      ],
+      "landings": [],
+      "mentions": [],
+      "name": "Publish",
+      "permissions": [
+        "contents:read",
+        "id-token:write",
+        "packages:write"
+      ],
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "comfy_headless",
+          "depth": 0,
+          "files": 29
+        },
+        {
+          "boundary": "root",
+          "depth": 0,
+          "files": 3
+        }
+      ],
+      "readers": [],
+      "runs": [
+        {
+          "job": "docker",
+          "path": "LICENSE",
+          "runKind": "checks",
+          "via": "docker build Dockerfile",
+          "when": {
+            "event": "release"
+          }
+        },
+        {
+          "job": "docker",
+          "path": "README.md",
+          "runKind": "checks",
+          "via": "docker build Dockerfile",
+          "when": {
+            "event": "release"
+          }
+        },
+        {
+          "directory": true,
+          "job": "build",
+          "path": "comfy_headless/",
+          "runKind": "checks",
+          "via": "build pyproject.toml"
+        },
+        {
+          "directory": true,
+          "job": "docker",
+          "path": "comfy_headless/",
+          "runKind": "checks",
+          "via": "docker build Dockerfile",
+          "when": {
+            "event": "release"
+          }
+        },
+        {
+          "job": "build",
+          "path": "comfy_headless/__init__.py",
+          "runKind": "executes"
+        },
+        {
+          "job": "test-install",
+          "path": "comfy_headless/__init__.py",
+          "runKind": "executes"
+        },
+        {
+          "job": "docker",
+          "path": "comfy_headless/__main__.py",
+          "runKind": "executes",
+          "via": "docker build Dockerfile",
+          "when": {
+            "event": "release"
+          }
+        },
+        {
+          "job": "test-install",
+          "path": "comfy_headless/__main__.py",
+          "runKind": "executes"
+        },
+        {
+          "job": "docker",
+          "path": "pyproject.toml",
+          "runKind": "checks",
+          "via": "docker build Dockerfile",
+          "when": {
+            "event": "release"
+          }
+        }
+      ],
+      "runsCount": 6,
+      "secrets": [
+        "GITHUB_TOKEN"
+      ],
+      "sends": {
+        "deploysPages": false,
+        "dispatchesTo": [],
+        "opensIssues": false,
+        "opensIssuesOnFailure": false,
+        "opensPullRequests": false,
+        "publishes": false,
+        "publishesTo": [],
+        "releases": false
+      },
+      "stages": [],
+      "triggers": [
+        {
+          "event": "release",
+          "types": [
+            "published"
+          ]
+        },
+        {
+          "event": "workflow_dispatch"
+        }
+      ],
+      "uses": [
+        "actions/checkout",
+        "actions/download-artifact",
+        "actions/setup-python",
+        "actions/upload-artifact",
+        "docker/build-push-action",
+        "docker/login-action",
+        "docker/metadata-action",
+        "pypa/gh-action-pypi-publish"
+      ],
+      "usesWorkflowToken": true
+    },
+    {
+      "checksCount": 0,
+      "commands": [],
+      "elsewhere": [],
+      "file": "pyproject.toml",
+      "kind": "command",
+      "landings": [],
+      "mentions": [],
+      "name": "comfy-headless",
+      "permissions": [],
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "comfy_headless",
+          "depth": 0,
+          "files": 27
+        }
+      ],
+      "readers": [],
+      "runs": [
+        {
+          "path": "comfy_headless/__main__.py",
+          "runKind": "executes"
+        }
+      ],
+      "runsCount": 1,
+      "secrets": [],
+      "sends": {
+        "deploysPages": false,
+        "dispatchesTo": [],
+        "opensIssues": false,
+        "opensIssuesOnFailure": false,
+        "opensPullRequests": false,
+        "publishes": false,
+        "publishesTo": [],
+        "releases": false
+      },
+      "stages": [],
+      "triggers": [],
+      "uses": [],
+      "usesWorkflowToken": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "scripts",
+      "kind": "file",
+      "to": "comfy_headless"
+    },
+    {
+      "from": "tests",
+      "fromTests": true,
+      "kind": "file",
+      "to": "comfy_headless"
+    },
+    {
+      "from": "tests",
+      "fromTests": true,
+      "kind": "file",
+      "to": "scripts"
+    }
+  ],
+  "generatedFrom": {
+    "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815",
+    "tracked": 179
+  },
+  "landings": [
+    {
+      "readers": [
+        {
+          "by": "pyproject.toml",
+          "call": "configuration",
+          "confidence": "config"
+        }
+      ],
+      "target": "LICENSE",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "pyproject.toml",
+          "call": "configuration",
+          "confidence": "config"
+        },
+        {
+          "by": "scripts/gen_kb.py",
+          "call": "literal",
+          "confidence": "ast"
+        }
+      ],
+      "target": "README.md",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "CONTRIBUTING.md",
+          "call": "--cov",
+          "confidence": "text"
+        },
+        {
+          "by": "tests/test_optional_dep_annotations.py",
+          "call": "glob",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "comfy_headless",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "tests/test_optional_dep_annotations.py",
+          "call": "literal",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "comfy_headless/http_client.py",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "scripts/gen_kb.py",
+          "call": "read_text",
+          "confidence": "ast"
+        },
+        {
+          "by": "scripts/gen_kb.py",
+          "call": "rglob",
+          "confidence": "ast"
+        },
+        {
+          "by": "tests/test_kb.py",
+          "call": "rglob",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "kb",
+      "writers": [
+        {
+          "by": "scripts/gen_kb.py",
+          "confidence": "ast",
+          "unless": [
+            "main"
+          ]
+        }
+      ]
+    },
+    {
+      "readers": [
+        {
+          "by": "tests/test_kb.py",
+          "call": "read_text",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "kb/index.json",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "tests/test_kb.py",
+          "call": "read_text",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "kb/nodes.json",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "scripts/gen_kb.py",
+          "call": "literal",
+          "confidence": "ast"
+        },
+        {
+          "by": "tests/test_kb.py",
+          "call": "glob",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "kb/workflows",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "tests/test_kb.py",
+          "call": "literal",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "scripts/gen_kb.py",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "site/astro.config.mjs",
+          "call": "content-collection",
+          "confidence": "ast"
+        }
+      ],
+      "target": "site/src/content/docs",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "site/astro.config.mjs",
+          "call": "autogenerate",
+          "confidence": "ast"
+        }
+      ],
+      "target": "site/src/content/docs/handbook",
+      "writers": []
+    }
+  ],
+  "overlaps": [],
+  "submodules": [],
+  "symlinks": [],
+  "testFiles": 55,
+  "unassigned": []
+}
