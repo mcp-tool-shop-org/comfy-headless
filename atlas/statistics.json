@@ -1,0 +1,721 @@
+{
+  "authorship": {
+    "parts": [],
+    "places": []
+  },
+  "boundaries": [
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": []
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": ".github",
+      "qualifyingSourceCommits": 0,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": []
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "assets",
+      "qualifyingSourceCommits": 0,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": [
+          "scripts",
+          "tests"
+        ]
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "comfy_headless",
+      "qualifyingSourceCommits": 5,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": []
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "docs",
+      "qualifyingSourceCommits": 0,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": []
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "kb",
+      "qualifyingSourceCommits": 0,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": []
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "root",
+      "qualifyingSourceCommits": 0,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": [
+          "tests"
+        ]
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "scripts",
+      "qualifyingSourceCommits": 0,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": []
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "site",
+      "qualifyingSourceCommits": 2,
+      "rebaseline": null
+    },
+    {
+      "breakage": {
+        "coChangesOnly": [],
+        "collapsed": false,
+        "confidence": "low",
+        "importsAndCoChanges": [],
+        "importsOnly": []
+      },
+      "cohesion": null,
+      "cohesionDropped": false,
+      "confidence": "low",
+      "highWater": null,
+      "name": "tests",
+      "qualifyingSourceCommits": 4,
+      "rebaseline": null
+    }
+  ],
+  "churn": {
+    "definition": "commits is how many commits in the window touch the file, including merges and commits dropped from coupling. lines is added plus deleted in those commits.",
+    "files": [
+      {
+        "commits": 2,
+        "lines": 43,
+        "path": ".github/dependabot.yml"
+      },
+      {
+        "commits": 7,
+        "lines": 49,
+        "path": ".github/workflows/ci.yml"
+      },
+      {
+        "commits": 6,
+        "lines": 18,
+        "path": ".github/workflows/pages.yml"
+      },
+      {
+        "commits": 10,
+        "lines": 102,
+        "path": ".github/workflows/publish.yml"
+      },
+      {
+        "commits": 1,
+        "lines": 3,
+        "path": ".gitignore"
+      },
+      {
+        "commits": 1,
+        "lines": 1340,
+        "path": ".polyglot-cache.json"
+      },
+      {
+        "commits": 4,
+        "lines": 235,
+        "path": "CHANGELOG.md"
+      },
+      {
+        "commits": 2,
+        "lines": 675,
+        "path": "README.es.md"
+      },
+      {
+        "commits": 2,
+        "lines": 595,
+        "path": "README.fr.md"
+      },
+      {
+        "commits": 2,
+        "lines": 580,
+        "path": "README.hi.md"
+      },
+      {
+        "commits": 2,
+        "lines": 679,
+        "path": "README.it.md"
+      },
+      {
+        "commits": 2,
+        "lines": 661,
+        "path": "README.ja.md"
+      },
+      {
+        "commits": 5,
+        "lines": 715,
+        "path": "README.md"
+      },
+      {
+        "commits": 2,
+        "lines": 594,
+        "path": "README.pt-BR.md"
+      },
+      {
+        "commits": 2,
+        "lines": 572,
+        "path": "README.zh.md"
+      },
+      {
+        "commits": 4,
+        "lines": 159,
+        "path": "comfy_headless/__init__.py"
+      },
+      {
+        "commits": 2,
+        "lines": 27,
+        "path": "comfy_headless/__main__.py"
+      },
+      {
+        "commits": 3,
+        "lines": 11,
+        "path": "comfy_headless/_version.py"
+      },
+      {
+        "commits": 1,
+        "lines": 768,
+        "path": "comfy_headless/addressing.py"
+      },
+      {
+        "commits": 1,
+        "lines": 441,
+        "path": "comfy_headless/audio.py"
+      },
+      {
+        "commits": 2,
+        "lines": 1277,
+        "path": "comfy_headless/client.py"
+      },
+      {
+        "commits": 1,
+        "lines": 6,
+        "path": "comfy_headless/config.py"
+      },
+      {
+        "commits": 2,
+        "lines": 157,
+        "path": "comfy_headless/exceptions.py"
+      },
+      {
+        "commits": 1,
+        "lines": 4,
+        "path": "comfy_headless/http_client.py"
+      },
+      {
+        "commits": 1,
+        "lines": 349,
+        "path": "comfy_headless/inference.py"
+      },
+      {
+        "commits": 1,
+        "lines": 2,
+        "path": "comfy_headless/intelligence.py"
+      },
+      {
+        "commits": 1,
+        "lines": 243,
+        "path": "comfy_headless/metadata.py"
+      },
+      {
+        "commits": 1,
+        "lines": 164,
+        "path": "comfy_headless/node_packs.py"
+      },
+      {
+        "commits": 1,
+        "lines": 2,
+        "path": "comfy_headless/retry.py"
+      },
+      {
+        "commits": 1,
+        "lines": 294,
+        "path": "comfy_headless/three_d.py"
+      },
+      {
+        "commits": 1,
+        "lines": 2,
+        "path": "comfy_headless/ui.py"
+      },
+      {
+        "commits": 2,
+        "lines": 817,
+        "path": "comfy_headless/video.py"
+      },
+      {
+        "commits": 1,
+        "lines": 2,
+        "path": "comfy_headless/websocket_client.py"
+      },
+      {
+        "commits": 1,
+        "lines": 544,
+        "path": "comfy_headless/workflows.py"
+      },
+      {
+        "commits": 1,
+        "lines": 2,
+        "path": "docs/assets/social-preview.svg"
+      },
+      {
+        "commits": 1,
+        "lines": 50,
+        "path": "kb/README.md"
+      },
+      {
+        "commits": 1,
+        "lines": 70,
+        "path": "kb/addressing.md"
+      },
+      {
+        "commits": 1,
+        "lines": 663,
+        "path": "kb/index.json"
+      },
+      {
+        "commits": 1,
+        "lines": 98,
+        "path": "kb/nodes.json"
+      },
+      {
+        "commits": 1,
+        "lines": 73,
+        "path": "kb/profiles/audio.md"
+      },
+      {
+        "commits": 1,
+        "lines": 71,
+        "path": "kb/profiles/image.md"
+      },
+      {
+        "commits": 1,
+        "lines": 59,
+        "path": "kb/profiles/inference.md"
+      },
+      {
+        "commits": 1,
+        "lines": 61,
+        "path": "kb/profiles/metadata.md"
+      },
+      {
+        "commits": 1,
+        "lines": 61,
+        "path": "kb/profiles/three_d.md"
+      },
+      {
+        "commits": 1,
+        "lines": 61,
+        "path": "kb/profiles/video.md"
+      },
+      {
+        "commits": 1,
+        "lines": 47,
+        "path": "kb/retrieval.md"
+      },
+      {
+        "commits": 1,
+        "lines": 42,
+        "path": "kb/traps.md"
+      },
+      {
+        "commits": 1,
+        "lines": 145,
+        "path": "kb/workflows/3d_hunyuan3d_v2_detail.json"
+      },
+      {
+        "commits": 1,
+        "lines": 145,
+        "path": "kb/workflows/3d_hunyuan3d_v2_draft.json"
+      },
+      {
+        "commits": 1,
+        "lines": 145,
+        "path": "kb/workflows/3d_hunyuan3d_v2_standard.json"
+      },
+      {
+        "commits": 1,
+        "lines": 138,
+        "path": "kb/workflows/audio_ace_step_15_draft.json"
+      },
+      {
+        "commits": 1,
+        "lines": 138,
+        "path": "kb/workflows/audio_ace_step_15_jingle.json"
+      },
+      {
+        "commits": 1,
+        "lines": 138,
+        "path": "kb/workflows/audio_ace_step_15_music.json"
+      },
+      {
+        "commits": 1,
+        "lines": 138,
+        "path": "kb/workflows/audio_ace_step_15_music_long.json"
+      },
+      {
+        "commits": 1,
+        "lines": 139,
+        "path": "kb/workflows/audio_ace_step_15_music_mp3.json"
+      },
+      {
+        "commits": 1,
+        "lines": 92,
+        "path": "kb/workflows/audio_separation_stems.json"
+      },
+      {
+        "commits": 1,
+        "lines": 195,
+        "path": "kb/workflows/image_controlnet_union_qwen.json"
+      },
+      {
+        "commits": 1,
+        "lines": 163,
+        "path": "kb/workflows/image_controlnet_union_sdxl.json"
+      },
+      {
+        "commits": 1,
+        "lines": 167,
+        "path": "kb/workflows/image_qwen_edit_2511.json"
+      },
+      {
+        "commits": 1,
+        "lines": 140,
+        "path": "kb/workflows/image_qwen_txt2img_2512.json"
+      },
+      {
+        "commits": 1,
+        "lines": 79,
+        "path": "kb/workflows/inference_florence2_caption.json"
+      },
+      {
+        "commits": 1,
+        "lines": 79,
+        "path": "kb/workflows/inference_florence2_detailed_caption.json"
+      },
+      {
+        "commits": 1,
+        "lines": 94,
+        "path": "kb/workflows/inference_florence2_detect.json"
+      },
+      {
+        "commits": 1,
+        "lines": 79,
+        "path": "kb/workflows/inference_florence2_more_detailed_caption.json"
+      },
+      {
+        "commits": 1,
+        "lines": 79,
+        "path": "kb/workflows/inference_florence2_ocr.json"
+      },
+      {
+        "commits": 1,
+        "lines": 87,
+        "path": "kb/workflows/inference_florence2_segment.json"
+      },
+      {
+        "commits": 1,
+        "lines": 79,
+        "path": "kb/workflows/inference_florence2_tag.json"
+      },
+      {
+        "commits": 1,
+        "lines": 193,
+        "path": "kb/workflows/video_hunyuan15_720p.json"
+      },
+      {
+        "commits": 1,
+        "lines": 218,
+        "path": "kb/workflows/video_hunyuan15_i2v.json"
+      },
+      {
+        "commits": 1,
+        "lines": 169,
+        "path": "kb/workflows/video_ltx_standard.json"
+      },
+      {
+        "commits": 1,
+        "lines": 137,
+        "path": "kb/workflows/video_mochi.json"
+      },
+      {
+        "commits": 1,
+        "lines": 145,
+        "path": "kb/workflows/video_standard.json"
+      },
+      {
+        "commits": 1,
+        "lines": 152,
+        "path": "kb/workflows/video_standard_core_output.json"
+      },
+      {
+        "commits": 1,
+        "lines": 146,
+        "path": "kb/workflows/video_wan_14b.json"
+      },
+      {
+        "commits": 2,
+        "lines": 252,
+        "path": "llms.txt"
+      },
+      {
+        "commits": 5,
+        "lines": 12,
+        "path": "pyproject.toml"
+      },
+      {
+        "commits": 1,
+        "lines": 467,
+        "path": "scripts/gen_kb.py"
+      },
+      {
+        "commits": 1,
+        "lines": 2,
+        "path": "site/astro.config.mjs"
+      },
+      {
+        "commits": 2,
+        "lines": 6105,
+        "path": "site/package-lock.json"
+      },
+      {
+        "commits": 1,
+        "lines": 4,
+        "path": "site/package.json"
+      },
+      {
+        "commits": 2,
+        "lines": 492,
+        "path": "site/src/content/docs/handbook/api-reference.md"
+      },
+      {
+        "commits": 2,
+        "lines": 344,
+        "path": "site/src/content/docs/handbook/architecture.md"
+      },
+      {
+        "commits": 4,
+        "lines": 456,
+        "path": "site/src/content/docs/handbook/beginners.md"
+      },
+      {
+        "commits": 2,
+        "lines": 234,
+        "path": "site/src/content/docs/handbook/configuration.md"
+      },
+      {
+        "commits": 2,
+        "lines": 196,
+        "path": "site/src/content/docs/handbook/getting-started.md"
+      },
+      {
+        "commits": 4,
+        "lines": 135,
+        "path": "site/src/content/docs/handbook/index.md"
+      },
+      {
+        "commits": 1,
+        "lines": 161,
+        "path": "site/src/content/docs/handbook/profiles.md"
+      },
+      {
+        "commits": 2,
+        "lines": 459,
+        "path": "site/src/content/docs/handbook/usage.md"
+      },
+      {
+        "commits": 2,
+        "lines": 261,
+        "path": "site/src/content/docs/handbook/video-models.md"
+      },
+      {
+        "commits": 2,
+        "lines": 92,
+        "path": "site/src/site-config.ts"
+      },
+      {
+        "commits": 1,
+        "lines": 682,
+        "path": "tests/test_addressing.py"
+      },
+      {
+        "commits": 1,
+        "lines": 203,
+        "path": "tests/test_audio_profile.py"
+      },
+      {
+        "commits": 1,
+        "lines": 525,
+        "path": "tests/test_client_upload.py"
+      },
+      {
+        "commits": 1,
+        "lines": 7,
+        "path": "tests/test_config.py"
+      },
+      {
+        "commits": 1,
+        "lines": 161,
+        "path": "tests/test_inference.py"
+      },
+      {
+        "commits": 1,
+        "lines": 166,
+        "path": "tests/test_kb.py"
+      },
+      {
+        "commits": 1,
+        "lines": 39,
+        "path": "tests/test_main_extended.py"
+      },
+      {
+        "commits": 1,
+        "lines": 221,
+        "path": "tests/test_metadata.py"
+      },
+      {
+        "commits": 1,
+        "lines": 169,
+        "path": "tests/test_optional_dep_annotations.py"
+      },
+      {
+        "commits": 1,
+        "lines": 284,
+        "path": "tests/test_profile_contract.py"
+      },
+      {
+        "commits": 1,
+        "lines": 144,
+        "path": "tests/test_three_d.py"
+      },
+      {
+        "commits": 2,
+        "lines": 692,
+        "path": "tests/test_video_coverage.py"
+      }
+    ]
+  },
+  "confidence": {
+    "level": "low",
+    "reason": "fewer than 30 qualifying commits in the window, and fewer than 20 source files reach 10 revisions"
+  },
+  "generatedAt": "2026-09-25T09:30:17.927Z",
+  "generatedFrom": {
+    "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815"
+  },
+  "pairs": [],
+  "parameters": {
+    "appliedChangesetLimit": 44.75,
+    "changeset": 50,
+    "changesetFraction": 0.25,
+    "cohesionDrop": 0.2,
+    "couplingPopulation": "source",
+    "fallenShared": 3,
+    "floor": "fallen",
+    "floorHeld": false,
+    "floorTrigger": "both",
+    "headDate": "2026-09-17T18:04:14-07:00",
+    "inScopeFiles": 179,
+    "pinnedStart": null,
+    "priorFloor": null,
+    "qualifyingCommits": 19,
+    "qualifyingMinimum": 30,
+    "revisions": 5,
+    "shared": 10,
+    "sharedFloorUsed": 3,
+    "since": "2026-03-22T01:04:14.000Z",
+    "sourceExtensions": [
+      ".js",
+      ".mjs",
+      ".cjs",
+      ".jsx",
+      ".ts",
+      ".tsx",
+      ".mts",
+      ".cts",
+      ".py",
+      ".rs",
+      ".gd"
+    ],
+    "sourceFileReach": 20,
+    "sourceFileRise": 25,
+    "sourceFilesReachingStrongFloor": 0,
+    "strength": 0.5,
+    "windowDays": 180
+  },
+  "strengthDefinition": "strength is the shared qualifying commits divided by either. either is the number of qualifying commits that touch either file."
+}

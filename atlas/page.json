@@ -1,0 +1,260 @@
+{
+  "authored": [
+    ".github/",
+    "assets/",
+    "docs/",
+    "root",
+    "site/"
+  ],
+  "breaks": [
+    {
+      "doors": 3,
+      "importedBy": [
+        "scripts"
+      ],
+      "importedByTests": [
+        "tests"
+      ],
+      "kind": "part",
+      "name": "comfy_headless",
+      "partLabel": "comfy_headless"
+    },
+    {
+      "doors": 1,
+      "importedBy": [],
+      "importedByTests": [
+        "tests"
+      ],
+      "kind": "part",
+      "name": "scripts",
+      "partLabel": "scripts"
+    }
+  ],
+  "changes": {
+    "first": true
+  },
+  "changesTogether": [],
+  "changesTogetherNote": [
+    "Window: 180 days; a pair counts from 3 shared commits, since the window holds fewer than 30 qualifying commits."
+  ],
+  "changesTogetherWithTests": 0,
+  "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815",
+  "defaultBranch": "main",
+  "derived": "9 parts, mostly Python (83 files), TypeScript (2) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. People run comfy-headless.",
+  "doors": [
+    {
+      "checks": [
+        "comfy_headless/",
+        "scripts/"
+      ],
+      "checksCount": 2,
+      "checksMore": 0,
+      "file": ".github/workflows/ci.yml",
+      "id": ".github/workflows/ci.yml",
+      "landings": [],
+      "name": "CI",
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "comfy_headless",
+          "depth": 0,
+          "files": 29
+        },
+        {
+          "boundary": "scripts",
+          "depth": 0,
+          "files": 1
+        },
+        {
+          "boundary": "tests",
+          "depth": 0,
+          "files": 53
+        }
+      ],
+      "runs": [
+        "tests/"
+      ],
+      "runsCount": 1,
+      "runsMore": 0,
+      "sends": [],
+      "stages": [],
+      "triggers": [
+        "on a pull request to main",
+        "on a push to main touching 5 paths",
+        "or by hand"
+      ]
+    },
+    {
+      "checks": [
+        "comfy_headless/"
+      ],
+      "checksCount": 1,
+      "checksMore": 0,
+      "file": ".github/workflows/publish.yml",
+      "held": [
+        {
+          "checks": [
+            "LICENSE",
+            "README.md",
+            "pyproject.toml"
+          ],
+          "checksMore": 0,
+          "lead": "on a release event",
+          "runs": [],
+          "runsMore": 0,
+          "when": "on a release event"
+        }
+      ],
+      "id": ".github/workflows/publish.yml",
+      "landings": [],
+      "name": "Publish",
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "comfy_headless",
+          "depth": 0,
+          "files": 29
+        },
+        {
+          "boundary": "root",
+          "depth": 0,
+          "files": 3
+        }
+      ],
+      "runs": [
+        "comfy_headless/__init__.py",
+        "comfy_headless/__main__.py"
+      ],
+      "runsCount": 2,
+      "runsMore": 0,
+      "sends": [
+        "publishes a container image on a release event",
+        "publishes to PyPI (on a run by hand, only with dry_run false)"
+      ],
+      "stages": [],
+      "triggers": [
+        "when a release is published",
+        "or by hand"
+      ]
+    },
+    {
+      "checks": [],
+      "checksCount": 0,
+      "checksMore": 0,
+      "file": ".github/workflows/pages.yml",
+      "id": ".github/workflows/pages.yml",
+      "landings": [],
+      "name": "Deploy site to GitHub Pages",
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "site",
+          "depth": 0,
+          "files": 3
+        }
+      ],
+      "runs": [
+        "site/astro.config.mjs",
+        "site/src/"
+      ],
+      "runsCount": 2,
+      "runsMore": 0,
+      "sends": [
+        "deploys the site"
+      ],
+      "stages": [],
+      "triggers": [
+        "on a push to main touching 2 paths",
+        "or by hand"
+      ]
+    },
+    {
+      "checks": [],
+      "checksCount": 0,
+      "checksMore": 0,
+      "file": "pyproject.toml",
+      "id": "pyproject.toml#comfy-headless",
+      "kind": "command",
+      "landings": [],
+      "name": "comfy-headless",
+      "pushes": false,
+      "reach": [
+        {
+          "boundary": "comfy_headless",
+          "depth": 0,
+          "files": 27
+        }
+      ],
+      "runs": [
+        "comfy_headless/__main__.py"
+      ],
+      "runsCount": 1,
+      "runsMore": 0,
+      "sends": [],
+      "stages": [],
+      "triggers": []
+    }
+  ],
+  "duplicates": [],
+  "duplicatesLead": null,
+  "duplicatesNote": [],
+  "edges": [
+    {
+      "from": "scripts",
+      "fromTests": false,
+      "to": "comfy_headless"
+    }
+  ],
+  "generated": [
+    {
+      "place": "kb/",
+      "writers": [
+        "scripts/gen_kb.py"
+      ]
+    }
+  ],
+  "generatedAt": "2026-09-25T09:30:17.927Z",
+  "limits": [
+    "2 imports could not be resolved: `comfy_headless/__init__.py` imports a path built at run time; `tests/run_fuzz.py` imports `comfy_headless.tests.test_fuzz`, which is no module on its import path and no declared dependency.",
+    "2 writes and 4 reads use paths built at run time and are not named here.",
+    "3 reads go to a temporary directory, not to this repository.",
+    "Statistics confidence is low: fewer than 30 qualifying commits in the window, and fewer than 20 source files reach 10 revisions."
+  ],
+  "mainDoor": ".github/workflows/ci.yml",
+  "partLabels": {
+    ".github": ".github",
+    "assets": "assets",
+    "comfy_headless": "comfy_headless",
+    "docs": "docs",
+    "kb": "kb",
+    "root": "the repository root",
+    "scripts": "scripts",
+    "site": "the site",
+    "tests": "tests"
+  },
+  "parts": 9,
+  "readers": [],
+  "repo": "mcp-tool-shop-org/comfy-headless",
+  "sequences": [],
+  "startDoor": "pyproject.toml#comfy-headless",
+  "startHere": [
+    "comfy_headless/__main__.py",
+    "comfy_headless/feature_flags.py",
+    "comfy_headless/__init__.py"
+  ],
+  "startReason": "This path follows comfy-headless (a command people run) from its entry, since CI runs only tests and checks.",
+  "summary": null,
+  "summaryFrom": null,
+  "testFiles": 55,
+  "testedBy": {
+    "comfy_headless": 49,
+    "scripts": 1
+  },
+  "unnamedWrites": 2,
+  "unread": [],
+  "unreadFiles": 0,
+  "unreadNote": [],
+  "untested": [],
+  "untestedNote": [],
+  "written": 1
+}
