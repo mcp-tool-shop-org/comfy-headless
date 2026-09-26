@@ -20,6 +20,7 @@ on:
       - 'tests/**'
       - '.github/workflows/**'
       - 'atlas/**'
+      - 'codecov.yml'
   # Deliberately NOT paths-gated. main requires lint / test (3.11) / test (3.12) /
   # Pip Audit / Secret Scanning, and a required check that never runs never
   # reports -- so a docs-only PR (README, translations, handbook) sat at
@@ -66,6 +67,13 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    # id-token: write lets the Codecov steps sign in with a short-lived OIDC
+    # token; without a token Codecov refuses uploads to a protected branch.
+    # Naming any permission sets the rest to none, so contents: read is
+    # stated for the checkout.
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -100,14 +108,33 @@ jobs:
           pip install httpx[http2]
 
       - name: Run tests
-        run: pytest tests/ -v --cov=comfy_headless --cov-report=xml --cov-report=term-missing
+        id: tests
+        run: pytest tests/ -v --cov=comfy_headless --cov-report=xml --cov-report=term-missing --junitxml=junit.xml
 
+      # Coverage and test results go to Codecov from the 3.11 cell, the
+      # lowest supported Python. Both uploads sign in with OIDC and fail the
+      # job when Codecov refuses the report; the upload this replaces was
+      # refused on every run and passed anyway. Test results go up whenever
+      # the tests ran, failures included, because a failing test is what
+      # that report exists to show.
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.11'
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
-          files: coverage.xml
-          fail_ci_if_error: false
+          use_oidc: true
+          fail_ci_if_error: true
+          disable_search: true
+          files: ./coverage.xml
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() && matrix.python-version == '3.11' && steps.tests.outcome != 'skipped' }}
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          use_oidc: true
+          fail_ci_if_error: true
+          report_type: test_results
+          disable_search: true
+          files: ./junit.xml
 
   pip-audit:
     name: Pip Audit
