@@ -67,17 +67,16 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    # id-token: write lets the Codecov steps sign in with a short-lived OIDC
-    # token; without a token Codecov refuses uploads to a protected branch.
-    # Naming any permission sets the rest to none, so contents: read is
-    # stated for the checkout.
-    permissions:
-      contents: read
-      id-token: write
     strategy:
       fail-fast: false
       matrix:
         python-version: ['3.11', '3.12']
+
+    env:
+      # 'true' on the one cell whose coverage and test results go to Codecov:
+      # the lowest supported Python, on a pull request or a push to the
+      # default branch.
+      COVERAGE_LEG: ${{ matrix.python-version == '3.11' && (github.event_name == 'pull_request' || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)) }}
 
     steps:
       - uses: actions/checkout@v7
@@ -111,25 +110,92 @@ jobs:
         id: tests
         run: pytest tests/ -v --cov=comfy_headless --cov-report=xml --cov-report=term-missing --junitxml=junit.xml
 
-      # Coverage and test results go to Codecov from the 3.11 cell, the
-      # lowest supported Python. Both uploads sign in with OIDC and fail the
-      # job when Codecov refuses the report; the upload this replaces was
-      # refused on every run and passed anyway. Test results go up whenever
-      # the tests ran, failures included, because a failing test is what
-      # that report exists to show.
+      # The codecov job below uploads what these two steps save; this job
+      # never holds an OIDC token. Coverage is saved when the tests passed,
+      # and test results whenever they ran, failures included, because a
+      # failing test is what that report exists to show. A save step with no
+      # file to save fails the job. overwrite lets a re-run of this job
+      # replace the artifact its earlier attempt saved.
+      - name: Save coverage for Codecov
+        if: ${{ env.COVERAGE_LEG == 'true' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: codecov-coverage
+          path: coverage.xml
+          if-no-files-found: error
+          retention-days: 3
+          overwrite: true
+
+      - name: Save test results for Codecov
+        if: ${{ !cancelled() && env.COVERAGE_LEG == 'true' && steps.tests.outcome != 'skipped' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: codecov-test-results
+          path: junit.xml
+          if-no-files-found: error
+          retention-days: 3
+          overwrite: true
+
+  codecov:
+    # Uploads what the test job saved, from a job of its own, so the OIDC
+    # token that signs in to Codecov never exists beside the install and the
+    # tests. Codecov refuses tokenless uploads to a protected branch, which is
+    # what every upload from this repository got before. The checkout, which
+    # keeps no token, is there only so Codecov can match report paths to
+    # files: the job installs nothing and runs none of the repository's code.
+    # It runs whenever the test job ran, failures included, so failing tests
+    # still reach Codecov, and only on the events that collect coverage. A
+    # run the concurrency group cancels uploads nothing, and each run reads
+    # only its own artifacts.
+    name: Codecov
+    needs: test
+    if: ${{ !cancelled() && needs.test.result != 'cancelled' && needs.test.result != 'skipped' && (github.event_name == 'pull_request' || github.ref == format('refs/heads/{0}', github.event.repository.default_branch)) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Both artifacts unpack at the root, where the test job wrote them. A
+      # pattern that matches nothing, unlike a name, does not fail: a failing
+      # test run saves test results and no coverage.
+      - name: Download coverage
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: codecov-coverage
+          path: .
+
+      - name: Download test results
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: codecov-test-results
+          path: .
+
+      # After a passing test job both artifacts exist, so each upload runs,
+      # and fails the job if its file is missing; after a failing one each
+      # runs when its file arrived. Both sign in with OIDC, fail the job when
+      # Codecov refuses the report, and run the Codecov CLI at a fixed version
+      # rather than whichever is newest.
       - name: Upload coverage to Codecov
-        if: matrix.python-version == '3.11'
+        if: ${{ needs.test.result == 'success' || hashFiles('coverage.xml') != '' }}
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
+          version: v11.3.1
           use_oidc: true
           fail_ci_if_error: true
           disable_search: true
           files: ./coverage.xml
 
       - name: Upload test results to Codecov
-        if: ${{ !cancelled() && matrix.python-version == '3.11' && steps.tests.outcome != 'skipped' }}
+        if: ${{ needs.test.result == 'success' || hashFiles('junit.xml') != '' }}
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
+          version: v11.3.1
           use_oidc: true
           fail_ci_if_error: true
           report_type: test_results
