@@ -31,16 +31,41 @@
     }
   ],
   "changes": {
-    "first": true
+    "fileCounts": {
+      "added": 1,
+      "changed": 1,
+      "moved": 0,
+      "parts": 2,
+      "removed": 0
+    },
+    "items": [
+      {
+        "kind": "door",
+        "sentence": "CI's push trigger now also names `codecov.yml`.",
+        "subjects": [
+          ".github/workflows/ci.yml"
+        ]
+      },
+      {
+        "kind": "counts",
+        "sentence": "1 file added and 1 changed content, across 2 parts.",
+        "subjects": []
+      }
+    ],
+    "since": {
+      "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815",
+      "generatedAt": "2026-09-25T09:30:17.927Z"
+    },
+    "unchanged": false
   },
   "changesTogether": [],
   "changesTogetherNote": [
     "Window: 180 days; a pair counts from 3 shared commits, since the window holds fewer than 30 qualifying commits."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815",
+  "commit": "a804d340931e04aa742876692ed3ef9a25cd6830",
   "defaultBranch": "main",
-  "derived": "9 parts, mostly Python (83 files), TypeScript (2) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. People run comfy-headless.",
+  "derived": "9 parts, mostly Python (83 files), CSS (2), TypeScript (2), Astro (1) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. It deploys a site to GitHub Pages. People run comfy-headless.",
   "doors": [
     {
       "checks": [
@@ -76,11 +101,14 @@
       ],
       "runsCount": 1,
       "runsMore": 0,
-      "sends": [],
+      "sends": [
+        "uploads coverage to Codecov",
+        "scans for secrets with TruffleHog"
+      ],
       "stages": [],
       "triggers": [
         "on a pull request to main",
-        "on a push to main touching 5 paths",
+        "on a push to main touching 6 paths",
         "or by hand"
       ]
     },
@@ -93,13 +121,14 @@
       "file": ".github/workflows/publish.yml",
       "held": [
         {
-          "checks": [
+          "checks": [],
+          "checksMore": 0,
+          "lead": "on a release event",
+          "packs": [
             "LICENSE",
             "README.md",
             "pyproject.toml"
           ],
-          "checksMore": 0,
-          "lead": "on a release event",
           "runs": [],
           "runsMore": 0,
           "when": "on a release event"
@@ -150,7 +179,7 @@
         {
           "boundary": "site",
           "depth": 0,
-          "files": 3
+          "files": 5
         }
       ],
       "runs": [
@@ -205,6 +234,7 @@
       "to": "comfy_headless"
     }
   ],
+  "engine": "1.24.0",
   "generated": [
     {
       "place": "kb/",
@@ -213,12 +243,13 @@
       ]
     }
   ],
-  "generatedAt": "2026-09-25T09:30:17.927Z",
+  "generatedAt": "2026-09-30T20:09:11.510Z",
   "limits": [
-    "2 imports could not be resolved: `comfy_headless/__init__.py` imports a path built at run time; `tests/run_fuzz.py` imports `comfy_headless.tests.test_fuzz`, which is no module on its import path and no declared dependency.",
-    "2 writes and 4 reads use paths built at run time and are not named here.",
+    "1 import could not be resolved: `tests/run_fuzz.py` imports `comfy_headless.tests.test_fuzz`, which is no module on its import path and no declared dependency.",
+    "2 writes and 2 reads use paths built at run time and are not named here.",
+    "38 reads go to a path their caller passes, not to this repository.",
     "3 reads go to a temporary directory, not to this repository.",
-    "Statistics confidence is low: fewer than 30 qualifying commits in the window, and fewer than 20 source files reach 10 revisions."
+    "Statistics confidence is low: fewer than 30 qualifying commits in the window, and fewer than 25 source files reach 10 revisions."
   ],
   "mainDoor": ".github/workflows/ci.yml",
   "partLabels": {

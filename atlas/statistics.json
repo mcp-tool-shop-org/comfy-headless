@@ -52,7 +52,7 @@
       "confidence": "low",
       "highWater": null,
       "name": "comfy_headless",
-      "qualifyingSourceCommits": 5,
+      "qualifyingSourceCommits": 3,
       "rebaseline": null
     },
     {
@@ -150,7 +150,7 @@
       "confidence": "low",
       "highWater": null,
       "name": "tests",
-      "qualifyingSourceCommits": 4,
+      "qualifyingSourceCommits": 3,
       "rebaseline": null
     }
   ],
@@ -163,8 +163,8 @@
         "path": ".github/dependabot.yml"
       },
       {
-        "commits": 7,
-        "lines": 49,
+        "commits": 9,
+        "lines": 166,
         "path": ".github/workflows/ci.yml"
       },
       {
@@ -188,8 +188,8 @@
         "path": ".polyglot-cache.json"
       },
       {
-        "commits": 4,
-        "lines": 235,
+        "commits": 3,
+        "lines": 226,
         "path": "CHANGELOG.md"
       },
       {
@@ -233,14 +233,39 @@
         "path": "README.zh.md"
       },
       {
-        "commits": 4,
-        "lines": 159,
-        "path": "comfy_headless/__init__.py"
+        "commits": 1,
+        "lines": 80,
+        "path": "atlas/README.md"
       },
       {
-        "commits": 2,
-        "lines": 27,
-        "path": "comfy_headless/__main__.py"
+        "commits": 1,
+        "lines": 38,
+        "path": "atlas/boundaries.yaml"
+      },
+      {
+        "commits": 1,
+        "lines": 260,
+        "path": "atlas/page.json"
+      },
+      {
+        "commits": 1,
+        "lines": 721,
+        "path": "atlas/statistics.json"
+      },
+      {
+        "commits": 1,
+        "lines": 2517,
+        "path": "atlas/structure.json"
+      },
+      {
+        "commits": 1,
+        "lines": 18,
+        "path": "codecov.yml"
+      },
+      {
+        "commits": 3,
+        "lines": 157,
+        "path": "comfy_headless/__init__.py"
       },
       {
         "commits": 3,
@@ -533,8 +558,8 @@
         "path": "llms.txt"
       },
       {
-        "commits": 5,
-        "lines": 12,
+        "commits": 4,
+        "lines": 10,
         "path": "pyproject.toml"
       },
       {
@@ -568,8 +593,8 @@
         "path": "site/src/content/docs/handbook/architecture.md"
       },
       {
-        "commits": 4,
-        "lines": 456,
+        "commits": 3,
+        "lines": 349,
         "path": "site/src/content/docs/handbook/beginners.md"
       },
       {
@@ -583,8 +608,8 @@
         "path": "site/src/content/docs/handbook/getting-started.md"
       },
       {
-        "commits": 4,
-        "lines": 135,
+        "commits": 3,
+        "lines": 134,
         "path": "site/src/content/docs/handbook/index.md"
       },
       {
@@ -639,11 +664,6 @@
       },
       {
         "commits": 1,
-        "lines": 39,
-        "path": "tests/test_main_extended.py"
-      },
-      {
-        "commits": 1,
         "lines": 221,
         "path": "tests/test_metadata.py"
       },
@@ -671,15 +691,15 @@
   },
   "confidence": {
     "level": "low",
-    "reason": "fewer than 30 qualifying commits in the window, and fewer than 20 source files reach 10 revisions"
+    "reason": "fewer than 30 qualifying commits in the window, and fewer than 25 source files reach 10 revisions"
   },
-  "generatedAt": "2026-09-25T09:30:17.927Z",
+  "generatedAt": "2026-09-30T20:09:11.510Z",
   "generatedFrom": {
-    "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815"
+    "commit": "a804d340931e04aa742876692ed3ef9a25cd6830"
   },
   "pairs": [],
   "parameters": {
-    "appliedChangesetLimit": 44.75,
+    "appliedChangesetLimit": 46.25,
     "changeset": 50,
     "changesetFraction": 0.25,
     "cohesionDrop": 0.2,
@@ -688,16 +708,16 @@
     "floor": "fallen",
     "floorHeld": false,
     "floorTrigger": "both",
-    "headDate": "2026-09-17T18:04:14-07:00",
-    "inScopeFiles": 179,
+    "headDate": "2026-09-26T05:05:59-07:00",
+    "inScopeFiles": 185,
     "pinnedStart": null,
-    "priorFloor": null,
-    "qualifyingCommits": 19,
+    "priorFloor": "fallen",
+    "qualifyingCommits": 18,
     "qualifyingMinimum": 30,
     "revisions": 5,
     "shared": 10,
     "sharedFloorUsed": 3,
-    "since": "2026-03-22T01:04:14.000Z",
+    "since": "2026-03-30T12:05:59.000Z",
     "sourceExtensions": [
       ".js",
       ".mjs",
