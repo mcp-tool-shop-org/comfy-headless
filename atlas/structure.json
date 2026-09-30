@@ -21,7 +21,7 @@
           "path": ".github/dependabot.yml"
         },
         {
-          "hash": "525090eff97d315f03d43a30641e727815d1efc91edc0ed56c4e1f65b131f899",
+          "hash": "c9bd433ebaa40ce4b7f3bbe66f2f297d9c0ef51aab408d66028b381be1e8af77",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -67,7 +67,7 @@
       "unresolvedSites": 0
     },
     {
-      "dynamicReads": 3,
+      "dynamicReads": 1,
       "dynamicSpawns": 0,
       "dynamicSpawnsInTests": 0,
       "dynamicWrites": 2,
@@ -77,6 +77,22 @@
       "externals": 0,
       "files": [
         {
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 188
+            },
+            {
+              "in": "__getattr__",
+              "kind": "raise",
+              "line": 436
+            },
+            {
+              "in": "__getattr__",
+              "kind": "raise",
+              "line": 461
+            }
+          ],
           "hash": "6c2700b9b536cbf113019740d2b4b6f59c2480b14501ac3e8f41112f11678ff2",
           "importOrder": [
             "comfy_headless/config.py",
@@ -102,7 +118,8 @@
             "comfy_headless/validation.py",
             "comfy_headless/video.py",
             "comfy_headless/workflows.py",
-            "comfy_headless/ui.py"
+            "comfy_headless/ui.py",
+            "comfy_headless/theme.py"
           ],
           "importsFiles": [
             "comfy_headless/_version.py",
@@ -123,6 +140,7 @@
             "comfy_headless/node_packs.py",
             "comfy_headless/retry.py",
             "comfy_headless/secrets_manager.py",
+            "comfy_headless/theme.py",
             "comfy_headless/three_d.py",
             "comfy_headless/ui.py",
             "comfy_headless/validation.py",
@@ -162,6 +180,13 @@
           "entryRule": 0,
           "exports": [
             "main"
+          ],
+          "failurePaths": [
+            {
+              "in": "main",
+              "kind": "except",
+              "line": 46
+            }
           ],
           "hash": "7f3dacd328dd6bdd11691af7dfbe20bb46da3882d38166d109f44c2b2a3445cd",
           "importsFiles": [
@@ -224,6 +249,7 @@
           ]
         },
         {
+          "constantOnly": true,
           "hash": "8dbdc168006f92b19f132685032395699a9c7fd3839c1fa22034a17eee891514",
           "path": "comfy_headless/_version.py"
         },
@@ -239,6 +265,73 @@
             "set_node_input",
             "validate_node_input"
           ],
+          "failurePaths": [
+            {
+              "in": "parse_field_path",
+              "kind": "raise",
+              "line": 249
+            },
+            {
+              "in": "parse_field_path",
+              "kind": "raise",
+              "line": 256
+            },
+            {
+              "in": "parse_field_path",
+              "kind": "raise",
+              "line": 275
+            },
+            {
+              "in": "parse_field_path",
+              "kind": "raise",
+              "line": 279
+            },
+            {
+              "in": "_resolve_node",
+              "kind": "raise",
+              "line": 299
+            },
+            {
+              "in": "set_node_input",
+              "kind": "raise",
+              "line": 325
+            },
+            {
+              "in": "build",
+              "kind": "raise",
+              "line": 403
+            },
+            {
+              "in": "_check_active",
+              "kind": "raise",
+              "line": 442
+            },
+            {
+              "in": "_check_active",
+              "kind": "raise",
+              "line": 464
+            },
+            {
+              "in": "_check_active",
+              "kind": "raise",
+              "line": 472
+            },
+            {
+              "in": "_check_active",
+              "kind": "raise",
+              "line": 479
+            },
+            {
+              "in": "_check_active",
+              "kind": "raise",
+              "line": 486
+            },
+            {
+              "in": "require_output_node",
+              "kind": "raise",
+              "line": 751
+            }
+          ],
           "hash": "1f31b7a7d32b97cea92ef092670dd1d5126629fa2c71ca703d6842daecb4db2c",
           "importsFiles": [
             "comfy_headless/exceptions.py",
@@ -252,6 +345,18 @@
             "build_audio_workflow",
             "get_audio_builder",
             "list_audio_presets"
+          ],
+          "failurePaths": [
+            {
+              "in": "build_separation",
+              "kind": "raise",
+              "line": 333
+            },
+            {
+              "in": "build_separation",
+              "kind": "raise",
+              "line": 337
+            }
           ],
           "hash": "dfeebf1f70b97ed06debeaf36dc95cb0dc8b323709278d5e877404c77279a9cc",
           "importsFiles": [
@@ -269,6 +374,103 @@
             "save_temp_image",
             "save_temp_video"
           ],
+          "failurePaths": [
+            {
+              "in": "__init__",
+              "kind": "except",
+              "line": 93
+            },
+            {
+              "in": "__init__",
+              "kind": "raise",
+              "line": 95
+            },
+            {
+              "in": "__init__",
+              "kind": "except",
+              "line": 96
+            },
+            {
+              "in": "__init__",
+              "kind": "raise",
+              "line": 98
+            },
+            {
+              "in": "cleanup",
+              "kind": "except",
+              "line": 168
+            },
+            {
+              "in": "cleanup",
+              "kind": "except",
+              "line": 182
+            },
+            {
+              "in": "cleanup",
+              "kind": "except",
+              "line": 185
+            },
+            {
+              "in": "cleanup",
+              "kind": "except",
+              "line": 189
+            },
+            {
+              "in": "cleanup",
+              "kind": "except",
+              "line": 191
+            },
+            {
+              "in": "cleanup",
+              "kind": "except",
+              "line": 193
+            },
+            {
+              "in": "get_total_size",
+              "kind": "except",
+              "line": 222
+            },
+            {
+              "in": "cleanup_temp_files",
+              "kind": "except",
+              "line": 290
+            },
+            {
+              "in": "cleanup_temp_files",
+              "kind": "except",
+              "line": 293
+            },
+            {
+              "in": "cleanup_temp_files",
+              "kind": "except",
+              "line": 296
+            },
+            {
+              "in": "cleanup_temp_files",
+              "kind": "except",
+              "line": 298
+            },
+            {
+              "in": "cleanup_temp_files",
+              "kind": "except",
+              "line": 300
+            },
+            {
+              "in": "cleanup_all",
+              "kind": "except",
+              "line": 322
+            },
+            {
+              "in": "register_shutdown_handlers",
+              "kind": "except",
+              "line": 344
+            },
+            {
+              "in": "run",
+              "kind": "except",
+              "line": 380
+            }
+          ],
           "hash": "716ad6def31318fbeab26e31588c2d9c83d5f549536e3a52fc0721732177f816",
           "importsFiles": [
             "comfy_headless/config.py",
@@ -277,6 +479,363 @@
           "path": "comfy_headless/cleanup.py"
         },
         {
+          "failurePaths": [
+            {
+              "in": "_safe_json_parse",
+              "kind": "except",
+              "line": 62
+            },
+            {
+              "in": "_safe_json_parse",
+              "kind": "raise",
+              "line": 67
+            },
+            {
+              "in": "_normalize_upload_subfolder",
+              "kind": "raise",
+              "line": 205
+            },
+            {
+              "in": "_resolve_upload_payload",
+              "kind": "except",
+              "line": 239
+            },
+            {
+              "in": "_resolve_upload_payload",
+              "kind": "raise",
+              "line": 240
+            },
+            {
+              "in": "_resolve_upload_payload",
+              "kind": "raise",
+              "line": 249
+            },
+            {
+              "in": "_normalize_original_ref",
+              "kind": "raise",
+              "line": 275
+            },
+            {
+              "in": "_normalize_original_ref",
+              "kind": "raise",
+              "line": 281
+            },
+            {
+              "in": "_request",
+              "kind": "raise",
+              "line": 427
+            },
+            {
+              "in": "_request",
+              "kind": "except",
+              "line": 436
+            },
+            {
+              "in": "_request",
+              "kind": "raise",
+              "line": 438
+            },
+            {
+              "in": "_request",
+              "kind": "except",
+              "line": 443
+            },
+            {
+              "in": "_request",
+              "kind": "raise",
+              "line": 445
+            },
+            {
+              "in": "_request",
+              "kind": "except",
+              "line": 448
+            },
+            {
+              "in": "_request",
+              "kind": "raise",
+              "line": 450
+            },
+            {
+              "in": "is_online",
+              "kind": "except",
+              "line": 482
+            },
+            {
+              "in": "get_system_stats",
+              "kind": "except",
+              "line": 496
+            },
+            {
+              "in": "get_system_stats",
+              "kind": "except",
+              "line": 499
+            },
+            {
+              "in": "get_vram_gb",
+              "kind": "except",
+              "line": 524
+            },
+            {
+              "in": "get_free_vram_gb",
+              "kind": "except",
+              "line": 546
+            },
+            {
+              "in": "ensure_online",
+              "kind": "raise",
+              "line": 558
+            },
+            {
+              "in": "check_vram_available",
+              "kind": "raise",
+              "line": 588
+            },
+            {
+              "in": "recommend_video_preset",
+              "kind": "except",
+              "line": 738
+            },
+            {
+              "in": "_get_object_info",
+              "kind": "except",
+              "line": 779
+            },
+            {
+              "in": "_get_object_info",
+              "kind": "except",
+              "line": 782
+            },
+            {
+              "in": "get_all_installed_nodes",
+              "kind": "except",
+              "line": 824
+            },
+            {
+              "in": "get_all_installed_nodes",
+              "kind": "except",
+              "line": 827
+            },
+            {
+              "in": "require_workflow_dependencies",
+              "kind": "raise",
+              "line": 913
+            },
+            {
+              "in": "check_workflow_types",
+              "kind": "except",
+              "line": 938
+            },
+            {
+              "in": "check_workflow_types",
+              "kind": "except",
+              "line": 940
+            },
+            {
+              "in": "get_queue",
+              "kind": "except",
+              "line": 978
+            },
+            {
+              "in": "get_queue",
+              "kind": "except",
+              "line": 981
+            },
+            {
+              "in": "get_history",
+              "kind": "except",
+              "line": 992
+            },
+            {
+              "in": "get_history",
+              "kind": "except",
+              "line": 995
+            },
+            {
+              "in": "cancel_current",
+              "kind": "except",
+              "line": 1006
+            },
+            {
+              "in": "clear_queue",
+              "kind": "except",
+              "line": 1017
+            },
+            {
+              "in": "queue_prompt",
+              "kind": "except",
+              "line": 1073
+            },
+            {
+              "in": "queue_prompt",
+              "kind": "raise",
+              "line": 1074
+            },
+            {
+              "in": "queue_prompt",
+              "kind": "except",
+              "line": 1075
+            },
+            {
+              "in": "wait_for_completion",
+              "kind": "except",
+              "line": 1192
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "raise",
+              "line": 1241
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "raise",
+              "line": 1255
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "raise",
+              "line": 1260
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "raise",
+              "line": 1305
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "except",
+              "line": 1317
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "raise",
+              "line": 1318
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "raise",
+              "line": 1329
+            },
+            {
+              "in": "_upload_asset",
+              "kind": "raise",
+              "line": 1345
+            },
+            {
+              "in": "get_image",
+              "kind": "except",
+              "line": 1542
+            },
+            {
+              "in": "get_video",
+              "kind": "except",
+              "line": 1556
+            },
+            {
+              "in": "get_file",
+              "kind": "except",
+              "line": 1578
+            },
+            {
+              "in": "generate_image",
+              "kind": "except",
+              "line": 1808
+            },
+            {
+              "in": "generate_image",
+              "kind": "except",
+              "line": 1840
+            },
+            {
+              "in": "generate_batch",
+              "kind": "except",
+              "line": 2006
+            },
+            {
+              "in": "generate_video",
+              "kind": "except",
+              "line": 2104
+            },
+            {
+              "in": "generate_video",
+              "kind": "except",
+              "line": 2145
+            },
+            {
+              "in": "_resolve_input_ref",
+              "kind": "raise",
+              "line": 2237
+            },
+            {
+              "in": "_resolve_input_ref",
+              "kind": "except",
+              "line": 2248
+            },
+            {
+              "in": "_resolve_input_ref",
+              "kind": "raise",
+              "line": 2254
+            },
+            {
+              "in": "generate_3d",
+              "kind": "except",
+              "line": 2394
+            },
+            {
+              "in": "generate_3d",
+              "kind": "except",
+              "line": 2401
+            },
+            {
+              "in": "generate_audio",
+              "kind": "except",
+              "line": 2471
+            },
+            {
+              "in": "generate_audio",
+              "kind": "except",
+              "line": 2479
+            },
+            {
+              "in": "separate_audio",
+              "kind": "except",
+              "line": 2545
+            },
+            {
+              "in": "separate_audio",
+              "kind": "except",
+              "line": 2552
+            },
+            {
+              "in": "run_inference",
+              "kind": "except",
+              "line": 2627
+            },
+            {
+              "in": "run_inference",
+              "kind": "except",
+              "line": 2636
+            },
+            {
+              "in": "edit_image",
+              "kind": "except",
+              "line": 2705
+            },
+            {
+              "in": "edit_image",
+              "kind": "except",
+              "line": 2713
+            },
+            {
+              "in": "rerun_from_png",
+              "kind": "except",
+              "line": 2781
+            },
+            {
+              "in": "rerun_from_png",
+              "kind": "except",
+              "line": 2789
+            }
+          ],
           "hash": "bf692d96fbf428d8a51afbebbf58b6924da52a1d0f55df70e8f47aa756ff7287",
           "importOrder": [
             "comfy_headless/config.py",
@@ -313,6 +872,12 @@
             "get_temp_dir",
             "reload_settings"
           ],
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 50
+            }
+          ],
           "hash": "07d423f6c3d9d1e5652577fd3b0ebe6bec947b1918fbb9b734df8803133a2672",
           "importsFiles": [
             "comfy_headless/_version.py"
@@ -325,6 +890,28 @@
             "format_error_for_user",
             "get_verbosity",
             "set_verbosity"
+          ],
+          "failurePaths": [
+            {
+              "in": "_get_verbosity",
+              "kind": "except",
+              "line": 126
+            },
+            {
+              "in": "value",
+              "kind": "raise",
+              "line": 1025
+            },
+            {
+              "in": "from_exception",
+              "kind": "except",
+              "line": 1081
+            },
+            {
+              "in": "from_exception",
+              "kind": "except",
+              "line": 1083
+            }
           ],
           "hash": "d09d6473842ad108428608327d83ddace955fac4d5995a896fd63aeee3bc67cf",
           "path": "comfy_headless/exceptions.py"
@@ -339,6 +926,48 @@
             "list_available_features",
             "list_missing_features",
             "require_feature"
+          ],
+          "failurePaths": [
+            {
+              "in": "_detect_features",
+              "kind": "except",
+              "line": 95
+            },
+            {
+              "in": "_detect_features",
+              "kind": "except",
+              "line": 104
+            },
+            {
+              "in": "_detect_features",
+              "kind": "except",
+              "line": 113
+            },
+            {
+              "in": "_detect_features",
+              "kind": "except",
+              "line": 122
+            },
+            {
+              "in": "_detect_features",
+              "kind": "except",
+              "line": 132
+            },
+            {
+              "in": "_detect_features",
+              "kind": "except",
+              "line": 141
+            },
+            {
+              "in": "wrapper",
+              "kind": "raise",
+              "line": 236
+            },
+            {
+              "in": "ensure_feature",
+              "kind": "raise",
+              "line": 268
+            }
           ],
           "hash": "e9e5cee59fd543f96fb4a8e898bbe8616b6757e89f4439ab1ebd79c7ca856a6b",
           "path": "comfy_headless/feature_flags.py",
@@ -356,6 +985,88 @@
             "full_health_check",
             "get_health_checker",
             "is_healthy"
+          ],
+          "failurePaths": [
+            {
+              "in": "check_comfyui_health",
+              "kind": "except",
+              "line": 164
+            },
+            {
+              "in": "check_comfyui_health",
+              "kind": "except",
+              "line": 168
+            },
+            {
+              "in": "check_comfyui_health",
+              "kind": "except",
+              "line": 174
+            },
+            {
+              "in": "check_ollama_health",
+              "kind": "except",
+              "line": 223
+            },
+            {
+              "in": "check_ollama_health",
+              "kind": "except",
+              "line": 229
+            },
+            {
+              "in": "check_ollama_health",
+              "kind": "except",
+              "line": 235
+            },
+            {
+              "in": "check_disk_space",
+              "kind": "except",
+              "line": 272
+            },
+            {
+              "in": "check_memory",
+              "kind": "except",
+              "line": 309
+            },
+            {
+              "in": "check_memory",
+              "kind": "except",
+              "line": 313
+            },
+            {
+              "in": "check_temp_files",
+              "kind": "except",
+              "line": 345
+            },
+            {
+              "in": "check_circuit_breakers",
+              "kind": "except",
+              "line": 369
+            },
+            {
+              "in": "attempt_recovery",
+              "kind": "except",
+              "line": 462
+            },
+            {
+              "in": "attempt_recovery",
+              "kind": "except",
+              "line": 469
+            },
+            {
+              "in": "_cleanup_temp_files",
+              "kind": "except",
+              "line": 493
+            },
+            {
+              "in": "_reset_circuits",
+              "kind": "except",
+              "line": 505
+            },
+            {
+              "in": "_monitor_loop",
+              "kind": "except",
+              "line": 584
+            }
           ],
           "hash": "993f558895df091e6a5d194942744e2e00432952dba5f0891b941591f107899e",
           "importsFiles": [
@@ -378,6 +1089,13 @@
             "search_help",
             "set_help_level"
           ],
+          "failurePaths": [
+            {
+              "in": "_get_default_level",
+              "kind": "except",
+              "line": 80
+            }
+          ],
           "hash": "0144f9d86ab4ff1023b6b01d713fa56920029f84763517c755e0692c4d07738f",
           "importsFiles": [
             "comfy_headless/logging_config.py"
@@ -389,6 +1107,51 @@
             "close_all_clients",
             "get_async_http_client",
             "get_http_client"
+          ],
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 59
+            },
+            {
+              "kind": "except",
+              "line": 68
+            },
+            {
+              "in": "client",
+              "kind": "raise",
+              "line": 140
+            },
+            {
+              "in": "_request",
+              "kind": "except",
+              "line": 172
+            },
+            {
+              "in": "_request",
+              "kind": "raise",
+              "line": 179
+            },
+            {
+              "in": "_request",
+              "kind": "raise",
+              "line": 183
+            },
+            {
+              "in": "__init__",
+              "kind": "raise",
+              "line": 258
+            },
+            {
+              "in": "_request",
+              "kind": "except",
+              "line": 306
+            },
+            {
+              "in": "_request",
+              "kind": "raise",
+              "line": 307
+            }
           ],
           "hash": "8aa448479c09637e71a2a1f7767c174b9c3f73eaf4e9ee7ae8968fedb0159dd2",
           "importsFiles": [
@@ -403,6 +1166,23 @@
           "exports": [
             "build_inference_workflow",
             "get_inference_builder"
+          ],
+          "failurePaths": [
+            {
+              "in": "build",
+              "kind": "raise",
+              "line": 213
+            },
+            {
+              "in": "build",
+              "kind": "raise",
+              "line": 217
+            },
+            {
+              "in": "build",
+              "kind": "raise",
+              "line": 294
+            }
           ],
           "hash": "4d7c65000b75adfcef25f7e4f34787c1c2134f14062b7a76440db2b5c0bc4d41",
           "importsFiles": [
@@ -420,6 +1200,23 @@
             "get_prompt_cache",
             "quick_enhance",
             "sanitize_prompt"
+          ],
+          "failurePaths": [
+            {
+              "in": "_load_custom_few_shot_examples",
+              "kind": "except",
+              "line": 396
+            },
+            {
+              "in": "_ollama_request_with_retry",
+              "kind": "except",
+              "line": 1337
+            },
+            {
+              "in": "check_ollama",
+              "kind": "except",
+              "line": 1360
+            }
           ],
           "hash": "99b9a4eac544f0049b97875b3614342192c4a1ba4ea0458da28e9243c5a33cd7",
           "importsFiles": [
@@ -441,6 +1238,37 @@
             "set_request_id",
             "traced_operation"
           ],
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 66
+            },
+            {
+              "in": "_format_json",
+              "kind": "except",
+              "line": 148
+            },
+            {
+              "in": "_setup_opentelemetry",
+              "kind": "except",
+              "line": 261
+            },
+            {
+              "in": "_setup_opentelemetry",
+              "kind": "except",
+              "line": 269
+            },
+            {
+              "in": "log_timing",
+              "kind": "except",
+              "line": 518
+            },
+            {
+              "in": "log_timing",
+              "kind": "raise",
+              "line": 520
+            }
+          ],
           "hash": "ea56ad108a50b31f00c61dba0eaa9d183ee4b144319c78f7000dcd2664693496",
           "importsFiles": [
             "comfy_headless/config.py"
@@ -452,6 +1280,33 @@
             "extract_prompt_graph",
             "read_png_text_chunks",
             "read_workflow_metadata"
+          ],
+          "failurePaths": [
+            {
+              "in": "_decompress_capped",
+              "kind": "raise",
+              "line": 106
+            },
+            {
+              "in": "read_png_text_chunks",
+              "kind": "raise",
+              "line": 125
+            },
+            {
+              "in": "read_png_text_chunks",
+              "kind": "except",
+              "line": 176
+            },
+            {
+              "in": "read_workflow_metadata",
+              "kind": "except",
+              "line": 198
+            },
+            {
+              "in": "extract_prompt_graph",
+              "kind": "raise",
+              "line": 230
+            }
           ],
           "hash": "e6be30cf889d7babbe52d93a5d0c425b05c878202acebf03949d05320cb3095e",
           "importsFiles": [
@@ -476,6 +1331,82 @@
             "retry_on_exception",
             "retry_with_backoff",
             "with_timeout"
+          ],
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 79
+            },
+            {
+              "in": "wrapper",
+              "kind": "except",
+              "line": 166
+            },
+            {
+              "in": "wrapper",
+              "kind": "raise",
+              "line": 167
+            },
+            {
+              "in": "wrapper",
+              "kind": "except",
+              "line": 187
+            },
+            {
+              "in": "wrapper",
+              "kind": "raise",
+              "line": 195
+            },
+            {
+              "in": "wrapper",
+              "kind": "raise",
+              "line": 226
+            },
+            {
+              "in": "retry_on_exception",
+              "kind": "except",
+              "line": 269
+            },
+            {
+              "in": "retry_on_exception",
+              "kind": "raise",
+              "line": 277
+            },
+            {
+              "in": "wrapper",
+              "kind": "except",
+              "line": 345
+            },
+            {
+              "in": "wrapper",
+              "kind": "raise",
+              "line": 353
+            },
+            {
+              "in": "__enter__",
+              "kind": "raise",
+              "line": 509
+            },
+            {
+              "in": "wrapper",
+              "kind": "except",
+              "line": 696
+            },
+            {
+              "in": "wrapper",
+              "kind": "raise",
+              "line": 697
+            },
+            {
+              "in": "wrapper",
+              "kind": "except",
+              "line": 721
+            },
+            {
+              "in": "wrapper",
+              "kind": "raise",
+              "line": 722
+            }
           ],
           "hash": "910c3610273444f23371fe4eb029c9c62da321a90bbb21bcaebe187c0345512b",
           "importsFiles": [
@@ -504,6 +1435,41 @@
             "redact_dict",
             "verify_hashed_secret"
           ],
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 77
+            },
+            {
+              "kind": "except",
+              "line": 84
+            },
+            {
+              "in": "_init_vault",
+              "kind": "except",
+              "line": 240
+            },
+            {
+              "in": "_get_from_vault",
+              "kind": "except",
+              "line": 267
+            },
+            {
+              "in": "get",
+              "kind": "raise",
+              "line": 311
+            },
+            {
+              "in": "get",
+              "kind": "raise",
+              "line": 324
+            },
+            {
+              "in": "verify_hashed_secret",
+              "kind": "except",
+              "line": 459
+            }
+          ],
           "hash": "d584c7675cda33dab3a8242edecd1a2d5849d297ba4973d54c4070c93fca50e9",
           "importsFiles": [
             "comfy_headless/exceptions.py",
@@ -527,6 +1493,9 @@
             "run_tests_with_coverage"
           ],
           "hash": "a8526e78a2d74749f5d7fba66d2d837646fc88855debdec54ab5f399cc9226be",
+          "names": [
+            "comfy_headless/__init__.py"
+          ],
           "path": "comfy_headless/test_runner_ui.py"
         },
         {
@@ -543,6 +1512,13 @@
             "build_3d_workflow",
             "get_three_d_builder",
             "list_3d_presets"
+          ],
+          "failurePaths": [
+            {
+              "in": "build",
+              "kind": "raise",
+              "line": 168
+            }
           ],
           "hash": "e653f4b95a19675c893395d43560a50106304fc551782a094e671faf31c3f965",
           "path": "comfy_headless/three_d.py"
@@ -568,6 +1544,73 @@
             "refresh_samplers",
             "refresh_schedulers"
           ],
+          "failurePaths": [
+            {
+              "in": "enhance_prompt_with_ollama",
+              "kind": "except",
+              "line": 113
+            },
+            {
+              "in": "enhance_prompt_with_ollama",
+              "kind": "except",
+              "line": 115
+            },
+            {
+              "in": "validate_workflow_json",
+              "kind": "except",
+              "line": 1575
+            },
+            {
+              "in": "validate_workflow_json",
+              "kind": "except",
+              "line": 1577
+            },
+            {
+              "in": "check_workflow_dependencies",
+              "kind": "except",
+              "line": 1645
+            },
+            {
+              "in": "check_workflow_dependencies",
+              "kind": "except",
+              "line": 1647
+            },
+            {
+              "in": "import_workflow",
+              "kind": "except",
+              "line": 1754
+            },
+            {
+              "in": "create_custom_workflow",
+              "kind": "except",
+              "line": 1890
+            },
+            {
+              "in": "test_connection_detailed",
+              "kind": "except",
+              "line": 2259
+            },
+            {
+              "in": "test_connection_detailed",
+              "kind": "except",
+              "line": 2264
+            },
+            {
+              "in": "test_connection_detailed",
+              "kind": "except",
+              "line": 2267
+            },
+            {
+              "in": "test_connection_detailed",
+              "kind": "except",
+              "line": 2281
+            },
+            {
+              "in": "test_connection_detailed",
+              "kind": "except",
+              "line": 2300
+            }
+          ],
           "hash": "42435367cd3d25e0c4873dcf6a5a033fbf975ba505ff5cf36e27671c39201c02",
           "importsFiles": [
             "comfy_headless/client.py",
@@ -592,6 +1635,152 @@
             "validated_dimensions",
             "validated_prompt"
           ],
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 76
+            },
+            {
+              "in": "validate_prompt",
+              "kind": "raise",
+              "line": 149
+            },
+            {
+              "in": "validate_prompt",
+              "kind": "raise",
+              "line": 155
+            },
+            {
+              "in": "validate_prompt",
+              "kind": "raise",
+              "line": 158
+            },
+            {
+              "in": "validate_prompt",
+              "kind": "raise",
+              "line": 173
+            },
+            {
+              "in": "sanitize_prompt",
+              "kind": "except",
+              "line": 196
+            },
+            {
+              "in": "validate_dimensions",
+              "kind": "raise",
+              "line": 233
+            },
+            {
+              "in": "validate_dimensions",
+              "kind": "raise",
+              "line": 239
+            },
+            {
+              "in": "validate_dimensions",
+              "kind": "raise",
+              "line": 243
+            },
+            {
+              "in": "validate_dimensions",
+              "kind": "raise",
+              "line": 249
+            },
+            {
+              "in": "validate_path",
+              "kind": "raise",
+              "line": 312
+            },
+            {
+              "in": "validate_path",
+              "kind": "raise",
+              "line": 318
+            },
+            {
+              "in": "validate_path",
+              "kind": "except",
+              "line": 322
+            },
+            {
+              "in": "validate_path",
+              "kind": "raise",
+              "line": 323
+            },
+            {
+              "in": "validate_path",
+              "kind": "raise",
+              "line": 329
+            },
+            {
+              "in": "validate_path",
+              "kind": "except",
+              "line": 339
+            },
+            {
+              "in": "validate_path",
+              "kind": "raise",
+              "line": 340
+            },
+            {
+              "in": "validate_path",
+              "kind": "raise",
+              "line": 347
+            },
+            {
+              "in": "validate_in_range",
+              "kind": "raise",
+              "line": 380
+            },
+            {
+              "in": "validate_in_range",
+              "kind": "raise",
+              "line": 383
+            },
+            {
+              "in": "validate_choice",
+              "kind": "raise",
+              "line": 408
+            },
+            {
+              "in": "check_prompt_injection",
+              "kind": "raise",
+              "line": 460
+            },
+            {
+              "in": "validate_model_name",
+              "kind": "raise",
+              "line": 509
+            },
+            {
+              "in": "validate_generation_params",
+              "kind": "except",
+              "line": 586
+            },
+            {
+              "in": "validate_generation_params",
+              "kind": "except",
+              "line": 592
+            },
+            {
+              "in": "validate_generation_params",
+              "kind": "except",
+              "line": 598
+            },
+            {
+              "in": "validate_generation_params",
+              "kind": "except",
+              "line": 604
+            },
+            {
+              "in": "validate_generation_params",
+              "kind": "except",
+              "line": 611
+            },
+            {
+              "in": "validate_generation_params",
+              "kind": "raise",
+              "line": 616
+            }
+          ],
           "hash": "66b48622588dd16f4cbdfa342db57c803e5a3f05aa0c23c71e9348a6b5eba07b",
           "importsFiles": [
             "comfy_headless/config.py",
@@ -609,6 +1798,23 @@
             "list_video_models",
             "list_video_presets"
           ],
+          "failurePaths": [
+            {
+              "in": "build",
+              "kind": "raise",
+              "line": 726
+            },
+            {
+              "in": "_build_svd",
+              "kind": "raise",
+              "line": 956
+            },
+            {
+              "in": "_build_hunyuan_15",
+              "kind": "raise",
+              "line": 1290
+            }
+          ],
           "hash": "a8a92008e0f9cdb01713b233de6a04fd3016c0022b4a1309ee26c158b16bdc00",
           "importOrder": [
             "comfy_headless/node_packs.py",
@@ -621,6 +1827,62 @@
           "path": "comfy_headless/video.py"
         },
         {
+          "failurePaths": [
+            {
+              "kind": "except",
+              "line": 44
+            },
+            {
+              "in": "__init__",
+              "kind": "raise",
+              "line": 145
+            },
+            {
+              "in": "connect",
+              "kind": "except",
+              "line": 211
+            },
+            {
+              "in": "connect",
+              "kind": "raise",
+              "line": 220
+            },
+            {
+              "in": "_message_loop",
+              "kind": "except",
+              "line": 253
+            },
+            {
+              "in": "_message_loop",
+              "kind": "except",
+              "line": 256
+            },
+            {
+              "in": "_message_loop",
+              "kind": "except",
+              "line": 258
+            },
+            {
+              "in": "_handle_message",
+              "kind": "except",
+              "line": 281
+            },
+            {
+              "in": "_notify_listeners",
+              "kind": "except",
+              "line": 403
+            },
+            {
+              "in": "_notify_listeners",
+              "kind": "except",
+              "line": 411
+            },
+            {
+              "in": "wait_for_completion",
+              "kind": "except",
+              "line": 477
+            }
+          ],
           "hash": "a69ce2756b1a88d02f0cea7ac690cfb238a967f441176e3bcb7644b385980117",
           "importsFiles": [
             "comfy_headless/config.py",
@@ -649,6 +1911,78 @@
             "list_presets",
             "validate_workflow_dag"
           ],
+          "failurePaths": [
+            {
+              "in": "_load_index",
+              "kind": "except",
+              "line": 362
+            },
+            {
+              "in": "_save_index",
+              "kind": "except",
+              "line": 374
+            },
+            {
+              "in": "_load_snapshot",
+              "kind": "except",
+              "line": 458
+            },
+            {
+              "in": "delete_snapshot",
+              "kind": "except",
+              "line": 584
+            },
+            {
+              "in": "fetch_node_info",
+              "kind": "except",
+              "line": 845
+            },
+            {
+              "in": "compile",
+              "kind": "except",
+              "line": 1190
+            },
+            {
+              "in": "_validate_value",
+              "kind": "except",
+              "line": 1233
+            },
+            {
+              "in": "_validate_value",
+              "kind": "except",
+              "line": 1240
+            },
+            {
+              "in": "_inject_parameter",
+              "kind": "raise",
+              "line": 1285
+            },
+            {
+              "in": "build_qwen_edit_workflow",
+              "kind": "raise",
+              "line": 2262
+            },
+            {
+              "in": "build_controlnet_workflow",
+              "kind": "raise",
+              "line": 2381
+            },
+            {
+              "in": "build_controlnet_workflow",
+              "kind": "raise",
+              "line": 2388
+            },
+            {
+              "in": "build_controlnet_workflow",
+              "kind": "raise",
+              "line": 2395
+            },
+            {
+              "in": "build_controlnet_workflow",
+              "kind": "raise",
+              "line": 2402
+            }
+          ],
           "hash": "3806804489b808a04e91af08f75b0a4af7f45cab5fd002c9d131e851ddd012f6",
           "importOrder": [
             "comfy_headless/logging_config.py",
@@ -671,6 +2005,13 @@
       "origin": "authored",
       "outsidePlaces": [
         {
+          "reads": 38,
+          "where": [
+            "caller"
+          ],
+          "writes": 0
+        },
+        {
           "reads": 3,
           "where": [
             "temp"
@@ -678,17 +2019,13 @@
           "writes": 0
         }
       ],
-      "outsideReads": 3,
+      "outsideReads": 41,
       "role": "code",
-      "testedBy": 49,
-      "unresolvedNamed": [
-        {
-          "path": "comfy_headless/__init__.py",
-          "specifier": null,
-          "why": "dynamic"
-        }
+      "testRunners": [
+        "pytest"
       ],
-      "unresolvedSites": 1
+      "testedBy": 49,
+      "unresolvedSites": 0
     },
     {
       "dynamicReads": 0,
@@ -1009,6 +2346,10 @@
           "path": "UI_AUDIT.md"
         },
         {
+          "hash": "59ca3f6a5be96b80fee73bebf2b778211208d17cd3fb82e2134608dff0729c76",
+          "path": "codecov.yml"
+        },
+        {
           "hash": "292645320d19b0fdd09c68d8c7f5ccfc03ca087c27458abffe4a34481c9a1209",
           "path": "llms.txt"
         },
@@ -1044,6 +2385,12 @@
             "generate",
             "main"
           ],
+          "failurePaths": [
+            {
+              "kind": "raise",
+              "line": 467
+            }
+          ],
           "hash": "39c6caeb5f2ec33a8774a7953a7b6a5edae8354956ad0c92432305f30498a6c7",
           "importOrder": [
             "comfy_headless/audio.py",
@@ -1075,6 +2422,9 @@
       "name": "scripts",
       "origin": "authored",
       "role": "code",
+      "testRunners": [
+        "pytest"
+      ],
       "testedBy": 1,
       "unresolvedSites": 0
     },
@@ -1141,6 +2491,14 @@
         },
         {
           "hash": "391533713539035d3c92282579d43de0f137067867fdb502d7eaea3c74601d2a",
+          "importOrder": [
+            "site/src/styles/global.css",
+            "site/src/site-config.ts"
+          ],
+          "importsFiles": [
+            "site/src/site-config.ts",
+            "site/src/styles/global.css"
+          ],
           "path": "site/src/pages/index.astro"
         },
         {
@@ -1219,7 +2577,8 @@
           "importsFiles": [
             "comfy_headless/config.py"
           ],
-          "path": "tests/conftest.py"
+          "path": "tests/conftest.py",
+          "testFramework": "pytest"
         },
         {
           "exports": [
@@ -1250,7 +2609,8 @@
             "comfy_headless/video.py",
             "comfy_headless/workflows.py"
           ],
-          "path": "tests/test_addressing.py"
+          "path": "tests/test_addressing.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "c6d7c5bb5ff931c2c9dafea7ea7a7ac22f84f889261bf10d24b8626ebb0a8eef",
@@ -1264,7 +2624,8 @@
             "comfy_headless/audio.py",
             "comfy_headless/exceptions.py"
           ],
-          "path": "tests/test_audio_profile.py"
+          "path": "tests/test_audio_profile.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "f97d92174cf30a2009f62465efec47dc7d6962709f8230ca5e4e8ac3e72d9528",
@@ -1291,7 +2652,8 @@
             "comfy_headless/client.py",
             "comfy_headless/exceptions.py"
           ],
-          "path": "tests/test_client.py"
+          "path": "tests/test_client.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "91a6d009b9d2bd4bf64aaac6fad5cba462717bf4cc716487aa3d689a4ace2190",
@@ -1299,7 +2661,8 @@
             "comfy_headless/client.py",
             "comfy_headless/exceptions.py"
           ],
-          "path": "tests/test_client_coverage.py"
+          "path": "tests/test_client_coverage.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "093c8e69f99d473bb980af462a06733e44c68481524ba926f7dce2521bad8cdc",
@@ -1308,7 +2671,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/retry.py"
           ],
-          "path": "tests/test_client_generation.py"
+          "path": "tests/test_client_generation.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "821787226370ec1d9d4cb057dc9bf7b08f1f2a248c2eff965cb4f55c0d98bec9",
@@ -1326,7 +2690,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/video.py"
           ],
-          "path": "tests/test_client_upload.py"
+          "path": "tests/test_client_upload.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "b1eaa360a16547ab4817fdbc6f41a932a93113a8b7837b68991c765615edee81",
@@ -1346,7 +2711,8 @@
             "comfy_headless/__init__.py",
             "comfy_headless/config.py"
           ],
-          "path": "tests/test_config_extended.py"
+          "path": "tests/test_config_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "780030611ba4825f37088d0ff407d5b73d93eb7b91443b3f4242542c488e2612",
@@ -1374,7 +2740,8 @@
             "comfy_headless/video.py",
             "comfy_headless/workflows.py"
           ],
-          "path": "tests/test_error_paths.py"
+          "path": "tests/test_error_paths.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "14f277d818ba4615a63575dde90ec76a50439d61520577392ce9faa31ac212a9",
@@ -1393,7 +2760,8 @@
             "comfy_headless/__init__.py",
             "comfy_headless/exceptions.py"
           ],
-          "path": "tests/test_exceptions_extended.py"
+          "path": "tests/test_exceptions_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "16d00b8ec6c10af726a49f0709abf58139acc4160c6400b2528cb26bd6ed3541",
@@ -1405,7 +2773,8 @@
             "comfy_headless/__init__.py",
             "comfy_headless/feature_flags.py"
           ],
-          "path": "tests/test_feature_flags_extended.py"
+          "path": "tests/test_feature_flags_extended.py",
+          "testFramework": "pytest"
         },
         {
           "exports": [
@@ -1426,7 +2795,8 @@
             "comfy_headless/validation.py",
             "comfy_headless/workflows.py"
           ],
-          "path": "tests/test_fuzz.py"
+          "path": "tests/test_fuzz.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "582ae65f78ce4ab8b1fe6d8738e901dce35c3fc6a51ab7f6e96ec89a8d8558c1",
@@ -1473,7 +2843,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/http_client.py"
           ],
-          "path": "tests/test_http_client_extended.py"
+          "path": "tests/test_http_client_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "0394cf45a53026e41fb27adfc638d0f7025df90d11400fdf6f45ae539554bb2a",
@@ -1487,7 +2858,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/inference.py"
           ],
-          "path": "tests/test_inference.py"
+          "path": "tests/test_inference.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "cafa109944d0bb31bb5be644895e7aab32928718b7c48a182abecc8138e92a1a",
@@ -1495,7 +2867,8 @@
             "comfy_headless/__init__.py",
             "comfy_headless/feature_flags.py"
           ],
-          "path": "tests/test_init_extended.py"
+          "path": "tests/test_init_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "e32aa92ee1a897571afa5c0340b7c42e5cd50206fe956e3ae256680759f98c38",
@@ -1556,7 +2929,8 @@
             "comfy_headless/node_packs.py",
             "scripts/gen_kb.py"
           ],
-          "path": "tests/test_kb.py"
+          "path": "tests/test_kb.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "067feeb30092c5fe5ec60153042efa9e984bc60cf136b9fa10ba0b6eaddf287f",
@@ -1568,7 +2942,8 @@
             "comfy_headless/__init__.py",
             "comfy_headless/logging_config.py"
           ],
-          "path": "tests/test_logging_config_extended.py"
+          "path": "tests/test_logging_config_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "7822f9e2c9fc46747d529baf3d0e798cf87cf1576de03257549e5b8e79f66bf5",
@@ -1591,7 +2966,8 @@
             "comfy_headless/__main__.py",
             "comfy_headless/feature_flags.py"
           ],
-          "path": "tests/test_main_extended.py"
+          "path": "tests/test_main_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "b0274d62ed174cfffd9c852ce9650435fa14be1fd4cdfe12db10a604d3e72166",
@@ -1605,10 +2981,14 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/metadata.py"
           ],
-          "path": "tests/test_metadata.py"
+          "path": "tests/test_metadata.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "ca84f7b2dbd637361f5b05698460c0d846171015a4dbcd9eb884145847016d82",
+          "names": [
+            "comfy_headless/http_client.py"
+          ],
           "path": "tests/test_optional_dep_annotations.py"
         },
         {
@@ -1621,6 +3001,7 @@
             "comfy_headless/node_packs.py",
             "comfy_headless/addressing.py",
             "comfy_headless/__init__.py",
+            "comfy_headless/video.py",
             "comfy_headless/client.py"
           ],
           "importsFiles": [
@@ -1631,9 +3012,11 @@
             "comfy_headless/inference.py",
             "comfy_headless/node_packs.py",
             "comfy_headless/three_d.py",
+            "comfy_headless/video.py",
             "comfy_headless/workflows.py"
           ],
-          "path": "tests/test_profile_contract.py"
+          "path": "tests/test_profile_contract.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "502a962090d632be67755efa418f74b0d8a8d6f5c21b6df65bea349380831452",
@@ -1669,7 +3052,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/retry.py"
           ],
-          "path": "tests/test_retry.py"
+          "path": "tests/test_retry.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "e0725fddb2e5c8fb3a200e909e306c066c79c343ff85ed4ef4ec44abc73cd252",
@@ -1681,7 +3065,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/retry.py"
           ],
-          "path": "tests/test_retry_extended.py"
+          "path": "tests/test_retry_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "83a1c889e740f7ed25591f2850d88b17e296c053dc5f9bb8a837fe30be7112cb",
@@ -1693,40 +3078,53 @@
             "comfy_headless/__init__.py",
             "comfy_headless/secrets.py"
           ],
-          "path": "tests/test_secrets_extended.py"
+          "path": "tests/test_secrets_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "c735f7b01b2450047dd89aaa9481cc55f70d3b473d4187a10f610ca9d35bcb17",
           "importOrder": [
             "comfy_headless/__init__.py",
             "comfy_headless/feature_flags.py",
+            "comfy_headless/websocket_client.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/ui.py",
             "comfy_headless/config.py"
           ],
           "importsFiles": [
             "comfy_headless/__init__.py",
             "comfy_headless/config.py",
-            "comfy_headless/feature_flags.py"
+            "comfy_headless/feature_flags.py",
+            "comfy_headless/intelligence.py",
+            "comfy_headless/ui.py",
+            "comfy_headless/websocket_client.py"
           ],
-          "path": "tests/test_security_features.py"
+          "path": "tests/test_security_features.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "4f611b612527f501e8981e6f1ba0bad77a0fe8d124be3aa33064eae6e0ac39f7",
           "importsFiles": [
             "comfy_headless/websocket_client.py"
           ],
-          "path": "tests/test_security_limits.py"
+          "path": "tests/test_security_limits.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "e23c90ada3856bdf76645cc2733236fa2c4fc763cda30a76db6a729d23cc80ac",
           "importsFiles": [
             "comfy_headless/workflows.py"
           ],
-          "path": "tests/test_snapshots.py"
+          "path": "tests/test_snapshots.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "42412a4d2e371474a3f36c1283836091b7d6c27e490b0bae9adebc24d42eab5d",
           "importsFiles": [
             "comfy_headless/test_runner_ui.py"
+          ],
+          "names": [
+            "comfy_headless/__init__.py"
           ],
           "path": "tests/test_test_runner_ui.py"
         },
@@ -1743,7 +3141,8 @@
           "importsFiles": [
             "comfy_headless/three_d.py"
           ],
-          "path": "tests/test_three_d.py"
+          "path": "tests/test_three_d.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "02298c96e6c7d564924cc19d521068d37cbf231401a0e332ca15d0ef3f54ecdd",
@@ -1762,14 +3161,16 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/validation.py"
           ],
-          "path": "tests/test_validation.py"
+          "path": "tests/test_validation.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "e37b53e16861df5d402ca1dba1331614e11a61eef028be9758a222019c8f03f1",
           "importsFiles": [
             "comfy_headless/video.py"
           ],
-          "path": "tests/test_video.py"
+          "path": "tests/test_video.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "fa2a4b42ab53744715ab4b4edeedca83f030b2dbf2e654dd686818165b851ff8",
@@ -1783,7 +3184,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/video.py"
           ],
-          "path": "tests/test_video_coverage.py"
+          "path": "tests/test_video_coverage.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "13733d5fcd78cdb6e86ea66533bdd1d5470340aa5c45d45ab6b85119990e1f0a",
@@ -1795,7 +3197,8 @@
             "comfy_headless/__init__.py",
             "comfy_headless/websocket_client.py"
           ],
-          "path": "tests/test_websocket_client.py"
+          "path": "tests/test_websocket_client.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "7c35596a039a68d1a4208ec9a5f802bb839cc438a03612a07ccc20d6665adf27",
@@ -1809,7 +3212,8 @@
             "comfy_headless/exceptions.py",
             "comfy_headless/websocket_client.py"
           ],
-          "path": "tests/test_websocket_extended.py"
+          "path": "tests/test_websocket_extended.py",
+          "testFramework": "pytest"
         },
         {
           "hash": "69d114902e1c21457db755405761424ae5bb2714590dd497ee1e4b152eedb277",
@@ -1826,6 +3230,9 @@
       "name": "tests",
       "origin": "authored",
       "role": "test",
+      "testRunners": [
+        "pytest"
+      ],
       "testedBy": 0,
       "unresolvedNamed": [
         {
@@ -1842,62 +3249,236 @@
       "checksCount": 2,
       "commands": [
         {
+          "dir": "",
           "job": "lint",
-          "step": "Install linters",
-          "text": "python -m pip install --upgrade pip\n# Pinned: an unpinned lint tool makes CI non-reproducible. A newer\n# ruff began formatting Python inside markdown fences, which turned\n# 16 pre-existing docs into a surprise CI failure on an unrelated PR.\npip install ruff==0.15.17 mypy\n"
+          "programs": [
+            "pip",
+            "python"
+          ],
+          "step": "Install linters"
         },
         {
+          "dir": "",
           "job": "lint",
-          "step": "Run ruff",
-          "text": "ruff check ."
+          "programs": [
+            "ruff"
+          ],
+          "step": "Run ruff"
         },
         {
+          "dir": "",
           "job": "lint",
-          "step": "Check formatting",
-          "text": "ruff format --check ."
+          "programs": [
+            "ruff"
+          ],
+          "step": "Check formatting"
         },
         {
+          "dir": "",
           "job": "lint",
-          "step": "Run type checking",
-          "text": "mypy comfy_headless"
+          "programs": [
+            "mypy"
+          ],
+          "step": "Run type checking"
         },
         {
+          "dir": "",
           "job": "test",
-          "step": "Atlas check",
-          "text": "npx --yes @dogfood-lab/atlas@1.21.0 check"
+          "programs": [
+            "npx"
+          ],
+          "step": "Atlas check"
         },
         {
+          "dir": "",
           "job": "test",
-          "step": "Install dependencies",
-          "text": "python -m pip install --upgrade pip\npip install -e \".[dev,ai,websocket,validation,ui,health]\"\npip install httpx[http2]\n"
+          "programs": [
+            "pip",
+            "python"
+          ],
+          "step": "Install dependencies"
         },
         {
+          "dir": "",
           "job": "test",
-          "step": "Run tests",
-          "text": "pytest tests/ -v --cov=comfy_headless --cov-report=xml --cov-report=term-missing"
+          "programs": [
+            "pytest"
+          ],
+          "step": "Run tests"
         },
         {
+          "dir": "",
           "job": "pip-audit",
-          "step": "Install pip-audit",
-          "text": "python -m pip install --upgrade pip\npip install pip-audit\n"
+          "programs": [
+            "pip",
+            "python"
+          ],
+          "step": "Install pip-audit"
         },
         {
+          "dir": "",
           "job": "pip-audit",
-          "step": "Run pip-audit on core dependencies",
-          "text": "echo \"requests>=2.28.0\" > /tmp/core-deps.txt\necho \"tenacity>=8.0.0\" >> /tmp/core-deps.txt\npip-audit -r /tmp/core-deps.txt\n"
+          "programs": [
+            "echo",
+            "pip-audit"
+          ],
+          "step": "Run pip-audit on core dependencies"
         },
         {
+          "dir": "",
           "job": "pip-audit",
-          "step": "Run pip-audit on full dependencies",
-          "text": "pip install -e \".[full]\"\npip-audit\n"
+          "programs": [
+            "pip",
+            "pip-audit"
+          ],
+          "step": "Run pip-audit on full dependencies"
         }
       ],
       "elsewhere": [],
       "file": ".github/workflows/ci.yml",
+      "jobs": [
+        {
+          "basis": "declared",
+          "name": "lint",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ],
+          "setup": [
+            {
+              "ranges": [
+                {
+                  "from": "3.11",
+                  "range": ">=3.11.0 <3.12.0-0"
+                }
+              ],
+              "step": "Set up Python",
+              "uses": "actions/setup-python",
+              "version": "3.11"
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "name": "test",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ],
+          "setup": [
+            {
+              "ranges": [
+                {
+                  "from": "3.11",
+                  "range": ">=3.11.0 <3.12.0-0"
+                },
+                {
+                  "from": "3.12",
+                  "range": ">=3.12.0 <3.13.0-0"
+                }
+              ],
+              "step": "Set up Python ${{ matrix.python-version }}",
+              "uses": "actions/setup-python",
+              "version": "${{ matrix.python-version }}"
+            },
+            {
+              "ranges": [
+                {
+                  "from": "22",
+                  "range": ">=22.0.0 <23.0.0-0"
+                }
+              ],
+              "step": "Set up Node for Atlas",
+              "uses": "actions/setup-node",
+              "version": "22"
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "name": "codecov",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "name": "pip-audit",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ],
+          "setup": [
+            {
+              "ranges": [
+                {
+                  "from": "3.11",
+                  "range": ">=3.11.0 <3.12.0-0"
+                }
+              ],
+              "step": "Set up Python",
+              "uses": "actions/setup-python",
+              "version": "3.11"
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "name": "secret-scan",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ]
+        }
+      ],
       "landings": [],
       "mentions": [],
       "name": "CI",
-      "permissions": [],
+      "permissions": [
+        "contents:read",
+        "id-token:write"
+      ],
       "pushes": false,
       "reach": [
         {
@@ -1960,6 +3541,17 @@
         "releases": false
       },
       "stages": [],
+      "tests": [
+        {
+          "config": "pyproject.toml",
+          "coverage": true,
+          "files": 53,
+          "job": "test",
+          "junit": true,
+          "runner": "pytest",
+          "step": "Run tests"
+        }
+      ],
       "triggers": [
         {
           "branches": [
@@ -1975,6 +3567,7 @@
           "paths": [
             ".github/workflows/**",
             "atlas/**",
+            "codecov.yml",
             "comfy_headless/**",
             "pyproject.toml",
             "tests/**"
@@ -1986,8 +3579,10 @@
       ],
       "uses": [
         "actions/checkout",
+        "actions/download-artifact",
         "actions/setup-node",
         "actions/setup-python",
+        "actions/upload-artifact",
         "codecov/codecov-action",
         "trufflesecurity/trufflehog"
       ],
@@ -1997,18 +3592,74 @@
       "checksCount": 0,
       "commands": [
         {
+          "dir": "site",
           "job": "build",
-          "step": "Install site dependencies",
-          "text": "npm ci"
+          "programs": [
+            "npm"
+          ],
+          "step": "Install site dependencies"
         },
         {
+          "dir": "site",
           "job": "build",
-          "step": "Build site",
-          "text": "npm run build"
+          "programs": [
+            "npm"
+          ],
+          "step": "Build site"
         }
       ],
       "elsewhere": [],
       "file": ".github/workflows/pages.yml",
+      "jobs": [
+        {
+          "basis": "declared",
+          "name": "build",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ],
+          "setup": [
+            {
+              "ranges": [
+                {
+                  "from": "22",
+                  "range": ">=22.0.0 <23.0.0-0"
+                }
+              ],
+              "step": "1",
+              "uses": "actions/setup-node",
+              "version": "22"
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "environment": {
+            "name": "github-pages"
+          },
+          "name": "deploy",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ]
+        }
+      ],
       "landings": [],
       "mentions": [],
       "name": "Deploy site to GitHub Pages",
@@ -2022,7 +3673,7 @@
         {
           "boundary": "site",
           "depth": 0,
-          "files": 3
+          "files": 5
         }
       ],
       "readers": [],
@@ -2083,39 +3734,61 @@
       "checksCount": 4,
       "commands": [
         {
+          "dir": "",
           "job": "build",
-          "step": "Install build dependencies",
-          "text": "python -m pip install --upgrade pip\npip install build twine\n"
+          "programs": [
+            "pip",
+            "python"
+          ],
+          "step": "Install build dependencies"
         },
         {
+          "dir": "",
           "job": "build",
-          "step": "Build package",
-          "text": "python -m build"
+          "programs": [
+            "python"
+          ],
+          "step": "Build package"
         },
         {
+          "dir": "",
           "job": "build",
-          "step": "Check package",
-          "text": "twine check dist/*"
+          "programs": [
+            "twine"
+          ],
+          "step": "Check package"
         },
         {
+          "dir": "",
           "job": "build",
-          "step": "Test import",
-          "text": "python -m pip install dist/*.whl\npython -c \"from comfy_headless import ComfyClient; print('Import successful')\"\n"
+          "programs": [
+            "python"
+          ],
+          "step": "Test import"
         },
         {
+          "dir": "",
           "job": "test-install",
-          "step": "Install from wheel",
-          "text": "pip install dist/*.whl"
+          "programs": [
+            "pip"
+          ],
+          "step": "Install from wheel"
         },
         {
+          "dir": "",
           "job": "test-install",
-          "step": "Test import",
-          "text": "python -c \"from comfy_headless import ComfyClient; print('Import successful')\""
+          "programs": [
+            "python"
+          ],
+          "step": "Test import"
         },
         {
+          "dir": "",
           "job": "test-install",
-          "step": "Test CLI",
-          "text": "comfy-headless --version"
+          "programs": [
+            "comfy-headless"
+          ],
+          "step": "Test CLI"
         }
       ],
       "elsewhere": [],
@@ -2150,6 +3823,105 @@
           }
         }
       ],
+      "jobs": [
+        {
+          "basis": "declared",
+          "name": "build",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ],
+          "setup": [
+            {
+              "ranges": [
+                {
+                  "from": "3.11",
+                  "range": ">=3.11.0 <3.12.0-0"
+                }
+              ],
+              "step": "Set up Python",
+              "uses": "actions/setup-python",
+              "version": "3.11"
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "name": "test-install",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ],
+          "setup": [
+            {
+              "ranges": [
+                {
+                  "from": "3.11",
+                  "range": ">=3.11.0 <3.12.0-0"
+                },
+                {
+                  "from": "3.12",
+                  "range": ">=3.12.0 <3.13.0-0"
+                }
+              ],
+              "step": "Set up Python ${{ matrix.python-version }}",
+              "uses": "actions/setup-python",
+              "version": "${{ matrix.python-version }}"
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "environment": {
+            "name": "pypi"
+          },
+          "name": "publish-pypi",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ]
+        },
+        {
+          "basis": "declared",
+          "name": "docker",
+          "runsOn": [
+            {
+              "labels": [
+                "ubuntu-latest"
+              ],
+              "platform": {
+                "cpu": "x64",
+                "libc": "glibc",
+                "os": "linux"
+              }
+            }
+          ]
+        }
+      ],
       "landings": [],
       "mentions": [],
       "name": "Publish",
@@ -2175,6 +3947,7 @@
       "runs": [
         {
           "job": "docker",
+          "packed": true,
           "path": "LICENSE",
           "runKind": "checks",
           "via": "docker build Dockerfile",
@@ -2184,6 +3957,7 @@
         },
         {
           "job": "docker",
+          "packed": true,
           "path": "README.md",
           "runKind": "checks",
           "via": "docker build Dockerfile",
@@ -2201,6 +3975,7 @@
         {
           "directory": true,
           "job": "docker",
+          "packed": true,
           "path": "comfy_headless/",
           "runKind": "checks",
           "via": "docker build Dockerfile",
@@ -2234,6 +4009,7 @@
         },
         {
           "job": "docker",
+          "packed": true,
           "path": "pyproject.toml",
           "runKind": "checks",
           "via": "docker build Dockerfile",
@@ -2257,6 +4033,32 @@
         "releases": false
       },
       "stages": [],
+      "tests": [
+        {
+          "job": "build",
+          "ran": [
+            "comfy_headless/__init__.py"
+          ],
+          "runner": null,
+          "step": "Test import"
+        },
+        {
+          "job": "test-install",
+          "ran": [
+            "comfy_headless/__init__.py"
+          ],
+          "runner": null,
+          "step": "Test import"
+        },
+        {
+          "job": "test-install",
+          "ran": [
+            "comfy_headless/__main__.py"
+          ],
+          "runner": null,
+          "step": "Test CLI"
+        }
+      ],
       "triggers": [
         {
           "event": "release",
@@ -2342,9 +4144,10 @@
       "to": "scripts"
     }
   ],
+  "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815",
-    "tracked": 179
+    "commit": "a804d340931e04aa742876692ed3ef9a25cd6830",
+    "tracked": 180
   },
   "landings": [
     {
@@ -2513,5 +4316,8 @@
   "submodules": [],
   "symlinks": [],
   "testFiles": 55,
+  "testsNotRun": [
+    "comfy_headless/test_runner_ui.py"
+  ],
   "unassigned": []
 }
