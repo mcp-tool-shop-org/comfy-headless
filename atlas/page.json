@@ -32,38 +32,31 @@
   ],
   "changes": {
     "fileCounts": {
-      "added": 1,
-      "changed": 1,
+      "added": 0,
+      "changed": 6,
       "moved": 0,
-      "parts": 2,
+      "parts": 4,
       "removed": 0
     },
     "items": [
       {
-        "kind": "door",
-        "sentence": "CI's push trigger now also names `codecov.yml`.",
-        "subjects": [
-          ".github/workflows/ci.yml"
-        ]
-      },
-      {
         "kind": "counts",
-        "sentence": "1 file added and 1 changed content, across 2 parts.",
+        "sentence": "Nothing structural changed since 2026-09-30; 6 files changed content.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "bfb7973f01276325e75a4dfcc5ec34cbdf37f815",
-      "generatedAt": "2026-09-25T09:30:17.927Z"
+      "commit": "a804d340931e04aa742876692ed3ef9a25cd6830",
+      "generatedAt": "2026-09-30T20:09:11.510Z"
     },
-    "unchanged": false
+    "unchanged": true
   },
   "changesTogether": [],
   "changesTogetherNote": [
     "Window: 180 days; a pair counts from 3 shared commits, since the window holds fewer than 30 qualifying commits."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "a804d340931e04aa742876692ed3ef9a25cd6830",
+  "commit": "f66a4f9dc88a69acdf9e28fab7b26321a5096332",
   "defaultBranch": "main",
   "derived": "9 parts, mostly Python (83 files), CSS (2), TypeScript (2), Astro (1) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. It deploys a site to GitHub Pages. People run comfy-headless.",
   "doors": [
@@ -243,7 +236,7 @@
       ]
     }
   ],
-  "generatedAt": "2026-09-30T20:09:11.510Z",
+  "generatedAt": "2026-10-14T23:56:15.219Z",
   "limits": [
     "1 import could not be resolved: `tests/run_fuzz.py` imports `comfy_headless.tests.test_fuzz`, which is no module on its import path and no declared dependency.",
     "2 writes and 2 reads use paths built at run time and are not named here.",
