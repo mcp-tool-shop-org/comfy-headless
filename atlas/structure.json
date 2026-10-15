@@ -21,7 +21,7 @@
           "path": ".github/dependabot.yml"
         },
         {
-          "hash": "c9bd433ebaa40ce4b7f3bbe66f2f297d9c0ef51aab408d66028b381be1e8af77",
+          "hash": "571016133bab8677d5549cf122f818b3a10e6bdfc1535256327202bd22417cca",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -29,7 +29,7 @@
           "path": ".github/workflows/pages.yml"
         },
         {
-          "hash": "7eb8edcd609f83a7015d9d3979b60c4635b7936092fe9d6c2a978fc9f472290b",
+          "hash": "12950f630f810055209d21b460b1f05a8a779ac1ddced0f0ddf3eb2d056cca2c",
           "path": ".github/workflows/publish.yml"
         }
       ],
@@ -250,7 +250,7 @@
         },
         {
           "constantOnly": true,
-          "hash": "8dbdc168006f92b19f132685032395699a9c7fd3839c1fa22034a17eee891514",
+          "hash": "86a7e283b465e722629f6db17d3dfbe90dce81aec1cf537c38efbb7f2562a2a0",
           "path": "comfy_headless/_version.py"
         },
         {
@@ -2258,7 +2258,7 @@
           "path": ".pre-commit-config.yaml"
         },
         {
-          "hash": "65289c7eabc74df0eea68ce37225e6ba84ec83aaefc35392608d5e80cf156839",
+          "hash": "5dce1668286d8f248731bbc6f75ee25c9457c77dcf213d9316fa2ea0e53e9c79",
           "path": "CHANGELOG.md"
         },
         {
@@ -2358,7 +2358,7 @@
           "path": "logo.png"
         },
         {
-          "hash": "ddca9f179e8401345a4a292579ef0aba7a3c1417ae06702866b9e989807eb35a",
+          "hash": "e90f77fb75b1c958611ebba073413a845c0c45cf9f5564a1237eb49061a6b48a",
           "path": "pyproject.toml"
         }
       ],
@@ -2441,7 +2441,7 @@
           "path": "site/astro.config.mjs"
         },
         {
-          "hash": "43be06d37552deaa7bb058af94a783dea310b0e305885f085bd7568eb16f32e7",
+          "hash": "8b4e3750bace16f021a17d0a3d7c21895aacb44c66dd2d3bc4975db675487f82",
           "path": "site/package-lock.json"
         },
         {
@@ -4146,7 +4146,7 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "a804d340931e04aa742876692ed3ef9a25cd6830",
+    "commit": "f66a4f9dc88a69acdf9e28fab7b26321a5096332",
     "tracked": 180
   },
   "landings": [

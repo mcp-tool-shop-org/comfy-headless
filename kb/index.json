@@ -658,6 +658,6 @@
   "how_to_use": "This index is the entry point for the comfy-headless knowledge base. Pick entries by 'profile' (image, video, 3d, audio, inference, metadata) and 'kind': 'profile-guide' pages carry the verified facts and traps for one profile; 'workflow' entries are runnable API-format reference graphs with placeholder inputs (see each file's 'placeholders'); 'knowledge-page' entries are cross-cutting (addressing/typing rules, retrieval contract, traps); 'node-facts' is the machine-readable pack/provenance registry. Read the profile guide before editing a graph; every class_type in these graphs was verified against the live ComfyUI catalog on the date above.",
   "kb_version": 1,
   "package": "comfy-headless",
-  "package_version": "3.1.0",
+  "package_version": "3.1.1",
   "verified_against_catalog": "2026-08-21"
 }

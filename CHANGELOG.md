@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-10-14
+
+### Security
+
+- **Workflow jobs run with a read-only token by default.** `ci.yml` and `publish.yml` had jobs with no `permissions` block, so they inherited the repository default token. A top-level `permissions: contents: read` now applies to every job that does not set its own (the jobs that publish or write keep theirs). Closes the `actions/missing-workflow-permissions` code-scanning alerts.
+
 ## [3.1.0] - 2026-08-21
 
 The six-profile release: **Image, Video, 3D, Inference, Metadata, Audio**, on a
