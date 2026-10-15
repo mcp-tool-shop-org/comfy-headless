@@ -2083,7 +2083,7 @@
           "path": "kb/addressing.md"
         },
         {
-          "hash": "255ee421c70b3f1625ece94ba06df12d7b159166227ab4dfb45658a683f19ef0",
+          "hash": "bb81a81ed58ea8f68c777e11d30cee8ec4a2fe573ea3a80da840cc44f327c9aa",
           "path": "kb/index.json"
         },
         {
@@ -2441,7 +2441,7 @@
           "path": "site/astro.config.mjs"
         },
         {
-          "hash": "8b4e3750bace16f021a17d0a3d7c21895aacb44c66dd2d3bc4975db675487f82",
+          "hash": "fcfa107026d90637256481ffd85229c30ab8cf4ca392c40fdd5ebb1fb195fb3e",
           "path": "site/package-lock.json"
         },
         {
@@ -4146,7 +4146,7 @@
   ],
   "engine": "1.24.0",
   "generatedFrom": {
-    "commit": "f66a4f9dc88a69acdf9e28fab7b26321a5096332",
+    "commit": "b66ac70c4be4a918a458c1f1ee36b64b3951d7e0",
     "tracked": 180
   },
   "landings": [
