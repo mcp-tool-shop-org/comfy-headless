@@ -33,21 +33,21 @@
   "changes": {
     "fileCounts": {
       "added": 0,
-      "changed": 6,
+      "changed": 2,
       "moved": 0,
-      "parts": 4,
+      "parts": 2,
       "removed": 0
     },
     "items": [
       {
         "kind": "counts",
-        "sentence": "Nothing structural changed since 2026-09-30; 6 files changed content.",
+        "sentence": "Nothing structural changed since 2026-10-14; 2 files changed content.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "a804d340931e04aa742876692ed3ef9a25cd6830",
-      "generatedAt": "2026-09-30T20:09:11.510Z"
+      "commit": "f66a4f9dc88a69acdf9e28fab7b26321a5096332",
+      "generatedAt": "2026-10-14T23:56:15.219Z"
     },
     "unchanged": true
   },
@@ -56,7 +56,7 @@
     "Window: 180 days; a pair counts from 3 shared commits, since the window holds fewer than 30 qualifying commits."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "f66a4f9dc88a69acdf9e28fab7b26321a5096332",
+  "commit": "b66ac70c4be4a918a458c1f1ee36b64b3951d7e0",
   "defaultBranch": "main",
   "derived": "9 parts, mostly Python (83 files), CSS (2), TypeScript (2), Astro (1) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. It deploys a site to GitHub Pages. People run comfy-headless.",
   "doors": [
@@ -236,7 +236,7 @@
       ]
     }
   ],
-  "generatedAt": "2026-10-14T23:56:15.219Z",
+  "generatedAt": "2026-10-15T02:50:58.557Z",
   "limits": [
     "1 import could not be resolved: `tests/run_fuzz.py` imports `comfy_headless.tests.test_fuzz`, which is no module on its import path and no declared dependency.",
     "2 writes and 2 reads use paths built at run time and are not named here.",

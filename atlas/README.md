@@ -1,14 +1,14 @@
 # comfy-headless: how it works
 
-Mapped at 2026-10-14 from commit f66a4f9 by Atlas 1.24.0.
+Mapped at 2026-10-15 from commit b66ac70 by Atlas 1.24.0.
 
 ## What this is
 
 9 parts, mostly Python (83 files), CSS (2), TypeScript (2), Astro (1) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. It deploys a site to GitHub Pages. People run comfy-headless.
 
-## What changed since 2026-09-30 (a804d34)
+## What changed since 2026-10-14 (f66a4f9)
 
-Nothing structural changed since 2026-09-30; 6 files changed content.
+Nothing structural changed since 2026-10-14; 2 files changed content.
 
 ## What comes in
 

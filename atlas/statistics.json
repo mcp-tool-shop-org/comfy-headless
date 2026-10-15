@@ -52,7 +52,7 @@
       "confidence": "low",
       "highWater": null,
       "name": "comfy_headless",
-      "qualifyingSourceCommits": 3,
+      "qualifyingSourceCommits": 4,
       "rebaseline": null
     },
     {
@@ -158,23 +158,23 @@
     "definition": "commits is how many commits in the window touch the file, including merges and commits dropped from coupling. lines is added plus deleted in those commits.",
     "files": [
       {
-        "commits": 2,
-        "lines": 43,
+        "commits": 1,
+        "lines": 22,
         "path": ".github/dependabot.yml"
       },
       {
-        "commits": 11,
-        "lines": 170,
+        "commits": 10,
+        "lines": 169,
         "path": ".github/workflows/ci.yml"
       },
       {
-        "commits": 6,
-        "lines": 18,
+        "commits": 2,
+        "lines": 6,
         "path": ".github/workflows/pages.yml"
       },
       {
-        "commits": 10,
-        "lines": 102,
+        "commits": 4,
+        "lines": 39,
         "path": ".github/workflows/publish.yml"
       },
       {
@@ -188,8 +188,8 @@
         "path": ".polyglot-cache.json"
       },
       {
-        "commits": 3,
-        "lines": 226,
+        "commits": 4,
+        "lines": 232,
         "path": "CHANGELOG.md"
       },
       {
@@ -233,8 +233,8 @@
         "path": "README.zh.md"
       },
       {
-        "commits": 3,
-        "lines": 128,
+        "commits": 4,
+        "lines": 135,
         "path": "atlas/README.md"
       },
       {
@@ -243,18 +243,18 @@
         "path": "atlas/boundaries.yaml"
       },
       {
-        "commits": 3,
-        "lines": 374,
+        "commits": 4,
+        "lines": 399,
         "path": "atlas/page.json"
       },
       {
-        "commits": 3,
-        "lines": 889,
+        "commits": 4,
+        "lines": 923,
         "path": "atlas/statistics.json"
       },
       {
-        "commits": 3,
-        "lines": 6477,
+        "commits": 4,
+        "lines": 6491,
         "path": "atlas/structure.json"
       },
       {
@@ -268,8 +268,8 @@
         "path": "comfy_headless/__init__.py"
       },
       {
-        "commits": 3,
-        "lines": 11,
+        "commits": 4,
+        "lines": 13,
         "path": "comfy_headless/_version.py"
       },
       {
@@ -368,8 +368,8 @@
         "path": "kb/addressing.md"
       },
       {
-        "commits": 1,
-        "lines": 663,
+        "commits": 2,
+        "lines": 665,
         "path": "kb/index.json"
       },
       {
@@ -558,8 +558,8 @@
         "path": "llms.txt"
       },
       {
-        "commits": 4,
-        "lines": 10,
+        "commits": 5,
+        "lines": 12,
         "path": "pyproject.toml"
       },
       {
@@ -593,8 +593,8 @@
         "path": "site/src/content/docs/handbook/architecture.md"
       },
       {
-        "commits": 3,
-        "lines": 349,
+        "commits": 2,
+        "lines": 242,
         "path": "site/src/content/docs/handbook/beginners.md"
       },
       {
@@ -608,8 +608,8 @@
         "path": "site/src/content/docs/handbook/getting-started.md"
       },
       {
-        "commits": 3,
-        "lines": 134,
+        "commits": 2,
+        "lines": 133,
         "path": "site/src/content/docs/handbook/index.md"
       },
       {
@@ -693,9 +693,9 @@
     "level": "low",
     "reason": "fewer than 30 qualifying commits in the window, and fewer than 25 source files reach 10 revisions"
   },
-  "generatedAt": "2026-10-14T23:56:15.219Z",
+  "generatedAt": "2026-10-15T02:50:58.557Z",
   "generatedFrom": {
-    "commit": "f66a4f9dc88a69acdf9e28fab7b26321a5096332"
+    "commit": "b66ac70c4be4a918a458c1f1ee36b64b3951d7e0"
   },
   "pairs": [],
   "parameters": {
@@ -708,16 +708,16 @@
     "floor": "fallen",
     "floorHeld": false,
     "floorTrigger": "both",
-    "headDate": "2026-10-01T13:43:00-07:00",
+    "headDate": "2026-10-14T17:07:52-07:00",
     "inScopeFiles": 185,
     "pinnedStart": null,
     "priorFloor": "fallen",
-    "qualifyingCommits": 20,
+    "qualifyingCommits": 19,
     "qualifyingMinimum": 30,
     "revisions": 5,
     "shared": 10,
     "sharedFloorUsed": 3,
-    "since": "2026-04-04T20:43:00.000Z",
+    "since": "2026-04-18T00:07:52.000Z",
     "sourceExtensions": [
       ".js",
       ".mjs",
