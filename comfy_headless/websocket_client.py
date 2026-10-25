@@ -474,7 +474,7 @@ class ComfyWSClient:
 
         try:
             await asyncio.wait_for(completed.wait(), timeout=timeout)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             final_progress = WSProgress(
                 prompt_id=prompt_id,
                 status="timeout",

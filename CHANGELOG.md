@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-10-25
+
+### Changed
+
+- **Current Python only: 3.13, 3.14 and 3.15.** `requires-python` is now `>=3.13` (it was `>=3.10`), the classifiers name 3.13 to 3.15, ruff targets `py313` and mypy checks as 3.13. The full suite, with every optional extra (`ai`, `websocket`, `health`, `ui`, `validation`, `observability`), passes on all three. Python 3.10 to 3.12 are no longer supported or tested; stay on 3.1.1 if you need them.
+- CI tests 3.13, 3.14 and 3.15. Lint, pip-audit, the Atlas check and the release build run on 3.15; coverage is collected from the 3.13 leg. The release workflow's install check covers the same three. The container image is `python:3.15-slim`.
+- **Required status checks:** the matrix cells are now `test (3.13)`, `test (3.14)` and `test (3.15)`; `test (3.11)` and `test (3.12)` no longer report.
+
+- Coverage measured at 71.12% (3.15) and 71.31% (3.13); CI now enforces a floor of 71 (target 90, ratcheted per the org coverage bar). `retry_on_exception` uses PEP 695 type parameters and two `asyncio.TimeoutError` uses became `TimeoutError` (the same class from 3.11); `UP042` stays ignored because `StrEnum` would change `str()` of public enums.
+
+### Added
+
+- `tests/test_python_support.py` keeps the floor, classifiers, tool targets, CI matrix and image on the same Pythons.
+
 ## [3.1.1] - 2026-10-14
 
 ### Security

@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This document provides guidelines a
 ## Development Setup
 
 ### Prerequisites
-- Python 3.10 or higher
+- Python 3.13 or higher (3.15 is the one to test first)
 - Git
 - A running ComfyUI instance (for integration tests)
 

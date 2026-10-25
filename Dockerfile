@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS builder
+FROM python:3.15-slim AS builder
 
 WORKDIR /build
 
@@ -10,7 +10,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir ".[ui,ai,websocket,health]"
 
-FROM python:3.11-slim
+FROM python:3.15-slim
 
 RUN groupadd -r comfy && useradd -r -g comfy comfy
 

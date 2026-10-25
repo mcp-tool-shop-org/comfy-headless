@@ -234,7 +234,7 @@ def retry_with_backoff(
         return decorator
 
 
-def retry_on_exception(
+def retry_on_exception[T](
     func: Callable[..., T],
     max_attempts: int = 3,
     exceptions: ExceptionTypes = Exception,
@@ -718,7 +718,7 @@ def async_timeout(timeout: float):
         async def wrapper(*args, **kwargs):
             try:
                 return await asyncio.wait_for(func(*args, **kwargs), timeout=timeout)
-            except asyncio.TimeoutError as e:
+            except TimeoutError as e:
                 raise OperationTimeoutError(
                     f"Operation {func.__name__} timed out after {timeout}s"
                 ) from e
