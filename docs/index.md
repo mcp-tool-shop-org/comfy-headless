@@ -48,7 +48,7 @@ print(f"Generated: {result['images']}")
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.13+
 - ComfyUI running locally (default: `http://localhost:8188`)
 - Optional: Ollama for AI prompt enhancement
 

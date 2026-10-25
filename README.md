@@ -92,7 +92,7 @@ pip install comfy-headless[full]        # everything
 | `standard` | `ai` + `websocket` |
 | `full` | All of the above |
 
-Requires **Python 3.10+** and a running ComfyUI instance.
+Requires **Python 3.13+** (tested on 3.13, 3.14 and 3.15) and a running ComfyUI instance.
 
 Check what's active at runtime:
 
