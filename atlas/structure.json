@@ -21,7 +21,7 @@
           "path": ".github/dependabot.yml"
         },
         {
-          "hash": "571016133bab8677d5549cf122f818b3a10e6bdfc1535256327202bd22417cca",
+          "hash": "9cb2bebb83d0180462bab990168796177a88f35e2bf999ffaefe573728852ad5",
           "path": ".github/workflows/ci.yml"
         },
         {
@@ -29,7 +29,7 @@
           "path": ".github/workflows/pages.yml"
         },
         {
-          "hash": "12950f630f810055209d21b460b1f05a8a779ac1ddced0f0ddf3eb2d056cca2c",
+          "hash": "9d977afc62d138f99d8f80e0b2a5f5a9d723c0bb6cf5c3dc0acb8776759564d9",
           "path": ".github/workflows/publish.yml"
         }
       ],
@@ -2236,7 +2236,7 @@
       ],
       "importConfidence": "full",
       "name": "kb",
-      "origin": "generated",
+      "origin": "mixed",
       "role": "data",
       "testedBy": 0,
       "unresolvedSites": 0
@@ -2373,7 +2373,7 @@
       "unresolvedSites": 0
     },
     {
-      "dynamicReads": 1,
+      "dynamicReads": 0,
       "dynamicSpawns": 0,
       "dynamicSpawnsInTests": 0,
       "dynamicWrites": 0,
@@ -2441,11 +2441,11 @@
           "path": "site/astro.config.mjs"
         },
         {
-          "hash": "fcfa107026d90637256481ffd85229c30ab8cf4ca392c40fdd5ebb1fb195fb3e",
+          "hash": "e73c414d980ca4ca98b0c4918bd7d0f71d0b97698c8bb2875a8a262c48bc02f9",
           "path": "site/package-lock.json"
         },
         {
-          "hash": "07bd21d241392acfb75506461325500f6d9ae20b3753bcd32deee3dbd48b1fd0",
+          "hash": "c1a30f1c6d1e4abe8b46397f48f1743b845830c8eef2b56231fe4d25f16b9e83",
           "path": "site/package.json"
         },
         {
@@ -4144,9 +4144,9 @@
       "to": "scripts"
     }
   ],
-  "engine": "1.24.0",
+  "engine": "1.26.0",
   "generatedFrom": {
-    "commit": "b66ac70c4be4a918a458c1f1ee36b64b3951d7e0",
+    "commit": "9b99593f3db3ba7775ed414696d773ce4a6a4c1d",
     "tracked": 180
   },
   "landings": [
@@ -4219,10 +4219,36 @@
           "confidence": "ast"
         },
         {
+          "by": "scripts/gen_kb.py",
+          "call": "rglob",
+          "confidence": "ast",
+          "pattern": "kb/**/*.json"
+        },
+        {
+          "by": "scripts/gen_kb.py",
+          "call": "rglob",
+          "confidence": "ast",
+          "pattern": "kb/**/*.md"
+        },
+        {
+          "by": "tests/test_kb.py",
+          "call": "glob",
+          "confidence": "ast",
+          "fromTests": true,
+          "pattern": "kb/workflows/*.json"
+        },
+        {
           "by": "tests/test_kb.py",
           "call": "rglob",
           "confidence": "ast",
           "fromTests": true
+        },
+        {
+          "by": "tests/test_kb.py",
+          "call": "rglob",
+          "confidence": "ast",
+          "fromTests": true,
+          "pattern": "kb/**/*.json"
         }
       ],
       "target": "kb",
@@ -4234,7 +4260,19 @@
             "main"
           ]
         }
-      ]
+      ],
+      "writesInto": true
+    },
+    {
+      "readers": [
+        {
+          "by": "scripts/gen_kb.py",
+          "call": "read_text",
+          "confidence": "ast"
+        }
+      ],
+      "target": "kb/**/*.md",
+      "writers": []
     },
     {
       "readers": [
@@ -4275,6 +4313,18 @@
         }
       ],
       "target": "kb/workflows",
+      "writers": []
+    },
+    {
+      "readers": [
+        {
+          "by": "tests/test_kb.py",
+          "call": "read_text",
+          "confidence": "ast",
+          "fromTests": true
+        }
+      ],
+      "target": "kb/workflows/*.json",
       "writers": []
     },
     {

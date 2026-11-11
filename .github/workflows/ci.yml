@@ -101,7 +101,7 @@ jobs:
 
       - name: Atlas check
         if: matrix.python-version == '3.12'
-        run: npx --yes @dogfood-lab/atlas@1.24.0 check
+        run: npx --yes @dogfood-lab/atlas@1.26.0 check
 
       - name: Install dependencies
         run: |

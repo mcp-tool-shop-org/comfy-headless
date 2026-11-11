@@ -33,30 +33,53 @@
   "changes": {
     "fileCounts": {
       "added": 0,
-      "changed": 2,
+      "changed": 4,
       "moved": 0,
       "parts": 2,
       "removed": 0
     },
     "items": [
       {
+        "kind": "landing",
+        "sentence": "kb/**/*.md is now read by scripts/gen_kb.py.",
+        "subjects": [
+          "kb/**/*.md",
+          "scripts/gen_kb.py"
+        ]
+      },
+      {
+        "kind": "landing",
+        "sentence": "kb/workflows/*.json is now read by tests/test_kb.py.",
+        "subjects": [
+          "kb/workflows/*.json",
+          "tests/test_kb.py"
+        ]
+      },
+      {
+        "kind": "origin",
+        "sentence": "kb was generated and is now mixed.",
+        "subjects": [
+          "kb"
+        ]
+      },
+      {
         "kind": "counts",
-        "sentence": "Nothing structural changed since 2026-10-14; 2 files changed content.",
+        "sentence": "4 files changed content, across 2 parts.",
         "subjects": []
       }
     ],
     "since": {
-      "commit": "f66a4f9dc88a69acdf9e28fab7b26321a5096332",
-      "generatedAt": "2026-10-14T23:56:15.219Z"
+      "commit": "b66ac70c4be4a918a458c1f1ee36b64b3951d7e0",
+      "generatedAt": "2026-10-15T02:50:58.557Z"
     },
-    "unchanged": true
+    "unchanged": false
   },
   "changesTogether": [],
   "changesTogetherNote": [
     "Window: 180 days; a pair counts from 3 shared commits, since the window holds fewer than 30 qualifying commits."
   ],
   "changesTogetherWithTests": 0,
-  "commit": "b66ac70c4be4a918a458c1f1ee36b64b3951d7e0",
+  "commit": "9b99593f3db3ba7775ed414696d773ce4a6a4c1d",
   "defaultBranch": "main",
   "derived": "9 parts, mostly Python (83 files), CSS (2), TypeScript (2), Astro (1) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. It deploys a site to GitHub Pages. People run comfy-headless.",
   "doors": [
@@ -227,19 +250,20 @@
       "to": "comfy_headless"
     }
   ],
-  "engine": "1.24.0",
+  "engine": "1.26.0",
   "generated": [
     {
+      "into": true,
       "place": "kb/",
       "writers": [
         "scripts/gen_kb.py"
       ]
     }
   ],
-  "generatedAt": "2026-10-15T02:50:58.557Z",
+  "generatedAt": "2026-11-11T22:13:39.311Z",
   "limits": [
     "1 import could not be resolved: `tests/run_fuzz.py` imports `comfy_headless.tests.test_fuzz`, which is no module on its import path and no declared dependency.",
-    "2 writes and 2 reads use paths built at run time and are not named here.",
+    "2 writes and 1 read use paths built at run time and are not named here.",
     "38 reads go to a path their caller passes, not to this repository.",
     "3 reads go to a temporary directory, not to this repository.",
     "Statistics confidence is low: fewer than 30 qualifying commits in the window, and fewer than 25 source files reach 10 revisions."
@@ -260,11 +284,19 @@
   "readers": [],
   "repo": "mcp-tool-shop-org/comfy-headless",
   "sequences": [],
+  "startBeside": [
+    {
+      "files": [
+        "comfy_headless/feature_flags.py"
+      ],
+      "from": "comfy_headless/__main__.py"
+    }
+  ],
   "startDoor": "pyproject.toml#comfy-headless",
   "startHere": [
     "comfy_headless/__main__.py",
-    "comfy_headless/feature_flags.py",
-    "comfy_headless/__init__.py"
+    "comfy_headless/__init__.py",
+    "comfy_headless/config.py"
   ],
   "startReason": "This path follows comfy-headless (a command people run) from its entry, since CI runs only tests and checks.",
   "summary": null,
@@ -274,6 +306,7 @@
     "comfy_headless": 49,
     "scripts": 1
   },
+  "testedCodeParts": 2,
   "unnamedWrites": 2,
   "unread": [],
   "unreadFiles": 0,
