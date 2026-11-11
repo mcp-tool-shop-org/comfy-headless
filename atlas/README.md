@@ -1,14 +1,17 @@
 # comfy-headless: how it works
 
-Mapped at 2026-10-15 from commit b66ac70 by Atlas 1.24.0.
+Mapped at 2026-11-11 from commit 9b99593 by Atlas 1.26.0.
 
 ## What this is
 
 9 parts, mostly Python (83 files), CSS (2), TypeScript (2), Astro (1) and JavaScript (1). Work enters through 4 doors; the busiest is CI, which reaches 3 parts. It publishes to PyPI and a container image. It deploys a site to GitHub Pages. People run comfy-headless.
 
-## What changed since 2026-10-14 (f66a4f9)
+## What changed since 2026-10-15 (b66ac70)
 
-Nothing structural changed since 2026-10-14; 2 files changed content.
+- kb/**/*.md is now read by scripts/gen_kb.py.
+- kb/workflows/*.json is now read by tests/test_kb.py.
+- kb was generated and is now mixed.
+- 4 files changed content, across 2 parts.
 
 ## What comes in
 
@@ -60,7 +63,7 @@ No two parts export a helper that looks alike.
 
 ## Generated, never hand-edited
 
-- **kb/** is written by scripts/gen_kb.py.
+- **kb/** holds files written by scripts/gen_kb.py.
 
 ## Hand-authored
 
@@ -68,14 +71,16 @@ People write .github/, assets/, docs/, the repository root and site/; 2 writes w
 
 ## Where to start
 
-comfy_headless/__main__.py → comfy_headless/feature_flags.py → comfy_headless/__init__.py
+comfy_headless/__main__.py → comfy_headless/__init__.py → comfy_headless/config.py
 
 Read those in order to follow one run of comfy-headless end to end. This path follows comfy-headless (a command people run) from its entry, since CI runs only tests and checks.
+
+Beside the path, comfy_headless/__main__.py also calls comfy_headless/feature_flags.py.
 
 ## What this map cannot see
 
 - 1 import could not be resolved: `tests/run_fuzz.py` imports `comfy_headless.tests.test_fuzz`, which is no module on its import path and no declared dependency.
-- 2 writes and 2 reads use paths built at run time and are not named here.
+- 2 writes and 1 read use paths built at run time and are not named here.
 - 38 reads go to a path their caller passes, not to this repository.
 - 3 reads go to a temporary directory, not to this repository.
 - Statistics confidence is low: fewer than 30 qualifying commits in the window, and fewer than 25 source files reach 10 revisions.
