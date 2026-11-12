@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/comfy-headless/readme.png" alt="comfy-headless" width="400">
+  <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/comfy-headless/readme.png" alt="comfy-headless" width="600">
 </p>
 
 <p align="center">
@@ -22,23 +22,23 @@
 
 ## O que é isso
 
-comfy-headless cria **gráficos no formato da API ComfyUI** e os executa. Você chama uma função Python; ela emite o gráfico de nós JSON, envia para o ComfyUI, verifica se a operação foi concluída e fornece os caminhos de saída.
+comfy-headless cria **gráficos no formato ComfyUI API** e os executa. Você chama uma função Python; ela gera o gráfico de nós JSON, envia-o para ComfyUI, verifica se a operação foi concluída e fornece os caminhos de saída.
 
-Essa estrutura é importante porque indica o que pode dar errado. A tarefa principal da biblioteca é emitir nomes de nós e chaves de entrada que o ComfyUI de destino realmente possui. Quando o ComfyUI renomeia ou remove um nó, um gráfico que referencia o nome antigo é rejeitado no envio com um erro obscuro — e nada avisa você antes.
+Essa estrutura é importante, pois indica o que pode dar errado. A função principal da biblioteca é gerar nomes de nós e chaves de entrada que o ComfyUI de destino realmente possui. Quando ComfyUI renomeia ou remove um nó, um gráfico que referencia o nome antigo é rejeitado no envio, com um erro obscuro — e nada o avisa com antecedência.
 
-**A versão 3.0 foi a primeira a levar isso a sério.** Cada tipo de nó que esta biblioteca emite foi auditado em relação ao catálogo ativo do ComfyUI. Nove não existiam mais. Eles foram removidos, os gráficos que os usavam são reconstruídos com nós verificados e a biblioteca agora pode informar o que falta em um servidor *antes* que você execute uma tarefa nele.
+**v3.0 é a versão que levou isso a sério.** Cada tipo de nó que esta biblioteca gera foi auditado em relação ao catálogo ativo de ComfyUI. Nove não existiam mais. Eles foram removidos, os gráficos que os utilizavam são reconstruídos com nós verificados e a biblioteca agora pode informar o que falta em um servidor *antes* que você execute um processo nele.
 
-**A versão 3.1 estende essa funcionalidade para seis perfis de fluxo de trabalho:** — **Imagem, Vídeo, 3D, Inferência, Metadados, Áudio** — em uma camada compartilhada de endereçamento/tipagem que utiliza as próprias regras de validação do ComfyUI: correspondência de tipos de união transcrita do validador do servidor, campos dinâmicos pontuados (`codec.encoding.crf`) e entradas condicionais que rejeitam valores de ramos inativos no momento da construção. A mesma estrutura de roteamento anterior — malhas, música e legendas retornam através de `/history` + `/view` como tudo o mais.
+**v3.1 estende essa abordagem para seis perfis de fluxo de trabalho** — **Imagem, Vídeo, 3D, Inferência, Metadados, Áudio** — em uma camada compartilhada de endereçamento/tipagem que utiliza as próprias regras de validação de ComfyUI: correspondência de tipos de união transcrita do validador do servidor, campos dinâmicos pontilhados (`codec.encoding.crf`) e entradas condicionais que rejeitam valores de ramos inativos no momento da construção. A mesma estrutura de roteamento de antes — malhas, músicas e legendas retornam através de `/history` + `/view`, como tudo o mais.
 
-| Problema | O que comfy-headless faz |
+| Problema | O que o comfy-headless faz |
 |---------|--------------------------|
 | A interface do nó é extensa | Predefinições e uma API Python limpa |
-| A engenharia de prompts é difícil | Aprimoramento opcional por meio da IA local Ollama |
-| A geração de vídeo é complexa | 24 predefinições em 9 famílias de modelos |
-| "Preciso de uma malha a partir desta imagem." | `generate_3d()` — Hunyuan3D-2, todos os nós principais |
-| "Preciso de música/faixas separadas." | `generate_audio()` (ACE-Step 1.5), `separate_audio()` |
-| "O que há nesta imagem?" | `run_inference()` — legenda, tag, detecção, segmentação, OCR |
-| "Qual gráfico gerou esta imagem PNG?" | `extract_prompt_graph()` / `rerun_from_png()` |
+| A engenharia de prompts é difícil | Aprimoramento opcional por meio de IA local com Ollama |
+| A geração de vídeo é complexa | 26 predefinições em 9 famílias de modelos |
+| "Preciso de uma malha a partir desta imagem" | `generate_3d()` — Hunyuan3D-2, todos os nós principais |
+| "Preciso de música/faixas" | `generate_audio()` (ACE-Step 1.5), `separate_audio()` |
+| "O que tem nesta imagem?" | `run_inference()` — legenda, tag, detectar, segmentar, OCR |
+| "Qual gráfico gerou este PNG?" | `extract_prompt_graph()` / `rerun_from_png()` |
 | "Quais configurações devo usar?" | Recomendações dimensionadas para sua VRAM |
 | Os gráficos falham com erros enigmáticos | A verificação de dependências identifica o nó *e* o pacote |
 
@@ -68,18 +68,18 @@ pip install comfy-headless[full]        # everything
 
 | Extras | Adiciona |
 |-------|------|
-| `ai` | Análise e aprimoramento de prompts por meio da IA local Ollama |
-| `websocket` | Progresso em tempo real via WebSocket |
+| `ai` | Análise e aprimoramento de prompts por meio de IA local com Ollama |
+| `websocket` | Progresso em tempo real em WebSocket |
 | `ui` | Interface web Gradio |
-| `health` | Monitoramento do estado do sistema |
+| `health` | Monitoramento da saúde do sistema |
 | `validation` | Validação de configuração Pydantic |
 | `observability` | Rastreamento OpenTelemetry |
 | `standard` | `ai` + `websocket` |
-| `full` | Todos os itens acima |
+| `full` | Tudo o que foi mencionado |
 
-Requer **Python 3.10+** e uma instância do ComfyUI em execução.
+Requer **Python 3.10+** e uma instância ComfyUI em execução.
 
-Verifique o que está ativo durante a execução:
+Verifique o que está ativo em tempo de execução:
 
 ```python
 from comfy_headless import FEATURES, list_missing_features
@@ -99,9 +99,9 @@ result = client.generate_image(
 )
 ```
 
-Oito predefinições de imagem: `draft`, `fast`, `quality`, `hd`, `portrait`, `landscape`, `cinematic` e `square`.
+Oito predefinições de imagem: `draft`, `fast`, `quality`, `hd`, `portrait`, `landscape`, `cinematic`, `square`.
 
-Execute em lote uma lista de prompts:
+Processe uma lista de prompts:
 
 ```python
 result = client.generate_batch(
@@ -112,7 +112,7 @@ result = client.generate_batch(
 
 ### Aprimoramento de prompt por IA
 
-Requer o extra `[ai]` e um Ollama local. Estas são **funções no nível do módulo**, não métodos de cliente:
+Requer o extra `[ai]` e um Ollama local. Estas são **funções de nível de módulo**, não métodos de cliente:
 
 ```python
 from comfy_headless import enhance_prompt, analyze_prompt
@@ -126,7 +126,7 @@ print(analysis.intent, analysis.styles, analysis.suggested_preset)
 
 ### Qwen-Image (novo na versão 3.1)
 
-O modelo Qwen-Image-2512 de texto para imagem é fornecido como o modelo `qwen_txt2img`, com a receita que o modelo realmente deseja incorporada: caminho `UNETLoader`, `EmptySD3LatentImage` de 16 canais (a representação latente do SDXL produz resultados ruins em modelos DiT), 20 passos, **cfg 2.5**, desvio 3.1, tamanho nativo 1328×1328:
+Qwen-Image-2512, de texto para imagem, é fornecido como o modelo `qwen_txt2img`, com a receita que o modelo realmente deseja incorporada: caminho `UNETLoader`, 16 canais `EmptySD3LatentImage` (a latência SDXL produz resultados ruins em modelos DiT), 20 etapas, **cfg 2.5**, deslocamento 3.1, bucket nativo 1328×1328:
 
 ```python
 from comfy_headless import compile_workflow
@@ -144,11 +144,11 @@ result = client.edit_image(
 )
 ```
 
-As referências são fornecidas como entradas discretas `image1..image3` em `TextEncodeQwenImageEditPlus` e não passam pelo VAEEncode — a forma do gráfico é exatamente o que o nó espera.
+As referências são fornecidas para `TextEncodeQwenImageEditPlus` como entradas `image1..image3` discretas e não passam por VAEEncode — a forma do gráfico que o nó realmente espera.
 
 ### ControlNet (novo na versão 3.1)
 
-Um único caminho de código abrange os ControlNets de união Qwen e SDXL:
+Um único caminho de código abrange a união Qwen e SDXL ControlNets:
 
 ```python
 from comfy_headless import build_controlnet_workflow
@@ -162,7 +162,7 @@ workflow = build_controlnet_workflow(
 client.queue_prompt(workflow)
 ```
 
-Apenas o pré-processador principal `Canny` é emitido (`preprocess="canny"`); outros tipos de dicas esperam uma imagem de controle pré-criada, porque seus pré-processadores estão em um pacote personalizado que esta biblioteca não exige silenciosamente.
+Apenas o pré-processador principal `Canny` é gerado (`preprocess="canny"`); outros tipos de dicas esperam uma imagem de controle pré-criada, porque seus pré-processadores estão em um pacote personalizado que esta biblioteca não exige silenciosamente.
 
 ## Vídeo
 
@@ -179,11 +179,11 @@ result = client.generate_video(
 print(result["videos"])
 ```
 
-A seleção é feita **por predefinição**, não por modelo — `generate_video` não tem o argumento `model`. Qualquer um dos itens `frames`, `fps`, `steps`, `cfg`, `width` ou `height` pode ser passado para substituir a predefinição.
+A seleção é feita **por predefinição**, não por modelo — `generate_video` não tem um argumento `model`. Qualquer um de `frames`, `fps`, `steps`, `cfg`, `width`, `height` pode ser passado para substituir a predefinição.
 
 ### Entrada de imagem
 
-A conversão de imagem em vídeo e qualquer outra operação que utilize uma imagem de origem exige que essa imagem exista primeiro no ComfyUI. Carregue-a e, em seguida, passe o nome que o servidor retorna:
+Vídeo a partir de imagem e qualquer outra coisa que utilize uma imagem de origem, precisa que essa imagem exista primeiro em ComfyUI. Carregue-a e, em seguida, passe o nome que o servidor retorna:
 
 ```python
 ref = client.upload_image("reference.png")
@@ -196,29 +196,29 @@ result = client.generate_video(
 )
 ```
 
-Leia `name` da resposta, em vez de reutilizar o nome do arquivo que você enviou — o ComfyUI renomeia os arquivos em caso de conflito, portanto, os dois nem sempre são iguais. `ref` é o mesmo valor já combinado com qualquer subpasta, que é exatamente o que o gráfico precisa.
+Leia `name` da resposta, em vez de reutilizar o nome do arquivo que você enviou — ComfyUI renomeia em caso de colisão, portanto, os dois nem sempre são iguais. `ref` é o mesmo valor já combinado com qualquer subpasta, que é exatamente o que o gráfico precisa.
 
-> **Alterado na versão 3.0:** `init_image` é um nome de arquivo do lado do servidor. Versões anteriores aceitavam dados base64 e os transmitiam por meio de um nó de terceiros que não existe em uma instalação padrão do ComfyUI. Consulte o [CHANGELOG](CHANGELOG.md).
+> **Alterado na versão 3.0:** `init_image` é um nome de arquivo do lado do servidor. Versões anteriores aceitavam dados base64 e os transmitiam por meio de um nó de terceiros que não existe em uma instalação padrão de ComfyUI. Consulte o [CHANGELOG](CHANGELOG.md).
 
-> **Novo na versão 3.1:** Hunyuan 1.5 de imagem para vídeo é um verdadeiro i2v — os predefinidos `hunyuan15_i2v` e `hunyuan15_i2v_fast` são construídos sobre o nó principal `HunyuanVideo15ImageToVideo` e exigem uma entrada `init_image` (a versão 3.0 criou silenciosamente um gráfico de texto para vídeo). E `output="core"` substitui o terminador `VHS_VideoCombine` pelo principal `CreateVideo → SaveVideo`, eliminando completamente a dependência do Video Helper Suite.
+> **Novo na versão 3.1:** O vídeo de imagem Hunyuan 1.5 é um i2v real — as predefinições `hunyuan15_i2v` e `hunyuan15_i2v_fast` são baseadas no nó principal `HunyuanVideo15ImageToVideo` e exigem um `init_image` (v3.0 criou silenciosamente um gráfico de vídeo a partir de texto em vez disso). E `output="core"` troca o terminador `VHS_VideoCombine` pelo `CreateVideo → SaveVideo` principal, eliminando completamente a dependência do Video Helper Suite.
 
 ### Famílias de modelos
 
 | Família | VRAM mínima | Qualidade | Velocidade | Nós extras | Melhor para |
 |--------|----------|---------|-------|-------------|----------|
 | **Wan 2.1/2.2** | 6 GB | Ótimo | Médio | — | Baixa VRAM, eficiência |
-| AnimateDiff Lightning | 6 GB | Razoável | Mais rápido | AnimateDiff-Evolved | Rascunhos de 4 etapas |
-| AnimateDiff | 8 GB | Bom | Rápido | AnimateDiff-Evolved, Interpolação de quadros. | Visualizações rápidas |
+| AnimateDiff Lightning | 6 GB | Razoável | Mais rápido | AnimateDiff-Evolved | 4 etapas de rascunho |
+| AnimateDiff | 8 GB | Bom | Rápido | AnimateDiff-Evolved, Interpolação de quadros | Visualizações rápidas |
 | **LTX-Video** | 12 GB | Excelente | Rápido | — | O padrão seguro |
 | **Mochi** | 12 GB | Excelente | Lento | — | Adesão ao texto, clipes longos |
-| **SVD** | 12 GB | Bom | Médio | — | Animando uma imagem estática |
-| **Hunyuan 1.5** | 14 GB | Melhor | Lento | — | Maior qualidade |
-| CogVideoX | 16 GB | Bom | Lento | Wrapper CogVideoX | Legado |
+| **SVD** | 12 GB | Bom | Médio | — | Animar uma imagem estática |
+| **Hunyuan 1.5** | 14 GB | Melhor | Lento | — | Qualidade mais alta |
+| CogVideoX | 16 GB | Bom | Lento | CogVideoX Wrapper | Legado |
 | **Hunyuan 1.0** | 24 GB | Ótimo | Lento | Interpolação de quadros | Substituído pela versão 1.5 |
 
-Seis das nove famílias funcionam com **nós principais padrão do ComfyUI** — sem pacote wrapper para o próprio modelo. Apenas AnimateDiff (ambas as variantes) e CogVideoX precisam de um. A saída de vídeo usa [Video Helper Suite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite); a interpolação de quadros usa [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation).
+Seis das nove famílias funcionam em **nós principais ComfyUI padrão** — sem pacote wrapper para o próprio modelo. Apenas AnimateDiff (ambas as variantes) e CogVideoX precisam de um. A saída de vídeo usa [Video Helper Suite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite); a interpolação de quadros usa [Frame Interpolation](https://github.com/Fannovel16/ComfyUI-Frame-Interpolation).
 
-Os valores de VRAM são o mínimo para a resolução padrão da família, lidos de `VIDEO_MODEL_INFO` — não os máximos. Mais memória permite clipes mais longos e resoluções mais altas da mesma família.
+Os valores de VRAM são o mínimo para a resolução padrão da família, lidos de `VIDEO_MODEL_INFO` — não são valores máximos. Mais memória permite clipes mais longos e resoluções mais altas da mesma família.
 
 ### Verifique antes de executar
 
@@ -235,7 +235,7 @@ print(report["required_packs"])    # what this graph needs
 client.require_workflow_dependencies(workflow)
 ```
 
-Você também pode verificar os tipos das arestas de um gráfico em relação ao servidor ativo, usando a própria regra de aceitação do servidor (de modo que uma entrada `MESH` alimentando uma entrada de união `FILE_3D_*` nunca seja uma rejeição falsa):
+Você também pode verificar os tipos de dados das arestas de um grafo em relação ao servidor ativo, usando a própria regra de aceitação do servidor (de modo que uma entrada `MESH` alimentando uma união `FILE_3D_*` nunca seja uma rejeição falsa):
 
 ```python
 report = client.check_workflow_types(workflow)
@@ -245,7 +245,7 @@ print(report["warnings"])   # accepted edges with partial type overlap
 
 ## 3D (novo na versão 3.1)
 
-Imagem para malha via **Hunyuan3D-2** — totalmente nós principais do ComfyUI, sem pacotes de wrapper, sem novos caminhos. O GLB é registrado em `/history` exatamente como um PNG e baixado através de `/view`:
+Imagem para malha via **Hunyuan3D-2** — totalmente nós principais ComfyUI, sem pacotes wrapper, sem novas rotas. Os arquivos GLB são registrados em `/history` exatamente como um arquivo PNG e são baixados através de `/view`:
 
 ```python
 result = client.generate_3d("character.png", preset="detail")
@@ -254,13 +254,13 @@ glb = client.get_file(**result["meshes"][0])
 open("character.glb", "wb").write(glb)
 ```
 
-`generate_3d` aceita um caminho local, bytes brutos, um dicionário `upload_image()` ou uma referência do lado do servidor e faz o upload automaticamente quando necessário. É apenas condicionamento de imagem — não há prompt de texto no gráfico. Ajustáveis: `steps` (30), `cfg` (5.5), `octree_resolution` (256), `threshold` (0.6), `seed`.
+`generate_3d` aceita um caminho local, bytes brutos, um dicionário `upload_image()` ou uma referência do lado do servidor e faz o upload automaticamente quando necessário. É apenas condicionamento de imagem — não há prompt de texto no grafo. Ajustáveis: `steps` (30), `cfg` (5.5), `octree_resolution` (256), `threshold` (0.6), `seed`.
 
-Os modelos 3D do pacote wrapper (TRELLIS, TripoSG, ...) não são emitidos deliberadamente — as dependências nativas do ComfyUI-3D-Pack são as menos estáveis no ecossistema.
+Os modelos 3D com pacote wrapper (TRELLIS, TripoSG, ...) não são gerados intencionalmente — as dependências nativas de ComfyUI-3D-Pack são as menos estáveis no ecossistema.
 
 ## Áudio (novo na versão 3.1)
 
-Texto para música via **ACE-Step 1.5** — código e pesos com licença MIT, nós principais nativos, zero pacotes. O checkpoint turbo é executado em 8 passos / cfg 1:
+Texto para música via **ACE-Step 1.5** — código e pesos com licença MIT, nós principais nativos, zero pacotes. O checkpoint turbo é executado em 8 etapas / cfg 1:
 
 ```python
 result = client.generate_audio(
@@ -272,7 +272,7 @@ result = client.generate_audio(
 flac = client.get_file(**result["audios"][0])
 ```
 
-O construtor aplica a invariante de acoplamento do modelo para você: o `duration` do codificador e o `seconds` da representação latente são um único parâmetro lógico, derivados de um único campo — o tempo de execução não os valida cruzadamente e uma incompatibilidade é concluída "com sucesso" com saída silenciosamente incorreta. A saída passa por `SaveAudioAdvanced` (o único nó de salvamento de áudio não depreciado); a saída `flac` não emite nenhum campo de qualidade, `mp3`/`opus` emitem o subcampo pontuado `format.quality`.
+O criador aplica a invariante de acoplamento do modelo para você: o `duration` do codificador e o `seconds` do latente são um único parâmetro lógico, derivados de um único campo — o tempo de execução não os valida cruzadamente e uma incompatibilidade é concluída "com sucesso" com uma saída silenciosamente incorreta. A saída passa por `SaveAudioAdvanced` (o único nó de salvamento de áudio não obsoleto); a saída `flac` não emite nenhum campo de qualidade, `mp3`/`opus` emitem o subcampo pontilhado `format.quality`.
 
 Separação de faixas (requer o pacote `audio-separation-nodes-comfyui`):
 
@@ -283,7 +283,7 @@ result = client.separate_audio("song.flac", stems=["vocals"])
 
 ## Inferência (novo na versão 3.1)
 
-Chamadas de modelo não generativas — faça perguntas sobre uma imagem em vez de criá-la. Executa no Florence-2 (pacote `comfyui-florence2`; a tarefa de detecção adiciona `comfyui-segment-anything-2`):
+Chamadas de modelo não generativas — faça perguntas sobre uma imagem em vez de criar uma. Executa no Florence-2 (pacote `comfyui-florence2`; a tarefa de detecção adiciona `comfyui-segment-anything-2`):
 
 ```python
 r = client.run_inference("photo.png", task="caption")
@@ -298,11 +298,11 @@ r = client.run_inference("photo.png", task="segment", text_input="the person")
 mask_png = client.get_file(**r["images"][0])
 ```
 
-A regra fundamental do perfil: um resultado atinge `/history` apenas através de um nó de saída. Cada gráfico de inferência termina em `SaveText` principal (que relata o texto diretamente — sem uma segunda viagem) ou `SaveImage` para máscaras, e o construtor se recusa a emitir um gráfico que seria executado e não retornaria nada.
+A regra de carga do perfil: um resultado atinge `/history` apenas através de um nó de saída. Cada grafo de inferência termina no nó principal `SaveText` (que relata o texto embutido — sem uma segunda troca) ou `SaveImage` para máscaras, e o criador se recusa a gerar um grafo que seja executado e não retorne nada.
 
-## Proveniência (novo na versão 3.1)
+## Provável (novo na versão 3.1)
 
-O ComfyUI incorpora o **exato formato de gráfico da API** em cada imagem PNG de saída. O comfy-headless lê isso — código stdlib puro, sem Pillow — e pode executá-lo novamente literalmente:
+ComfyUI incorpora o **grafo exato no formato da API** em cada saída PNG. O comfy-headless o lê novamente — apenas stdlib, sem Pillow — e pode executá-lo novamente literalmente:
 
 ```python
 from comfy_headless import read_workflow_metadata, extract_prompt_graph
@@ -315,13 +315,13 @@ graph = extract_prompt_graph("output.png")   # raises with a hint if scrubbed
 result = client.rerun_from_png("output.png") # re-POSTs it verbatim
 ```
 
-Crie uma proveniência personalizada sem nenhum nó personalizado — qualquer coisa em `extra_pnginfo` se torna um fragmento de texto PNG nas saídas:
+Escreva informações de rastreamento personalizadas sem nenhum nó personalizado — qualquer coisa em `extra_pnginfo` se torna um fragmento de texto PNG nas saídas:
 
 ```python
 client.queue_prompt(workflow, extra_pnginfo={"myapp:run_id": "r-2026-077"})
 ```
 
-Limites conhecidos, documentados em vez de ocultos: WebP/JPEG carregam os mesmos dados no EXIF (um caminho de leitor diferente, não implementado); as saídas de vídeo não incorporam o gráfico; implantações reforçadas podem remover chaves desconhecidas; e a conversão GUI→API não tem rota do servidor — use "Fluxo de Trabalho → Exportar (API)" do ComfyUI.
+Limites conhecidos, documentados em vez de ocultos: WebP/JPEG carregam os mesmos dados em EXIF (um caminho de leitura diferente, não implementado); as saídas de vídeo não incorporam o grafo; as implantações reforçadas podem remover chaves desconhecidas; e a conversão GUI→API não tem rota de servidor — use a opção "Fluxo de Trabalho → Exportar (API)" de ComfyUI.
 
 ## Configuração
 
@@ -337,7 +337,7 @@ As variáveis de ambiente usam o prefixo `COMFY_HEADLESS_` com delimitadores de 
 
 Ou passe a URL diretamente: `ComfyClient("http://192.168.1.50:8188")`.
 
-## Interface web
+## Interface de usuário da web
 
 ```bash
 comfy-headless                 # launching the UI is the default action
@@ -352,8 +352,7 @@ comfy-headless                 # launching the UI is the default action
 | `--check` | Disponibilidade de recursos |
 | `--diagnose` | Diagnósticos completos |
 
-Seis abas: Imagem, Vídeo, Fila e Histórico, Fluxos de Trabalho, Modelos, Configurações. O tema é Ocean Mist —
-tons suaves de azul-esverdeado em fundos neutros quentes.
+Seis guias: Imagem, Vídeo, Fila e Histórico, Fluxos de Trabalho, Modelos, Configurações. O tema é Ocean Mist — tons suaves de azul-esverdeado em fundos neutros quentes.
 
 Programaticamente (requer `[ui]`):
 
@@ -364,7 +363,7 @@ launch(port=7861, share=False)
 
 ## Progresso
 
-Chamadas bloqueantes usam uma função de retorno `on_progress`:
+Chamadas de bloqueio recebem um callback `on_progress`:
 
 ```python
 client.generate_image("a fox", on_progress=lambda pct, msg: print(f"{pct:.0%} {msg}"))
@@ -415,14 +414,11 @@ your call ─→ build API-format graph ─→ POST /prompt ─→ poll /history
                      └─ validated against GET /object_info
 ```
 
-A biblioteca se comunica com sete rotas do ComfyUI — `/system_stats`, `/object_info`, `/queue`, `/history`, `/prompt`, `/interrupt`, `/view` — mais `/upload/image` e `/upload/mask` para entrada binária (os uploads de áudio também usam `/upload/image`; o servidor não tem rota específica de áudio). Todos os seis perfis se encaixam nessa estrutura: a versão 3.1 adicionou malhas, música, legendas e proveniência sem adicionar uma única rota.
+A biblioteca se comunica com sete rotas ComfyUI — `/system_stats`, `/object_info`, `/queue`, `/history`, `/prompt`, `/interrupt`, `/view` — mais `/upload/image` e `/upload/mask` para entrada binária (os uploads de áudio também usam `/upload/image`; o servidor não tem uma rota específica para áudio). Todos os seis perfis se encaixam nessa superfície: v3.1 adicionou malhas, música, legendas e informações de rastreamento sem adicionar uma única rota.
 
-`/object_info` é a autoridade sobre o que um determinado servidor pode executar. É um ponto de extremidade ativo, não
-um artefato com versão: não há um registro central de nós para referenciar. Portanto, a biblioteca
-valida os gráficos gerados em relação ao catálogo real do servidor de destino, em vez de assumir um
-conjunto fixo de nós. `check_workflow_dependencies()` é essa verificação e representa uma infraestrutura essencial, e não apenas uma conveniência.
+`/object_info` é a autoridade sobre o que um determinado servidor pode executar. É um endpoint ativo, não um artefato com versão: não há um registro de nós principais para fixar. Portanto, a biblioteca valida os grafos gerados em relação ao catálogo real do servidor de destino, em vez de presumir um conjunto fixo de nós. `check_workflow_dependencies()` é essa verificação e é uma infraestrutura essencial, em vez de uma conveniência.
 
-Recursos úteis quando você precisa do próprio gráfico:
+Úteis saídas de emergência quando você deseja o próprio grafo:
 
 ```python
 workflow = client.build_txt2img_workflow("a fox")   # the raw API-format dict
@@ -432,23 +428,17 @@ client.wait_for_completion(prompt_id)
 
 ## Documentação
 
-Manual completo:
-**[mcp-tool-shop-org.github.io/comfy-headless](https://mcp-tool-shop-org.github.io/comfy-headless/handbook/)** — introdução, uso, os seis perfis, modelos de vídeo, configuração, referência da API, arquitetura.
+Manual completo: **[mcp-tool-shop-org.github.io/comfy-headless](https://mcp-tool-shop-org.github.io/comfy-headless/handbook/)** — introdução, uso, os seis perfis, modelos de vídeo, configuração, referência da API, arquitetura.
 
-**Base de conhecimento no repositório** para LLMs e colaboradores: [`kb/`](kb/README.md) — uma base [`index.json`](kb/index.json) legível por máquina sobre páginas de fatos por perfil, gráficos de referência executáveis (`kb/workflows/*.json`, gerados a partir dos próprios construtores para que não possam divergir) e proveniência do nó (`kb/nodes.json`). `python scripts/gen_kb.py` regenera isso; o conjunto de testes falha se o código e a base de conhecimento discordarem.
+**Base de conhecimento no repositório** para LLMs e colaboradores: [`kb/`](kb/README.md) — uma [`index.json`](kb/index.json) legível por máquina sobre páginas de fatos por perfil, grafos de referência executáveis (`kb/workflows/*.json`, gerados pelos próprios criadores, para que não possam divergir) e informações de rastreamento de nós (`kb/nodes.json`). `python scripts/gen_kb.py` o regenera; a suíte de testes falha se o código e a base de conhecimento discordarem.
 
-## Segurança e escopo dos dados
+## Segurança e âmbito dos dados
 
-- **Dados acessados:** conecta-se a uma instância local ou remota do ComfyUI via HTTP/WebSocket.
-Envia o JSON do fluxo de trabalho e as imagens carregadas, recebe os arquivos de mídia gerados. Opcionalmente, conecta-se
-a um Ollama local para inteligência de prompts. Grava a saída em diretórios temporários com
-limpeza automática.
-- **Dados NÃO acessados:** sem telemetria, sem análise, sem APIs externas além dos pontos de extremidade do ComfyUI
-e do Ollama que você configurar. Os segredos são mascarados em toda a saída do log por meio de
-`SecretValue`.
-- **Permissões necessárias:** acesso à rede para o seu servidor ComfyUI e servidor Ollama opcional; permissão de gravação de arquivos para saída e diretórios temporários.
-- **Uploads:** `upload_image` rejeita tentativas de atravessar subpastas. Os arquivos carregados são armazenados
-no diretório de entrada do ComfyUI no servidor especificado — trate esse servidor como confiável.
+- **Dados acessados:** conecta-se a uma instância ComfyUI local ou remota através de HTTP/WebSocket.
+Envia o JSON do fluxo de trabalho e as imagens enviadas, recebendo os conteúdos multimédia gerados. Opcionalmente, conecta-se a um Ollama local para obter inteligência de prompts. Escreve os resultados em diretórios temporários com limpeza automática.
+- **Dados NÃO acessados:** sem telemetria, sem análise de dados, sem APIs externas além dos pontos de extremidade ComfyUI e Ollama que você configurar. Os segredos são mascarados em todas as saídas de registro através de `SecretValue`.
+- **Permissões necessárias:** acesso à rede para o seu servidor ComfyUI e servidor Ollama (opcional); permissão de escrita de arquivos para os diretórios de saída e temporários.
+- **Envios:** `upload_image` rejeita tentativas de atravessar subpastas. Os arquivos enviados são armazenados no diretório de entrada de ComfyUI no servidor que você especificar — trate esse servidor como confiável.
 
 Consulte [SECURITY.md](SECURITY.md) para relatar vulnerabilidades.
 
@@ -458,7 +448,7 @@ Consulte [SECURITY.md](SECURITY.md) para relatar vulnerabilidades.
 |----------|-------|
 | A. Segurança | 10/10 |
 | B. Tratamento de erros | 10/10 |
-| C. Documentação para o usuário | 10/10 |
+| C. Documentação para operadores | 10/10 |
 | D. Boas práticas de desenvolvimento | 10/10 |
 | E. Identidade (suave) | 10/10 |
 | **Overall** | **50/50** |
@@ -467,16 +457,13 @@ Consulte [SECURITY.md](SECURITY.md) para relatar vulnerabilidades.
 
 ## Relacionado
 
-Parte do [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — ferramentas de ML de código aberto para
-hardware local.
+Parte do [**MCP Tool Shop**](https://mcp-tool-shop.github.io/) — ferramentas de código aberto para aprendizado de máquina (ML) para hardware local.
 
 ## Contribuições
 
-Problemas e solicitações de pull são bem-vindos — consulte [CONTRIBUTING.md](CONTRIBUTING.md). Áreas úteis:
-famílias adicionais de modelos, modelos de fluxo de trabalho, documentação, correções de bugs.
+Problemas e solicitações de pull são bem-vindos — consulte [CONTRIBUTING.md](CONTRIBUTING.md). Áreas úteis: famílias de modelos adicionais, modelos de fluxo de trabalho, documentação, correções de bugs.
 
-Se você adicionar um tipo de nó, verifique primeiro se ele existe no catálogo ativo do ComfyUI e declare seu
-pacote, caso não seja um nó central. Essa regra é o motivo pelo qual esta versão existe.
+Se você adicionar um tipo de nó, verifique se ele existe no catálogo ComfyUI ativo e declare seu pacote, caso não seja um componente principal. Essa regra é o motivo pelo qual esta versão existe.
 
 ## Licença
 

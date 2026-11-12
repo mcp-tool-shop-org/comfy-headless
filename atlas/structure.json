@@ -2294,23 +2294,23 @@
           "path": "Makefile"
         },
         {
-          "hash": "fdff115dc76b783af7f5299cd1d8b8eb849d1b31dc2ad86b329949c205040a29",
+          "hash": "1a71eaa0c2c6b910c4d8b5145f69f2b140aa95665eb2d8a9b340ba4c0ee920f3",
           "path": "README.es.md"
         },
         {
-          "hash": "b4ebe2ceb1c3caf823dec9fe1b2610e3b735b42819ddac72ee403cafc668b01e",
+          "hash": "9d01b12511089179eb929c5b2e6e86350d6d5970c5acf256f503a68cbf6a4853",
           "path": "README.fr.md"
         },
         {
-          "hash": "621371e474d984e92cf6347a391be375dfa713655151cbe99720d605f3d5cad9",
+          "hash": "8b492e9dabdd05f4bbe0eae5707f12a4338891d4c5ce0137c87f7ea35e90b834",
           "path": "README.hi.md"
         },
         {
-          "hash": "a3e96b59d50e02fa7ebca99de4bdf9045e047e8f6775475d11e63ff3db94e9e7",
+          "hash": "4923487bb1d5b9d1884dd5f3fdcaf92fc914bc2f17980f4a7fe9b1c44f559850",
           "path": "README.it.md"
         },
         {
-          "hash": "916f46ff3de73172a203c257eaa78075e6c311970b4e99a6df5b08fa94086876",
+          "hash": "01179a1a00f5c3e038544a2e4a6ba10f9f393a0efd7db6ec1a9d101a7838d7e9",
           "path": "README.ja.md"
         },
         {
@@ -2318,11 +2318,11 @@
           "path": "README.md"
         },
         {
-          "hash": "00587eed432b1282ca88461e346ee1d4bb449058941ff95e43580355f8c72862",
+          "hash": "a2b67921ae7bf4a60c2ea54069fa8750da6c47101947f2bb038694e924d88ccd",
           "path": "README.pt-BR.md"
         },
         {
-          "hash": "e8767f214876ff6de83996ea2c72668eb15b15562b02f01806ef713c1c12500f",
+          "hash": "24260007aaf4b79439c532f0ecf321e364aec6149c3db8daef717c4713d59eb9",
           "path": "README.zh.md"
         },
         {
@@ -4146,7 +4146,7 @@
   ],
   "engine": "1.26.0",
   "generatedFrom": {
-    "commit": "9b99593f3db3ba7775ed414696d773ce4a6a4c1d",
+    "commit": "9fde86d166725bba8e80971fb5bc83818b30c165",
     "tracked": 180
   },
   "landings": [
